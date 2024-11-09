@@ -1,0 +1,72 @@
+/* Pagination.css */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.pagination-btn {
+    background-color: #ffffff;
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 10px 18px;
+    margin: 0 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-btn:hover:not(.disabled) {
+    background-color: #000;
+    color: #ffffff;
+    box-shadow: 0px 6px 12px rgba(0, 123, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.pagination-btn:disabled {
+    background-color: #e0e0e0;
+    color: #999999;
+    border: none;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.pagination-btn.active {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+    box-shadow: 0px 4px 8px rgba(40, 167, 69, 0.3);
+    transform: scale(1.05);
+}
+
+.pagination-dots {
+    padding: 10px 15px;
+    color: #555555;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.pagination-btn:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+}
+@media (max-width: 575.98px) { 
+    .pagination {
+        gap: 5px; /* Reduce gap between buttons */
+    }
+
+    .pagination-btn {
+        padding: 8px 12px; /* Reduce padding for smaller buttons */
+        margin: 0 3px; /* Less margin to fit more buttons */
+        font-size: 14px; /* Slightly smaller text */
+    }
+
+    .pagination-dots {
+        padding: 8px 10px; /* Reduce dots padding */
+        font-size: 16px; /* Slightly smaller font size */
+    }
+ }
