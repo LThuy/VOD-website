@@ -108,6 +108,11 @@ function Login() {
                     Đăng ký
                 </Link>
             </div>
+            <div className="form-section_register mt-2">
+                <Link to={'/forgetz'} className='register-btn' >
+                    Bạn quên mật khẩu?
+                </Link>
+            </div>
             {errorMessage && (
               <div className="alert alert-danger alert-message mt-3">
                 {errorMessage}

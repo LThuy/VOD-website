@@ -133,7 +133,7 @@ function WatchFilm () {
                         <div className="loading-container">
                             <div className="loading-item">
                                 <FontAwesomeIcon className='icon-loading' icon={faSpinner} spin size="3x" />
-                                <h2 className='mt-3'>Thông cảm! Đợi chút nha phen....</h2>
+                                <h2 className='mt-3'>Thông cảm! Đợi chút nha...</h2>
                             </div>
                         </div>
                     ): (

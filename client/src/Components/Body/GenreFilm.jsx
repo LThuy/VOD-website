@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCirclePlay,faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlay, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 import '../../Style/BodyCss/Home.css'
 import '../../Style/All/grid.css'
 import '../../Style/Responsive/Responsive.css'
 import fetchingApiData from '../../Ultil/FetchingData/FetchingApi'
 import Pagination from '../Pagination/Pagination';
-import {useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
-import {useHandleTruncateText} from '../../Ultil/Hepler/truncateText'
+import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
+import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
 
 function GenreFilm() {
     const { slug } = useParams();
-    const [films,setFilms] = useState([]);
-    const [filterdFilm,setFilteredFilms] = useState([]);
+    const [films, setFilms] = useState([]);
+    const [filteredFilm, setFilteredFilms] = useState([]);
     const [titleGenre, setTitleGenre] = useState([])
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -35,17 +35,17 @@ function GenreFilm() {
         "the-thao": "THỂ THAO",
         "lich-su": "LỊCH SỬ",
         "bi-an": "BÍ ẨN",
-        "tam-li":"TÂM LÍ",
-        "co-trang":"CỔ TRANG",
-        "vo-thua":"VÕ TRANG",
-        "kinh-di":"KINH DỊ",   
-        "vien-tuong":"VIỄN TƯỞNG"  
+        "tam-li": "TÂM LÍ",
+        "co-trang": "CỔ TRANG",
+        "vo-thua": "VÕ TRANG",
+        "kinh-di": "KINH DỊ",
+        "vien-tuong": "VIỄN TƯỞNG"
     };
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)
             try {
-                const [phimLeData,phimBoData] = await fetchingApiData([
+                const [phimLeData, phimBoData] = await fetchingApiData([
                     `https://phimapi.com/v1/api/danh-sach/phim-le?limit=50&page=${currentPage}`,
                     `https://phimapi.com/v1/api/danh-sach/phim-bo?limit=50&page=${currentPage}`,
                 ]);
@@ -61,19 +61,19 @@ function GenreFilm() {
             }
         };
 
-        
+
         setTitleGenre(specialGenre[slug])
 
         fetchData();
-    },[slug,currentPage])
+    }, [slug, currentPage])
 
     useEffect(() => {
-        const filteredFilms = films.filter(item => 
+        const filteredFilms = films.filter(item =>
             item.category.some(category => slug.includes(category.slug))
         );
 
         setFilteredFilms(filteredFilms);
-    },[films,slug])
+    }, [films, slug])
 
     useEffect(() => {
         document.title = titleGenre || '';
@@ -95,29 +95,39 @@ function GenreFilm() {
                             <div className="loading-container">
                                 <div className="loading-item">
                                     <FontAwesomeIcon className='icon-loading' icon={faSpinner} spin size="3x" />
-                                    <h2 className='mt-3'>Thông cảm! Đợi chút nha phen....</h2>
+                                    <h2 className='mt-3'>Thông cảm! Đợi chút nha...</h2>
                                 </div>
                             </div>
                         ) : (
-                            filterdFilm && filterdFilm.map(item => (
-                                <div key={item._id} onClick={() => hanldeClickFilmDetail(item.slug)} className="film-item col col-lg-2 col-md-4">
-                                    <div className="film-item-img-container">
-                                        <img src={imgUrl + item.poster_url} alt={item.name} />
+                            // Check if filteredFilm has items
+                            filteredFilm && filteredFilm.length > 0 ? (
+                                filteredFilm.map(item => (
+                                    <div
+                                        key={item._id}
+                                        onClick={() => hanldeClickFilmDetail(item.slug)}
+                                        className="film-item col col-lg-2 col-md-4"
+                                    >
+                                        <div className="film-item-img-container">
+                                            <img src={imgUrl + item.poster_url} alt={item.name} />
+                                        </div>
+                                        <div className="film-item-iconplay">
+                                            <FontAwesomeIcon className='fa-circle-play' icon={faCirclePlay} />
+                                        </div>
+                                        <h4>{hanldeTruncateText(item.name)}</h4>
                                     </div>
-                                    <div className="film-item-iconplay">
-                                        <FontAwesomeIcon className='fa-circle-play' icon={faCirclePlay} />
-                                    </div>
-                                    <h4>{hanldeTruncateText(item.name)}</h4>
-                                </div>
-                            ))
+                                ))
+                            ) : (
+                                // Render a "No results found" message if filteredFilm is empty
+                                <div className="error-message">No results found</div>
+                            )
                         )}
                     </div>
                     <div class="row pageNum-container">
                         <div class="film-pageNum-continer">
-                            <Pagination 
-                                currentPage={currentPage} 
-                                totalPages={totalPages} 
-                                onPageChange={(page) => setCurrentPage(page)} 
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={(page) => setCurrentPage(page)}
                             />
                         </div>
                     </div>

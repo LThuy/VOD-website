@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route ,useLocation } from 'react-router-dom';
 import Header from './Components/Partials/Header'
 import Footer from './Components/Partials/Footer'
 import Home from './Components/Body/Home'
@@ -14,14 +14,20 @@ import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
+  const location = useLocation();
+
+
+  const isLoginPage = location.pathname === '/login';
+  const isRegisterPage = location.pathname === '/register';
   
-
-
   return (
     <div className="App">
-      <div id="header-container">
-        <Header />
-      </div>
+      {!isLoginPage && !isRegisterPage && (
+        <div id="header-container">
+          <Header />
+        </div>
+      )}
+      
       <div id="body-content">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -34,9 +40,14 @@ function App() {
           <Route path="/genre/:slug" element={<GenreFilm />} />
         </Routes>
       </div>
-      <div id="footer-container">
-        <Footer />
-      </div>
+      {
+        !isLoginPage && !isRegisterPage && (
+          <div id="footer-container">
+            <Footer />
+          </div>
+        )
+      }
+      
     </div>
   );
 }

@@ -24,7 +24,7 @@ function SearchResult() {
             setLoading(true)
             try {
                 const [searchFilmData] = await fetchingApiData([
-                    `https://phimapi.com/v1/api/tim-kiem?keyword=${slug}&limit=50`,
+                    `https://phimapi.com/v1/api/tim-kiem?keyword=${slug}&limit=100`,
                 ]);
 
                 if (searchFilmData && searchFilmData.data.items) {
@@ -59,7 +59,7 @@ function SearchResult() {
                             <div className="loading-container">
                                 <div className="loading-item">
                                     <FontAwesomeIcon className='icon-loading' icon={faSpinner} spin size="3x" />
-                                    <h2 className='mt-3'>Thông cảm! Đợi chút nha phen....</h2>
+                                    <h2 className='mt-3'>Thông cảm! Đợi chút nha...</h2>
                                 </div>
                             </div>
                         ) : (

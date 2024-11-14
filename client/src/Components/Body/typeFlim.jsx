@@ -26,7 +26,7 @@ function TypeFilm() {
             setLoading(true)
             try {
                 const [phimData] = await fetchingApiData([
-                    `https://phimapi.com/v1/api/danh-sach/${slug}?limit=24&page=${currentPage}`,
+                    `https://phimapi.com/v1/api/danh-sach/${slug}?limit=12&page=${currentPage}`,
                 ]);
                 if (phimData && phimData.data.items) {
                     setDataFilm(phimData.data);
@@ -63,7 +63,7 @@ function TypeFilm() {
                             <div className="loading-container">
                                 <div className="loading-item">
                                     <FontAwesomeIcon className='icon-loading' icon={faSpinner} spin size="3x" />
-                                    <h2 className='mt-3'>Thông cảm! Đợi chút nha phen....</h2>
+                                    <h2 className='mt-3'>Thông cảm! Đợi chút nha...</h2>
                                 </div>
                             </div>
                         ) : (
