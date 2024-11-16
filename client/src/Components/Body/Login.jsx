@@ -1,12 +1,40 @@
 import React, { useState } from 'react';
-import '../../Style/BodyCss/Login.css'
-import { Link,useNavigate } from 'react-router-dom';
-
+import '../../Style/BodyCss/Login.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
-  const [formData, setFormData] = useState({ username: "", password: "" });
-  const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate()
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
+
+  // Custom validator
+  const validateInput = () => {
+    const { email, password } = formData;
+
+    if (!email.trim()) {
+      toast.error('Email is required.');
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('Invalid email format.');
+      return false;
+    }
+
+    if (!password.trim()) {
+      toast.error('Password is required.');
+      return false;
+    }
+
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters long.');
+      return false;
+    }
+
+    return true;
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -18,6 +46,11 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateInput()) {
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:5000/login', {
         method: 'POST',
@@ -28,41 +61,21 @@ function Login() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.message || "Login failed");
       }
-      if(response.status === 400) {
-        setErrorMessage(response.message)
-      }
-  
-      const result = await response.json(); 
-      console.log(result); 
-  
-      alert(result.message); 
-      localStorage.setItem('token', result.token); 
+
+      const result = await response.json();
+      toast.success(result.message || 'Login successful!');
+      localStorage.setItem('token', result.token);
+
       setTimeout(() => {
-        navigate('/')
+        navigate('/');
       }, 2000);
     } catch (error) {
-      if (error.response) {
-        console.log('Error response:', error.response);
-        
-        if (error.response.status === 400) {
-          setErrorMessage(error.response.data.message || "Invalid request. Please check your input.");
-        } 
-        else if (error.response.status === 401) {
-          setErrorMessage(error.response.data.message || "Invalid username or password.");
-        }
-        else {
-          setErrorMessage(error.response.data.message || "An error occurred during login.");
-        }
-      } else if (error.request) {
-        console.log('Error request:', error.request);
-        setErrorMessage("No response from server. Please try again.");
-      } else {
-        setErrorMessage("An error occurred. Please try again.");
-      }
+      console.error('Login error:', error);
+      toast.error(error.message || 'An error occurred during login.');
     }
-
   };
 
   return (
@@ -78,10 +91,10 @@ function Login() {
             <div className="form-seciton_input">
               <input
                 className="formlogin-inputvalue"
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
                 onChange={handleInputChange}
               />
             </div>
@@ -101,23 +114,16 @@ function Login() {
               </button>
             </div>
             <div className="form-section_register mt-3">
-                <span>
-                    Bạn chưa có tài khoản?  
-                </span>
-                <Link to={'/register'} className='register-btn' >
-                    Đăng ký
-                </Link>
+              <span>Bạn chưa có tài khoản?</span>
+              <Link to={'/register'} className="register-btn">
+                Đăng ký
+              </Link>
             </div>
             <div className="form-section_register mt-2">
-                <Link to={'/forgetz'} className='register-btn' >
-                    Bạn quên mật khẩu?
-                </Link>
+              <Link to={'/forget'} className="register-btn">
+                Bạn quên mật khẩu?
+              </Link>
             </div>
-            {errorMessage && (
-              <div className="alert alert-danger alert-message mt-3">
-                {errorMessage}
-              </div>
-            )}
           </form>
         </div>
       </div>

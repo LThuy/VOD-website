@@ -30,11 +30,11 @@ router.post('/items', async (req, res) => {
 });
 
 router.post('/createAccount', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     // Find user by username
-    const user = await Account.findOne({ username });
+    const user = await Account.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Invalid username or password" });
     }

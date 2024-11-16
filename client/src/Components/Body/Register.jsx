@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import '../../Style/BodyCss/Login.css'
-import { Link, useNavigate} from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../../Style/BodyCss/Login.css';
 
 function Register() {
-  const [formData, setFormData] = useState({ username: "", password: "", confirmPassword: "" });
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMMessage] = useState("");
-  const navigate = useNavigate()
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -16,9 +20,31 @@ function Register() {
     });
   };
 
-  // Handle form submission
+  const validateForm = () => {
+    const { email, password, confirmPassword } = formData;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email || !emailRegex.test(email)) {
+      toast.error('Please enter a valid email address.');
+      return false;
+    }
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters long.');
+      return false;
+    }
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match.');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:5000/register', {
@@ -31,20 +57,18 @@ function Register() {
 
       const result = await response.json();
       if (response.ok) {
-        setSuccessMMessage(result.message)
+        toast.success(result.message);
         setTimeout(() => {
-          navigate('/login')
-        },2000)
+          navigate('/login');
+        }, 2000);
       } else {
-        console.error('Error:', result);
-        setErrorMessage(result.message); 
+        toast.error(result.message);
       }
     } catch (error) {
       console.error('Client-side error:', error);
-      setErrorMessage('An error occurred during registration.');
+      toast.error('An error occurred during registration.');
     }
   };
-
 
   return (
     <div className="login-container">
@@ -55,14 +79,14 @@ function Register() {
           <h2>REGISTER</h2>
         </div>
         <div className="form-seciton">
-          <form id='registerForm' className="form-seciton-container" onSubmit={handleSubmit}>
+          <form id="registerForm" className="form-seciton-container" onSubmit={handleSubmit}>
             <div className="form-seciton_input">
               <input
                 className="formlogin-inputvalue"
                 type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
+                name="email"
+                placeholder="Email"
+                value={formData.email}
                 onChange={handleInputChange}
               />
             </div>
@@ -81,7 +105,7 @@ function Register() {
                 className="formlogin-inputvalue"
                 type="password"
                 name="confirmPassword"
-                placeholder="Comform Password"
+                placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
               />
@@ -92,23 +116,11 @@ function Register() {
               </button>
             </div>
             <div className="form-section_register mt-3">
-                <span>
-                    Bạn đã có tài khoản?  
-                </span>
-                <Link to={'/login'} className='register-btn'>
-                    Đăng nhập
-                </Link>
+              <span>Bạn đã có tài khoản?</span>
+              <Link to="/login" className="register-btn">
+                Đăng nhập
+              </Link>
             </div>
-            {errorMessage && (
-              <div className="alert alert-danger alert-message mt-3">
-                {errorMessage}
-              </div>
-            )}
-            {successMessage && (
-              <div className="alert alert-success alert-message mt-3">
-                {successMessage}
-              </div>
-            )}
           </form>
         </div>
       </div>
@@ -116,4 +128,4 @@ function Register() {
   );
 }
 
-export default Register
+export default Register;

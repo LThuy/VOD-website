@@ -1,17 +1,10 @@
-// models/Item.js
 const mongoose = require('mongoose');
 
 const AccountSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-      },
-      password: {
-        type: String,
-        required: true,
-      },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  verified: { type: Boolean, default: false }, // Track email verification status
+  verificationToken: { type: String },
 });
-
 
 module.exports = mongoose.model('Account', AccountSchema);

@@ -26,6 +26,7 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
+
 // Routes
 route(app);
 

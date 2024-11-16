@@ -9,20 +9,23 @@ import WatchFilm from './Components/Body/WatchFilm'
 import SearchResult from './Components/Body/SearchResult'
 import GenreFilm from './Components/Body/GenreFilm'
 import Login from './Components/Body/Login'
+import NoticeVerify from './Components/Body/NoticeVerify'
 import Register from './Components/Body/Register'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const location = useLocation();
 
-
   const isLoginPage = location.pathname === '/login';
   const isRegisterPage = location.pathname === '/register';
+  const isNoticeVerify = location.pathname === '/verify';
   
   return (
     <div className="App">
-      {!isLoginPage && !isRegisterPage && (
+      <ToastContainer />
+      {!isLoginPage && !isRegisterPage && !isNoticeVerify && (
         <div id="header-container">
           <Header />
         </div>
@@ -31,6 +34,7 @@ function App() {
       <div id="body-content">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/verify" element={<NoticeVerify />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/danh-sach/:slug" element={<TypeFilm />} />
@@ -41,7 +45,7 @@ function App() {
         </Routes>
       </div>
       {
-        !isLoginPage && !isRegisterPage && (
+        !isLoginPage && !isRegisterPage && !isNoticeVerify &&(
           <div id="footer-container">
             <Footer />
           </div>

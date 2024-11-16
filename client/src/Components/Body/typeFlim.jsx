@@ -9,6 +9,7 @@ import fetchingApiData from '../../Ultil/FetchingData/FetchingApi'
 import Pagination from '../Pagination/Pagination';
 import {useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import {useHandleTruncateText} from '../../Ultil/Hepler/truncateText'
+import axios from 'axios';
 
 function TypeFilm() {
     const { slug } = useParams();
@@ -21,12 +22,25 @@ function TypeFilm() {
     const hanldeClickFilmDetail = useHandleClickFilmDetail();
     const hanldeTruncateText = useHandleTruncateText()
 
+    // const [movies, setMovies] = useState([]);
+
+    // // Fetch data from the server
+    // useEffect(() => {
+    //     axios.get('http://localhost:5000/danh-sach/phim-le')
+    //         .then(response => {
+    //             setMovies(response.data);
+    //         })
+    //         .catch(error => {
+    //             console.error('Error fetching data:', error);
+    //         });
+    // }, []);
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)
             try {
                 const [phimData] = await fetchingApiData([
-                    `https://phimapi.com/v1/api/danh-sach/${slug}?limit=12&page=${currentPage}`,
+                    `http://localhost:5000/api/danh-sach/${slug}`, //?limit=12&page=${currentPage}
                 ]);
                 if (phimData && phimData.data.items) {
                     setDataFilm(phimData.data);
