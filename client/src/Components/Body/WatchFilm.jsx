@@ -26,7 +26,6 @@ function WatchFilm () {
     const handleTruncateText = useHandleTruncateText()
     const [similarFilms, setSimilarFilms] = useState([]);
     const imgUrl = 'https://img.phimapi.com/'
-
    
     const handleEpisodeClick = (link_embed, currentEpisode) => {
         window.scrollTo(0, 0);

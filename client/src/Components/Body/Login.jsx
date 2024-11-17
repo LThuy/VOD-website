@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function Login() {
+function Login({ setUserEmail }) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
@@ -57,7 +57,7 @@ function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // formData contains user email and password
       });
 
       if (!response.ok) {
@@ -66,9 +66,20 @@ function Login() {
       }
 
       const result = await response.json();
-      toast.success(result.message || 'Login successful!');
-      localStorage.setItem('token', result.token);
 
+      // Show success toast
+      toast.success(result.message || 'Login successful!');
+
+      // Save token and email to localStorage
+      localStorage.setItem('token', result.token);
+      localStorage.setItem('userEmail', result.email); // Save user's email
+
+      // Optionally update the app state with the user's email
+      if (typeof setUserEmail === 'function') {
+        setUserEmail(result.email);
+      }
+
+      // Navigate to the home page after a delay
       setTimeout(() => {
         navigate('/');
       }, 2000);
@@ -77,6 +88,7 @@ function Login() {
       toast.error(error.message || 'An error occurred during login.');
     }
   };
+
 
   return (
     <div className="login-container">

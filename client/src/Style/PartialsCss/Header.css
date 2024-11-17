@@ -311,15 +311,18 @@
 
     color: white;
 }
+.user_search-search {
+    position: relative;
+}
 .user_search-searchicon {
     cursor: pointer;
     margin: 0 20px;
 }
+
 .inputbox {
     position: absolute;
-    right: 55px;
+    right: 40px;
     top: -5px;
-    padding: 5px;
     transform-origin: right;
     transform: scaleX(0);
 }
@@ -350,4 +353,62 @@
 }
 .mb-15 {
     margin-bottom: 15px;
+}
+/* user after logined */
+.user-afterlogin {
+    margin-top: -20px;
+    text-decoration: none;
+    position: relative;
+}
+.user-email {
+    color: white;
+}
+.usericon-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-top: -5px;
+    cursor: pointer; /* Important for maintaining hover area */
+}
+
+.sub-profilenav {
+    position: absolute;
+    top: 100%;
+    z-index: 999;
+    background-color: #000000;
+    width: 200px;
+    border-radius: 10px;
+    display: none;
+}
+.profile-icon-container::before {
+    background-color: transparent;
+    height: 5px;
+    width: 100%;
+    content: "";
+    position: absolute;
+    bottom: 0;
+}
+.profile-icon-container:hover .sub-profilenav {
+    display: block;
+}
+
+.profile-list {
+    list-style: none;
+    margin-top: 5px;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+.profile-list-item {
+    display: flex; /* Aligns icon and text in a row */
+    align-items: center; /* Vertically centers the icon and text */
+    text-decoration: none;
+    color: white;
+    gap: 8px;
+    cursor: pointer;
+}
+.profile-list-item .fa {
+    font-size: 1.2em; /* Set the desired size for your icons */
+    margin-right: 10px; /* Space between the icon and text */
+    flex-shrink: 0; /* Prevents the icon from shrinking when the container is resized */
 }

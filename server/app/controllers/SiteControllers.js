@@ -18,12 +18,25 @@ const transporter = nodemailer.createTransport({
 
 // Send a verification email
 const sendVerificationEmail = (email, token) => {
-    const verificationUrl = `http://localhost:5000/verify-email?token=${token}`;
+    const clientBaseUrl = process.env.CLIENT_BASE_URL || 'http://localhost:3000';
+    const verificationUrl = `${clientBaseUrl}/verify-email?token=${token}`;
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
-        subject: 'Email Verification',
-        text: `Please verify your email by clicking the following link: ${verificationUrl}`,
+        subject: 'Action Required: Verify Your Email Address',
+        html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h2 style="color: #4CAF50;">Welcome to Our Service!</h2>
+                <p>Thank you for signing up. Please confirm your email address to activate your account.</p>
+                <p>
+                    <a href="${verificationUrl}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+                        Verify Email Address
+                    </a>
+                </p>
+                <p>If you didn't sign up for this account, please disregard this email.</p>
+                <p>Best regards,<br>The Team</p>
+            </div>
+        `,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -34,6 +47,8 @@ const sendVerificationEmail = (email, token) => {
         }
     });
 };
+
+
 
 class SiteControllers {
     //GET login section : /checkLogin
@@ -76,10 +91,11 @@ class SiteControllers {
                 expiresIn: '1h'
             });
 
-            res.status(200).json({
-                message: "Login successful",
-                token
-            });
+            // res.status(200).json({
+            //     message: "Login successful",
+            //     token
+            // });
+            res.status(200).json({ token, email: user.email });
         } catch (error) {
             console.error(error);
             res.status(500).json({
@@ -174,7 +190,35 @@ class SiteControllers {
             });
         }
     }
-
+    async resentEmail(req, res) {
+        try {
+            const { email } = req.body;
+    
+            // Find the user by email
+            const user = await User.findOne({ email });
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+    
+            // Check if the user is already verified
+            if (user.verified) {
+                return res.status(400).json({ message: 'User is already verified' });
+            }
+    
+            // Generate a new verification token (if needed)
+            const verificationToken = user.verificationToken || crypto.randomBytes(32).toString('hex');
+            user.verificationToken = verificationToken;
+            await user.save();
+    
+            // Resend the email
+            sendVerificationEmail(email, verificationToken);
+    
+            res.status(200).json({ message: 'Verification email resent successfully.' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error.' });
+        }
+    }
 
 
 

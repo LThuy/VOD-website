@@ -59,7 +59,7 @@ function Register() {
       if (response.ok) {
         toast.success(result.message);
         setTimeout(() => {
-          navigate('/login');
+          navigate('/verify', { state: { email: formData.email } });
         }, 2000);
       } else {
         toast.error(result.message);

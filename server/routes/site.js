@@ -5,6 +5,7 @@ const siteControllers = require('../app/controllers/SiteControllers');
 
 router.post('/login',siteControllers.checkLogin);
 router.post('/register',siteControllers.createAccount);
+router.post('/resend-verification',siteControllers.resentEmail);
 router.get('/verify-email', siteControllers.verifyEmail); 
 //movie
 const movieControllers = require('../app/controllers/MovieControllers');

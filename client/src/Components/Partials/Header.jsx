@@ -1,23 +1,23 @@
-import React, { useState, useRef } from 'react';
-import {Link,useNavigate} from 'react-router-dom';
-import '../../Style/PartialsCss/Header.css'; 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
-import { faList, faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons'; 
+import React, { useState, useRef ,useEffect} from 'react';
+import { Link, useNavigate} from 'react-router-dom';
+import '../../Style/PartialsCss/Header.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faList, faMagnifyingGlass, faUser,faStar,faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import '../../Style/Responsive/Responsive.css'
 
-import {useHandleEnterSearchFilm} from '../../Ultil/Hepler/navigationHelpers'
+import { useHandleEnterSearchFilm } from '../../Ultil/Hepler/navigationHelpers'
 
 function Header() {
+    const navigate = useNavigate()
     const [isOpen, setOpen] = useState(false)
     const inputBox = useRef(null)
     const handleEnterSearchFilm = useHandleEnterSearchFilm()
-    const navigate = useNavigate();
 
-    const [isNavOpen, setIsNavOpen] = useState(false); 
+    const [isNavOpen, setIsNavOpen] = useState(false);
     const [isActive, setIsActive] = useState(false);
 
-     // Function to open the nav
-     const openNav = () => {
+    // Function to open the nav
+    const openNav = () => {
         setIsNavOpen(true);
     };
 
@@ -37,8 +37,9 @@ function Header() {
         }
     };
 
-     // Click handler for the list icon
-     const handleClick = () => {
+
+    // Click handler for the list icon
+    const handleClick = () => {
         setIsActive(!isActive); // Toggle 'active' class on headerList
         if (isNavOpen) {
             closeNav();
@@ -46,15 +47,31 @@ function Header() {
             openNav();
         }
     };
+    // render user's email
+    const [userEmail, setUserEmail] = useState(null);
+
+    useEffect(() => {
+        const email = localStorage.getItem('userEmail');
+        if (email) {
+            setUserEmail(email);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userEmail');
+        setUserEmail(null); // Reset state
+        navigate('/login');
+    };
 
 
     return (
         <header>
             <div className="main-container">
                 <div className="grid-container">
-                    <header id="header">    
+                    <header id="header">
                         <div onClick={handleClick} className={`header-list ${isActive ? 'active' : ''}`} >
-                            <FontAwesomeIcon  className="header-list_icon"  icon={faList} />
+                            <FontAwesomeIcon className="header-list_icon" icon={faList} />
                         </div>
                         <h2 className="nameWeb">TTFilm</h2>
                         <nav className={`nav ${isNavOpen ? 'open' : ''}`}>
@@ -117,20 +134,40 @@ function Header() {
                         <div className="user_search">
                             <div className="user_search-search" onClick={hanldeSearchIconClick}>
                                 <FontAwesomeIcon className="user_search-searchicon" icon={faMagnifyingGlass} />
+                                <div className={`inputbox transition-inputbox ${isOpen ? 'open' : ''}`}>
+                                    <input onKeyDown={handleKeyDown} ref={inputBox} placeholder="Search Film Name" className="input-search" type="text" />
+                                </div>
                             </div>
+                            
                             <div className="account">
-                                <Link to="/login" className="user-link">
-                                    <FontAwesomeIcon className="account-icon" icon={faUser} />
-                                </Link>
+                                {userEmail ? (
+                                    <div className='profile-icon-container'>
+                                        <Link to='/profile' className='user-afterlogin'>
+                                            <div className="usericon-container">
+                                                <FontAwesomeIcon className="account-icon" icon={faUser} />
+                                                <span className="user-email">{userEmail}</span> 
+                                            </div>
+                                        </Link>
+                                        <div className="sub-profilenav">
+                                            <ul className="profile-list">
+                                                <Link className="profile-list-item"> <FontAwesomeIcon icon={faUser} />Hồ Sơ</Link>
+                                                <Link className="profile-list-item"> <FontAwesomeIcon icon={faStar} />Phim Yêu Thích</Link>
+                                                <div onClick={handleLogout} className="profile-list-item"><FontAwesomeIcon icon={faRightFromBracket} />Đăng Xuất</div>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <Link to="/login" className="user-link">
+                                        <FontAwesomeIcon className="account-icon" icon={faUser} />
+                                    </Link>
+                                )}
                             </div>
-                            <div className={`inputbox transition-inputbox ${isOpen ? 'open' : ''}`}>
-                                <input onKeyDown={handleKeyDown} ref={inputBox} placeholder="Search Film Name" className="input-search" type="text" />
-                            </div>
+                            
                         </div>
                     </header>
                 </div>
             </div>
-            <div className={`overlay ${isNavOpen ? 'open' : ''}`} onClick={closeNav}/>
+            <div className={`overlay ${isNavOpen ? 'open' : ''}`} onClick={closeNav} />
         </header>
     );
 }
