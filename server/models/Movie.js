@@ -1,31 +1,37 @@
 const mongoose = require('mongoose');
 
 const SeoSchema = new mongoose.Schema({
-  og_type: { type: String, required: true },
-  titleHead: { type: String, required: true },
-  descriptionHead: { type: String, required: true },
-  og_image: [{ type: String }], // Array of strings for image URLs
-  og_url: { type: String, required: true },
-});
+  og_type: { type: String, default: null },
+  titleHead: { type: String, default: null },
+  descriptionHead: { type: String, default: null },
+  og_image: { type: [String], default: [] },
+  og_url: { type: String, default: null },
+}, { _id: false }); // Embedded document schema
 
 const BreadCrumbSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  slug: { type: String },
-  isCurrent: { type: Boolean, required: true },
-  position: { type: Number, required: true },
+  name: { type: String, default: null },
+  slug: { type: String, default: null },
+  isCurrent: { type: Boolean, default: false },
+  position: { type: Number, default: null },
+}, { _id: false }); // Embedded document schema
+
+const DataSchema = new mongoose.Schema({
+  seoOnPage: { type: SeoSchema, default: {} },
+  breadCrumb: { type: [BreadCrumbSchema], default: [] },
+  titlePage: { type: String, default: null },
+  items: { type: [mongoose.Schema.Types.Mixed], default: [] },
+  params: { type: mongoose.Schema.Types.Mixed, default: {} },
+  type_list: { type: String, default: null },
+  APP_DOMAIN_FRONTEND: { type: String, default: null },
+  APP_DOMAIN_CDN_IMAGE: { type: String, default: null },
+}, { _id: false }); // Embedded document schema
+
+const MovieDataSchema = new mongoose.Schema({
+  status: { type: String, required: true },
+  msg: { type: String, default: "" },
+  data: { type: DataSchema, required: true },
 });
 
-const MainSchema = new mongoose.Schema({
-  seoOnPage: { type: SeoSchema, required: true },
-  breadCrumb: [BreadCrumbSchema], // Array of breadcrumb objects
-  titlePage: { type: String, required: true },
-  items: [{ type: mongoose.Schema.Types.Mixed }], // Generic array for items
-  params: { type: mongoose.Schema.Types.Mixed }, // Generic object for parameters
-  type_list: { type: String, required: true },
-  APP_DOMAIN_FRONTEND: { type: String, required: true },
-  APP_DOMAIN_CDN_IMAGE: { type: String, required: true },
-});
+const MovieData = mongoose.model('movie', MovieDataSchema, 'movie');
 
-const MovieModel = mongoose.model('movie', MainSchema, 'movie');
-
-module.exports = MovieModel;
+module.exports = MovieData;

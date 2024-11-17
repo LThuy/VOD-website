@@ -42,9 +42,10 @@ function TypeFilm() {
                 const [phimData] = await fetchingApiData([
                     `http://localhost:5000/api/danh-sach/${slug}`, //?limit=12&page=${currentPage}
                 ]);
-                if (phimData && phimData.data.items) {
-                    setDataFilm(phimData.data);
-                    setFilm(phimData.data.items);
+                console.log(phimData[0])
+                if (phimData[0] && phimData[0].data.items) {
+                    setDataFilm(phimData[0].data);
+                    setFilm(phimData[0].data.items);
                 }
                 
             } catch (error) {
