@@ -16,6 +16,7 @@ import SuccessNotice from './Components/Body/SuccesNotive';
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify';
+import Profile from './Components/Body/Profile';
 
 function App() {
   const location = useLocation();
@@ -31,7 +32,7 @@ function App() {
       <ToastContainer />
       {!isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify &&(
         <div id="header-container">
-          <Header userEmail={userEmail}/>
+          <Header/>
         </div>
       )}
       
@@ -43,6 +44,7 @@ function App() {
           <Route path="/successnotice" element={<SuccessNotice />} />
           <Route path="/login" element={<Login setUserEmail={setUserEmail}/>} />
           <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile/>} />
           <Route path="/danh-sach/:slug" element={<TypeFilm />} />
           <Route path="/filmDetail/:slug" element={<FilmDetail />} />
           <Route path="/watchFilm/:slug" element={<WatchFilm />} />

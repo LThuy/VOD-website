@@ -49,11 +49,14 @@ function Header() {
     };
     // render user's email
     const [userEmail, setUserEmail] = useState(null);
+    const [userName, setUserName] = useState(null);
 
     useEffect(() => {
-        const email = localStorage.getItem('userEmail');
+        const email = localStorage.getItem("userEmail");
         if (email) {
             setUserEmail(email);
+            const name = email.split("@")[0]; 
+            setUserName(name);
         }
     }, []);
 
@@ -61,6 +64,7 @@ function Header() {
         localStorage.removeItem('token');
         localStorage.removeItem('userEmail');
         setUserEmail(null); // Reset state
+        setUserName(null); // Reset state
         navigate('/login');
     };
 
@@ -140,12 +144,12 @@ function Header() {
                             </div>
                             
                             <div className="account">
-                                {userEmail ? (
+                                {userName ? (
                                     <div className='profile-icon-container'>
                                         <Link to='/profile' className='user-afterlogin'>
                                             <div className="usericon-container">
                                                 <FontAwesomeIcon className="account-icon" icon={faUser} />
-                                                <span className="user-email">{userEmail}</span> 
+                                                <span className="user-email">{userName}</span> 
                                             </div>
                                         </Link>
                                         <div className="sub-profilenav">
