@@ -3,35 +3,39 @@ html {
 
 }
 
-
 /* filmdetal section */
 .filmdetail-section {
     padding: 30px 0;
     width: 100%;
     background-color: #1a1a1a;
-    
+
 }
+
 .filmdetail-container-grid {
     width: 1000px;
     max-width: 100%;
     margin: 0 auto;
 }
+
 .filmdetail-container-poster {
     margin-top: 5px;
 }
+
 .filmimg-container {
     position: relative;
     background-color: #222222;
     padding-top: 10px;
-    padding-bottom: 20px; /* Add padding to give space around the buttons */
-    margin: 0 auto; 
+    padding-bottom: 20px;
+    /* Add padding to give space around the buttons */
+    margin: 0 auto;
     text-align: center;
 }
-.filmimg-container_filmName_container 
-{
+
+.filmimg-container_filmName_container {
     display: flex;
     margin-bottom: 10px;
 }
+
 .filmimg-container_filmName {
     color: #e8f307;
     margin: auto;
@@ -43,11 +47,14 @@ html {
     margin-left: 10px;
     margin-bottom: 10px;
 }
+
 .episodeBtn-container {
     background-color: #333333;
-    padding: 10px; /* Add padding for visual spacing */
+    padding: 10px;
+    /* Add padding for visual spacing */
     display: flex;
-    flex-wrap: wrap; /* Allow buttons to wrap to the next line */
+    flex-wrap: wrap;
+    /* Allow buttons to wrap to the next line */
     justify-content: center;
     margin-right: 10px;
     margin-left: 10px;
@@ -55,7 +62,8 @@ html {
 }
 
 .episode-button {
-    margin: 5px; /* Add margin around buttons for spacing */
+    margin: 5px;
+    /* Add margin around buttons for spacing */
     padding: 8px 16px;
     border-radius: 10px;
     border: none;
@@ -63,15 +71,18 @@ html {
     color: white;
     background-color: #3a3a3a;
 }
+
 .episode-button.active {
     background-color: #ff9601;
 
-} 
+}
+
 #film-img {
     height: 80%;
     width: 100%;
     opacity: 0.8;
 }
+
 #nameFilm {
     position: absolute;
     bottom: 120px;
@@ -79,12 +90,14 @@ html {
     color: white;
     font-size: 50px;
 }
+
 #originameFilm {
     position: absolute;
     bottom: 92px;
     left: 42px;
     color: white;
 }
+
 .trailer-btn {
     position: absolute;
     bottom: 50px;
@@ -94,6 +107,7 @@ html {
     opacity: 0.9;
     text-decoration: none;
 }
+
 .watch-btn {
     position: absolute;
     bottom: 50px;
@@ -103,10 +117,12 @@ html {
     text-decoration: none;
     opacity: 0.9;
 }
+
 .trailer-btn:hover,
 .watch-btn:hover {
     opacity: 1;
 }
+
 .trailer-btn,
 .watch-btn {
     font-size: 18px;
@@ -128,75 +144,120 @@ html {
     flex-wrap: wrap;
     justify-content: space-around;
 }
+
 .filmdetaile-infor-item {
     color: white;
     margin-left: 20px;
     margin-right: 20px;
     color: white;
 }
-.filmdetaile-infor-item:nth-child(1){
+
+.filmdetaile-infor-item:nth-child(1) {
     margin-left: 42px;
 }
+
 .rating-stars {
     display: inline-block;
     font-size: 0;
 }
+
 .rating-stars .star {
     display: inline-block;
     font-size: 20px;
     color: gray;
 }
+
 .rating-stars .star:hover,
 .rating-stars .star.active {
     color: yellow;
 }
+
 .fa-star {
     cursor: pointer;
 }
+
 .gern-info {
     margin-top: auto;
 }
+
 .filmdetaile-infor-item_type {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
 .filmdetaile-infor-item_info {
     font-weight: 400;
     color: #717171;
 }
+
 .filmdetaile-infor-review {
     margin: 0 40px;
     width: 100%;
     border-top: 1px solid #3a3a3a;
 }
+
 .filmdetaile-infor-review h4 {
     color: #40D3DC;
 }
-.filmdetaile-infor-review p{
+
+.filmdetaile-infor-review p {
     color: white;
     line-height: 1.5;
 }
+
 .filmdetail-container-similarfilm {
     border-radius: 10px;
     margin-top: 10px;
     background-color: #252525;
     padding-top: 10px;
     padding-bottom: 20px;
-    
+
 }
+
 .filmdetail-container-similarfilm h1 {
     color: white;
     text-align: center;
     margin-top: 15px;
 }
+
 .filmdetail-container-similarfilm-grid {
     width: 900px;
     max-width: 100%;
     margin: 0 auto;
 }
+
 .film-item h4 {
     color: white;
 }
+
+.like-btn-container button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #ff6b6b;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    gap: 8px;
+}
+
+.like-btn-container button:hover {
+    background-color: #e63946;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.like-btn-container button.active {
+    background-color: #2d6a4f;
+    color: #d8f3dc;
+    box-shadow: 0 4px 8px rgba(0, 128, 0, 0.3);
+}
+
+
 /* video film section */
 .filmdetail-container-video {
     border-radius: 10px;
@@ -206,6 +267,7 @@ html {
     /* display: flex; */
     display: none;
 }
+
 /* .filmdetail-container-video iframe {
     margin: auto;
     width: 100%;
@@ -214,6 +276,7 @@ html {
     margin: auto;
     width: 100%;
 }
+
 .filmdetail-container-video.open {
     display: block;
 }
@@ -225,8 +288,9 @@ html {
 .comment-seciton {
     background-color: black;
     padding: 20px 0;
-    
+
 }
+
 .comment-container {
     width: 1000px;
     max-width: 100%;
@@ -234,40 +298,49 @@ html {
     background-color: white;
     border-radius: 10px;
 }
+
 .comment-container-grid {
     width: 800px;
     max-width: 100%;
     margin: 0 auto;
 }
+
 .comment-header {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid #ccc;
     padding-bottom: 20px;
 }
+
 .comment-header p {
     margin-top: 20px;
     font-weight: 700;
 }
+
 .comment-sort-style {
     margin-top: 20px;
 }
+
 .comment-content {
     display: inline-block;
     height: 500px;
 }
+
 .icon-user {
     margin-top: 10px;
     margin-bottom: 5px;
 }
+
 .name-user {
     font-size: 40px;
     margin-left: 20px;
 }
+
 .icon-user img {
     height: 50px;
     width: 50px;
 }
+
 #cmt-box {
     font-size: 16px;
     padding: 8px;
@@ -278,6 +351,7 @@ html {
     overflow: hidden;
     height: auto;
 }
+
 .submit-comment-btn {
     padding: 5px 20px;
     border: none;
@@ -289,32 +363,37 @@ html {
     cursor: pointer;
     margin-top: 5px;
 }
+
 .comments-container {
     margin-top: 50px;
     display: flex;
     border-top: 1px solid #ccc;
     flex-direction: column;
 }
+
 .comments-container-item {
     display: flex;
     margin-top: 10px;
     margin-bottom: 10px;
 }
-.comments-container-item img{
+
+.comments-container-item img {
     height: 50px;
     width: 50px;
 }
+
 .comments-container-item .name-user {
     font-size: 18px;
     font-weight: 600;
     color: #5772a8;
 }
+
 .comments-container-item p {
     margin-left: 15px;
     margin-top: 5px;
 }
 
-  
+
 
 
 
@@ -330,6 +409,7 @@ html {
 #cmt-box {
     font-size: 15px;
 }
+
 .modal-remind-login {
     position: fixed;
     top: 0;
@@ -338,6 +418,7 @@ html {
     left: 0;
     display: none;
 }
+
 .modal-remind-login.open {
     display: block;
 }
@@ -349,10 +430,12 @@ html {
     height: 100%;
     position: absolute;
 }
+
 .modal-remind-container {
     display: flex;
     height: 100%;
 }
+
 .modal__remind-body {
     position: relative;
     width: 500px;
@@ -362,15 +445,18 @@ html {
     border-radius: 5px;
     animation: appearRemind .5s ease;
 }
+
 @keyframes appearRemind {
     from {
         transform: translateY(700px);
     }
+
     to {
         transform: translateY(0);
     }
 
 }
+
 .modal__remind-inner {
     margin-right: 30px;
     margin-left: 30px;
@@ -378,10 +464,12 @@ html {
     justify-content: space-between;
     position: relative;
 }
+
 .modal__remind-inner h3 {
     font-size: 30px;
     margin-top: 5px;
 }
+
 .modal-remind-close {
     position: absolute;
     top: 10px;
@@ -389,19 +477,23 @@ html {
     font-size: 30px;
     cursor: pointer;
 }
+
 .modal_remind-content {
     margin-right: 30px;
     margin-left: 30px;
     margin-top: 20px;
     line-height: 2.5;
 }
-.modal_remind-content p{
+
+.modal_remind-content p {
     font-size: 18px;
 }
+
 #count-down {
     color: red;
 }
-.modal_remind-content button{
+
+.modal_remind-content button {
     background-color: #40D3DC;
     color: white;
     border: none;
@@ -410,24 +502,27 @@ html {
     cursor: pointer;
     font-size: 18px;
 }
+
 .move-login-btn_link {
     text-decoration: none;
     color: black;
 }
+
 /* responsive mobile device*/
 @media (max-width: 768px) {
+
     /* film detail */
     #nameFilm {
         font-size: 20px;
     }
+
     #originameFilm {
         font-size: 15px;
     }
+
     .filmdetail-video {
         height: 280px;
     }
 }
-@media (min-width: 740px) and (max-width:1100px) {
-    
-}
 
+@media (min-width: 740px) and (max-width:1100px) {}

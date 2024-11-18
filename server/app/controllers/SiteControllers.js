@@ -95,7 +95,11 @@ class SiteControllers {
             //     message: "Login successful",
             //     token
             // });
-            res.status(200).json({ token, email: user.email });
+            res.status(200).json({
+                token,
+                email: user.email,
+                userId: user._id
+            });
         } catch (error) {
             console.error(error);
             res.status(500).json({
@@ -192,35 +196,101 @@ class SiteControllers {
     }
     async resentEmail(req, res) {
         try {
-            const { email } = req.body;
-    
+            const {
+                email
+            } = req.body;
+
             // Find the user by email
-            const user = await User.findOne({ email });
+            const user = await User.findOne({
+                email
+            });
             if (!user) {
-                return res.status(404).json({ message: 'User not found' });
+                return res.status(404).json({
+                    message: 'User not found'
+                });
             }
-    
+
             // Check if the user is already verified
             if (user.verified) {
-                return res.status(400).json({ message: 'User is already verified' });
+                return res.status(400).json({
+                    message: 'User is already verified'
+                });
             }
-    
+
             // Generate a new verification token (if needed)
             const verificationToken = user.verificationToken || crypto.randomBytes(32).toString('hex');
             user.verificationToken = verificationToken;
             await user.save();
-    
+
             // Resend the email
             sendVerificationEmail(email, verificationToken);
-    
-            res.status(200).json({ message: 'Verification email resent successfully.' });
+
+            res.status(200).json({
+                message: 'Verification email resent successfully.'
+            });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Internal server error.' });
+            res.status(500).json({
+                message: 'Internal server error.'
+            });
         }
     }
+    // [GET] /changePassword
+    async changePassword(req, res) {
+        const {
+            email,
+            oldPassword,
+            newPassword
+        } = req.body;
 
+        if (!email || !oldPassword || !newPassword) {
+            return res.status(400).json({
+                message: 'All fields are required.'
+            });
+        }
 
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                message: 'New password must be at least 6 characters.'
+            });
+        }
+
+        try {
+            const user = await User.findOne({
+                email
+            });
+            if (!user) {
+                return res.status(404).json({
+                    message: 'User not found.'
+                });
+            }
+
+            // Check if the old password matches
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({
+                    message: 'Old password is incorrect.'
+                });
+            }
+
+            // Hash the new password
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+            // Save the new password
+            user.password = hashedPassword;
+            await user.save();
+
+            res.status(200).json({
+                message: 'Password changed successfully.'
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({
+                message: 'Server error. Please try again later.'
+            });
+        }
+    }
 
     // [GET] /logout
     logout(req, res) {

@@ -5,6 +5,7 @@ const AccountSchema = new mongoose.Schema({
   password: { type: String, required: true },
   verified: { type: Boolean, default: false }, // Track email verification status
   verificationToken: { type: String },
+  favoriteFilms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Favfilm' }]
 });
 
 module.exports = mongoose.model('Account', AccountSchema);

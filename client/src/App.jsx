@@ -13,10 +13,13 @@ import NoticeVerify from './Components/Body/NoticeVerify'
 import Register from './Components/Body/Register'
 import VerifyEmail from './Ultil/Account/VerifyEmail';
 import SuccessNotice from './Components/Body/SuccesNotive';
+import Test from './Components/test'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify';
 import Profile from './Components/Body/Profile';
+import ChangePassword from './Components/Body/ChangePassword';
+import FavoriteFilm from './Components/Body/FavoriteFilm';
 
 function App() {
   const location = useLocation();
@@ -39,12 +42,15 @@ function App() {
       <div id="body-content">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/test" element={<Test />} />
           <Route path="/verify" element={<NoticeVerify />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/successnotice" element={<SuccessNotice />} />
           <Route path="/login" element={<Login setUserEmail={setUserEmail}/>} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile/>} />
+          <Route path="/changepassword" element={<ChangePassword/>} />
+          <Route path="/favorite" element={<FavoriteFilm/>} />
           <Route path="/danh-sach/:slug" element={<TypeFilm />} />
           <Route path="/filmDetail/:slug" element={<FilmDetail />} />
           <Route path="/watchFilm/:slug" element={<WatchFilm />} />

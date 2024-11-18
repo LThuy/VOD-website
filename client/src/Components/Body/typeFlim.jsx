@@ -47,7 +47,6 @@ function TypeFilm() {
                     setDataFilm(phimData[0].data);
                     setFilm(phimData[0].data.items);
                 }
-                
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {

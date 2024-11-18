@@ -379,6 +379,7 @@
     width: 200px;
     border-radius: 10px;
     display: none;
+    left: 0;
 }
 .profile-icon-container::before {
     background-color: transparent;
@@ -406,6 +407,9 @@
     color: white;
     gap: 8px;
     cursor: pointer;
+}
+.profile-list-item:hover {
+    color: #ff8a00;
 }
 .profile-list-item .fa {
     font-size: 1.2em; /* Set the desired size for your icons */

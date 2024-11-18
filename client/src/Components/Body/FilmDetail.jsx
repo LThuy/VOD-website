@@ -2,17 +2,18 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faStar, faCirclePlay, faSpinner} from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faStar, faCirclePlay, faSpinner, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
 import '../../Style/BodyCss/FilmDetail.css'
 import '../../Style/All/grid.css'
 import '../../Style/Responsive/Responsive.css'
 import fetchingApiData from '../../Ultil/FetchingData/FetchingApi'
-import {useHandleCLickWatchFilm} from '../../Ultil/Hepler/navigationHelpers'
-import {useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
-import {useHandleTruncateText} from '../../Ultil/Hepler/truncateText'
+import { useHandleCLickWatchFilm } from '../../Ultil/Hepler/navigationHelpers'
+import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
+import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
+import LikeButton from '../Parts/LikeButton';
 
-function FilmDetail () {
+function FilmDetail() {
     const { slug } = useParams();
     const [loading, setLoading] = useState(false);
     const [film, setFilm] = useState({});
@@ -60,15 +61,15 @@ function FilmDetail () {
         };
         fetchData();
         window.scrollTo(0, 0);
-    },[slug])
+    }, [slug])
     useEffect(() => {
         //finding the same category
         const fetchSimilarFilms = async () => {
             let urlFilmSame = ''
             const typeFilm = film.type
 
-             // Determine the URL to fetch based on the film type
-             if (typeFilm === 'single') {
+            // Determine the URL to fetch based on the film type
+            if (typeFilm === 'single') {
                 urlFilmSame = "https://phimapi.com/v1/api/danh-sach/phim-le?limit=24";
             } else if (typeFilm === 'series') {
                 urlFilmSame = "https://phimapi.com/v1/api/danh-sach/phim-bo?limit=24";
@@ -110,7 +111,7 @@ function FilmDetail () {
 
 
     useEffect(() => {
-        
+
         window.scrollTo(0, 0);
     }, []);
 
@@ -124,7 +125,7 @@ function FilmDetail () {
         } catch (error) {
             console.error("Error extracting YouTube ID:", error.message);
             return null;
-        }   
+        }
     };
 
     useEffect(() => {
@@ -135,6 +136,17 @@ function FilmDetail () {
             setEmbedUrl(`https://www.youtube.com/embed/${videoID}`)
         }
     }, [film]);
+
+    // render user's email
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+        const userid = localStorage.getItem("userId");
+        if (userid) {
+            setUserId(userid);
+        }
+    }, []);
+
 
     return (
         <div>
@@ -165,14 +177,8 @@ function FilmDetail () {
                             {/* Film Information */}
                             <div className="filmdetail-container-infor">
                                 <div className="filmdetaile-infor-item">
-                                    <h4 className="filmdetaile-infor-item_type">Rating star:</h4>
-                                    <div className="rating-stars">
-                                        {[...Array(10)].map((_, i) => (
-                                            <span className="star" key={i} data-rating={i + 1}>
-                                                <FontAwesomeIcon icon={faStar} />
-                                            </span>
-                                        ))}
-                                    </div>
+                                    <h4 className="filmdetaile-infor-item_type">Bạn thích phim này chứ?</h4>
+                                    <LikeButton filmId={film._id} userId={userId} />
                                     <p id="filmdetaile-infor-item-ratingstart-content"></p>
                                     <p id="rating-stars-response"></p>
                                     <h4 className="gern-info filmdetaile-infor-item_type">Genre: <span className="filmdetaile-infor-item_info">
@@ -182,7 +188,7 @@ function FilmDetail () {
                                                 {index < category.length - 1 ? ', ' : ''}
                                             </span>
                                         ))}
-                                        </span></h4>
+                                    </span></h4>
                                     <h4 className="filmdetaile-infor-item_type">Actors: <span className="filmdetaile-infor-item_info">
                                         {actors.map((actor, index) => (
                                             <span key={actor.id || index}>
@@ -190,7 +196,7 @@ function FilmDetail () {
                                                 {index < actor.length - 1 ? ', ' : ''}
                                             </span>
                                         ))}
-                                        </span></h4>
+                                    </span></h4>
                                 </div>
                                 <div className="filmdetaile-infor-item">
                                     <h4 className="filmdetaile-infor-item_type">Year: <span className="filmdetaile-infor-item_info">{film.year}</span></h4>
@@ -200,8 +206,8 @@ function FilmDetail () {
                                                 {director}
                                                 {index < directors.length - 1 ? ', ' : ''}
                                             </span>
-                                        ))} 
-                                        </span></h4>
+                                        ))}
+                                    </span></h4>
                                 </div>
                                 <div className="filmdetaile-infor-item">
                                     <h4 className="filmdetaile-infor-item_type">Country: <span className="filmdetaile-infor-item_info">
