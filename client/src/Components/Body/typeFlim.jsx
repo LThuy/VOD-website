@@ -9,7 +9,6 @@ import fetchingApiData from '../../Ultil/FetchingData/FetchingApi'
 import Pagination from '../Pagination/Pagination';
 import {useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import {useHandleTruncateText} from '../../Ultil/Hepler/truncateText'
-import axios from 'axios';
 
 function TypeFilm() {
     const { slug } = useParams();

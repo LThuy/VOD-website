@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback,useMemo  } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,108 +12,147 @@ import { useHandleCLickWatchFilm } from '../../Ultil/Hepler/navigationHelpers'
 import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
 import LikeButton from '../Parts/LikeButton';
+import { toast } from "react-toastify";
 
 function FilmDetail() {
     const { slug } = useParams();
     const [loading, setLoading] = useState(false);
     const [film, setFilm] = useState({});
-    const [actors, setActors] = useState([])
-    const [countries, setCountries] = useState([])
-    const [directors, setDirectors] = useState([])
-    const [category, setCategory] = useState([])
-    const [embedUrl, setEmbedUrl] = useState('')
-    const handleClickFilmDetail = useHandleClickFilmDetail()
-    const handleClickWathFilm = useHandleCLickWatchFilm()
-    const handleTruncateText = useHandleTruncateText()
+    const [actors, setActors] = useState([]);
+    const [countries, setCountries] = useState([]);
+    const [directors, setDirectors] = useState([]);
+    const [category, setCategory] = useState([]);
+    const [embedUrl, setEmbedUrl] = useState('');
     const [similarFilms, setSimilarFilms] = useState([]);
-    const imgUrl = 'https://img.phimapi.com/'
+    const [userId, setUserId] = useState(null);
 
-
-    //trailer handling
     const trailerRef = useRef(null);
-    const scrollToTrailer = () => {
-        if (trailerRef.current) {
-            trailerRef.current.classList.add('open');
-            trailerRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
+    const imgUrl = 'https://img.phimapi.com/';
 
+    const handleClickFilmDetail = useHandleClickFilmDetail();
+    const handleClickWathFilm = useHandleCLickWatchFilm();
+    const handleTruncateText = useHandleTruncateText();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        const userid = localStorage.getItem("userId");
+        if (userid) {
+            setUserId(userid);
+        }
+    }, []);
+
+    const showToast = useCallback((type, message) => {
+        if (type === "success") {
+            toast.success(message);
+        } else if (type === "error") {
+            toast.error(message);
+        }
+    }, []);
+
+    const categoryNames = useMemo(() => {
+        return category.map((cat, index) => (
+            <span key={cat.id || index}>
+                {cat.name}
+                {index < category.length - 1 ? ', ' : ''}
+            </span>
+        ));
+    }, [category]);
+
+    const actorNames = useMemo(() => {
+        return actors.map((actor, index) => (
+            <span key={actor.id || index}>
+                {actor}
+                {index < actors.length - 1 ? ', ' : ''}
+            </span>
+        ));
+    }, [actors]);
+
+    const countryNames = useMemo(() => {
+        return countries.map((country, index) => (
+            <span key={index}>
+                {country.name}
+                {index < countries.length - 1 ? ', ' : ''}
+            </span>
+        ));
+    }, [countries]);
+
+    const directorNames = useMemo(() => {
+        return directors.map((director, index) => (
+            <span key={director.id || index}>
+                {director}
+                {index < directors.length - 1 ? ', ' : ''}
+            </span>
+        ));
+    }, [directors]);
+
+    // Fetch film details
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [phimDetailData] = await fetchingApiData([
-                    `https://phimapi.com/phim/${slug}`,
-                ]);
+                const [phimDetailData] = await fetchingApiData([`https://phimapi.com/phim/${slug}`]);
 
-                if (phimDetailData && phimDetailData.movie) {
-                    setFilm(phimDetailData.movie)
-                    setActors(phimDetailData.movie.actor || []);
-                    setCountries(phimDetailData.movie.country || []);
-                    setDirectors(phimDetailData.movie.director || []);
-                    setCategory(phimDetailData.movie.category || []);
+                if (phimDetailData?.movie) {
+                    const { movie } = phimDetailData;
+                    setFilm(movie);
+                    setActors(movie.actor || []);
+                    setCountries(movie.country || []);
+                    setDirectors(movie.director || []);
+                    setCategory(movie.category || []);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
         };
-        fetchData();
-        window.scrollTo(0, 0);
-    }, [slug])
-    useEffect(() => {
-        //finding the same category
-        const fetchSimilarFilms = async () => {
-            let urlFilmSame = ''
-            const typeFilm = film.type
 
-            // Determine the URL to fetch based on the film type
-            if (typeFilm === 'single') {
-                urlFilmSame = "https://phimapi.com/v1/api/danh-sach/phim-le?limit=24";
-            } else if (typeFilm === 'series') {
-                urlFilmSame = "https://phimapi.com/v1/api/danh-sach/phim-bo?limit=24";
-            } else if (typeFilm === 'tvshows') {
-                urlFilmSame = "https://phimapi.com/v1/api/danh-sach/tv-shows?limit=24";
-            } else if (typeFilm === 'hoathinh') {
-                urlFilmSame = "https://phimapi.com/v1/api/danh-sach/hoat-hinh?limit=24";
-            }
+        fetchData();
+    }, [slug]); // Depend on slug
+
+    // Update embed URL and fetch similar films based on film type and category
+    useEffect(() => {
+        if (!film?._id) return;
+
+        document.title = film.name || 'Loading...';
+
+        const ytbUrlTrailer = film.trailer_url;
+        const videoID = extractYouTubeID(ytbUrlTrailer);
+        setEmbedUrl(`https://www.youtube.com/embed/${videoID}`);
+
+        const fetchSimilarFilms = async () => {
+            const typeMap = {
+                'single': 'phim-le',
+                'series': 'phim-bo',
+                'tvshows': 'tv-shows',
+                'hoathinh': 'hoat-hinh'
+            };
+
+            const urlFilmSame = typeMap[film.type]
+                ? `https://phimapi.com/v1/api/danh-sach/${typeMap[film.type]}?limit=24`
+                : null;
+
+            if (!urlFilmSame) return;
 
             try {
-                // Fetch the films based on the selected type
                 const response = await axios.get(urlFilmSame);
-                const similarFilmsFather = response.data;
-                const similarFilmsChild = similarFilmsFather.data.items;
+                const similarFilmsChild = response.data.data.items;
 
                 const currentFilmCategories = film.category.map(cat => cat.slug);
-                const arraySimilar = [];
-                const filmIds = new Set();
+                const filteredFilms = similarFilmsChild.filter(similarFilm =>
+                    similarFilm.category.some(category =>
+                        currentFilmCategories.includes(category.slug)
+                    )
+                );
 
-                // Filter similar films based on matching categories
-                similarFilmsChild.forEach(similarFilm => {
-                    similarFilm.category.forEach(category => {
-                        if (currentFilmCategories.includes(category.slug)) {
-                            const filmId = similarFilm._id;
-                            if (!filmIds.has(filmId)) {
-                                arraySimilar.push(similarFilm);
-                                filmIds.add(filmId);
-                            }
-                        }
-                    });
-                });
-                setSimilarFilms(arraySimilar);
+                setSimilarFilms(filteredFilms);
             } catch (error) {
                 console.error('Error fetching similar films:', error);
             }
-        }
+        };
+
         fetchSimilarFilms();
-    }, [film])
-
-
-    useEffect(() => {
-
-        window.scrollTo(0, 0);
-    }, []);
+    }, [film?._id, film?.type, film?.category]); // Only depend on necessary properties
 
     const extractYouTubeID = (url) => {
         try {
@@ -128,25 +167,12 @@ function FilmDetail() {
         }
     };
 
-    useEffect(() => {
-        if (film) {
-            document.title = film.name || 'Loading...';
-            const ytbUrlTrailer = film.trailer_url;
-            const videoID = extractYouTubeID(ytbUrlTrailer);
-            setEmbedUrl(`https://www.youtube.com/embed/${videoID}`)
+    const scrollToTrailer = () => {
+        if (trailerRef.current) {
+            trailerRef.current.classList.add('open');
+            trailerRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [film]);
-
-    // render user's email
-    const [userId, setUserId] = useState(null);
-
-    useEffect(() => {
-        const userid = localStorage.getItem("userId");
-        if (userid) {
-            setUserId(userid);
-        }
-    }, []);
-
+    };
 
     return (
         <div>
@@ -160,63 +186,45 @@ function FilmDetail() {
                     </div>
                 ) : (
                     <div className="filmdetail-container">
+                        {/* Film Details */}
                         <div className="filmdetail-container-grid">
                             <div className="filmdetail-container-poster">
                                 <div className="filmimg-container">
                                     <img id="film-img" src={film.thumb_url} alt={film.name} />
                                     <h1 id="nameFilm">{film.name}</h1>
                                     <h3 id="originameFilm">{`${film.origin_name} (${film.year})`}</h3>
-                                    <button onClick={scrollToTrailer} href="#trailer-film" className="trailer-btn" >
+                                    <button onClick={scrollToTrailer} className="trailer-btn">
                                         <FontAwesomeIcon icon={faYoutube} /> Trailer
                                     </button>
-                                    <button onClick={() => handleClickWathFilm(film.slug)} href={`watchFilm.php?name=${film.slug}`} className="watch-btn">
+                                    <button onClick={() => handleClickWathFilm(film.slug)} className="watch-btn">
                                         <FontAwesomeIcon icon={faPlay} /> Xem Film
                                     </button>
                                 </div>
                             </div>
+
                             {/* Film Information */}
                             <div className="filmdetail-container-infor">
                                 <div className="filmdetaile-infor-item">
                                     <h4 className="filmdetaile-infor-item_type">Bạn thích phim này chứ?</h4>
-                                    <LikeButton filmId={film._id} userId={userId} />
+                                    <LikeButton filmData={film} userId={userId} showToast={showToast} />
                                     <p id="filmdetaile-infor-item-ratingstart-content"></p>
                                     <p id="rating-stars-response"></p>
                                     <h4 className="gern-info filmdetaile-infor-item_type">Genre: <span className="filmdetaile-infor-item_info">
-                                        {category.map((cat, index) => (
-                                            <span key={cat.id || index}>
-                                                {cat.name}
-                                                {index < category.length - 1 ? ', ' : ''}
-                                            </span>
-                                        ))}
+                                        {categoryNames}
                                     </span></h4>
                                     <h4 className="filmdetaile-infor-item_type">Actors: <span className="filmdetaile-infor-item_info">
-                                        {actors.map((actor, index) => (
-                                            <span key={actor.id || index}>
-                                                {actor}
-                                                {index < actor.length - 1 ? ', ' : ''}
-                                            </span>
-                                        ))}
+                                        {actorNames}
                                     </span></h4>
                                 </div>
                                 <div className="filmdetaile-infor-item">
                                     <h4 className="filmdetaile-infor-item_type">Year: <span className="filmdetaile-infor-item_info">{film.year}</span></h4>
                                     <h4 className="filmdetaile-infor-item_type">Director: <span className="filmdetaile-infor-item_info">
-                                        {directors.map((director, index) => (
-                                            <span key={director.id || index}>
-                                                {director}
-                                                {index < directors.length - 1 ? ', ' : ''}
-                                            </span>
-                                        ))}
+                                        {directorNames}
                                     </span></h4>
                                 </div>
                                 <div className="filmdetaile-infor-item">
                                     <h4 className="filmdetaile-infor-item_type">Country: <span className="filmdetaile-infor-item_info">
-                                        {countries.map((country, index) => (
-                                            <span key={index}>
-                                                {country.name}
-                                                {index < countries.length - 1 ? ', ' : ''}
-                                            </span>
-                                        ))}</span></h4>
+                                        {countryNames}</span></h4>
                                     <h4 className="filmdetaile-infor-item_type">Duration: <span className="filmdetaile-infor-item_info"><span id="duration">{film.time}</span></span></h4>
                                 </div>
                                 <div className="filmdetaile-infor-item">
@@ -228,10 +236,12 @@ function FilmDetail() {
                                     <p>{film.content}</p>
                                 </div>
                             </div>
+
                             {/* Video Trailer */}
                             <div id="trailer-film" ref={trailerRef} className="filmdetail-container-video">
                                 <iframe className="filmdetail-video" src={embedUrl} width="640" height="480" allowFullScreen></iframe>
                             </div>
+
                             {/* Similar Films */}
                             <div className="filmdetail-container-similarfilm">
                                 <h1 className='mb-4'>CÓ THỂ BẠN CŨNG MUỐN XEM</h1>
@@ -259,4 +269,4 @@ function FilmDetail() {
     )
 }
 
-export default FilmDetail
+export default FilmDetail;

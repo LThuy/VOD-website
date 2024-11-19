@@ -2,11 +2,12 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
-const LikeButton = ({ filmId, userId }) => {
+const LikeButton = ({ filmData, userId, showToast }) => {
   const [isActive, setIsActive] = useState(false);
 
   const handleLikeClick = async () => {
     setIsActive(!isActive); // Toggle button active state
+
 
     try {
       const response = await fetch("http://localhost:5000/film/add-favorite", {
@@ -16,20 +17,21 @@ const LikeButton = ({ filmId, userId }) => {
         },
         body: JSON.stringify({
           userId: userId, // Send user ID
-          filmId: filmId, // Send the film ID
-          likeStatus: !isActive, // Send like status (true or false)
+          filmData: filmData,
         }),
       });
 
       const result = await response.json();
 
       if (response.ok) {
-        console.log("Film like status updated successfully:", result);
+        // Call the showToast function with a success message
+        showToast("success", result.message || "Film added to favorites!");
       } else {
         throw new Error(result.message || "Error liking the film");
       }
     } catch (error) {
-      console.error("Error during like action:", error);
+      // Call the showToast function with an error message
+      showToast("error", error.message || "Failed to like the film.");
     }
   };
 

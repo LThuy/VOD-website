@@ -154,7 +154,7 @@ function Header() {
                                         </Link>
                                         <div className="sub-profilenav">
                                             <ul className="profile-list">
-                                                <Link className="profile-list-item"> <FontAwesomeIcon icon={faUser} />Hồ Sơ</Link>
+                                                <Link to={"/profile"} className="profile-list-item"> <FontAwesomeIcon icon={faUser} />Hồ Sơ</Link>
                                                 <Link to={"/favorite"} className="profile-list-item"> <FontAwesomeIcon icon={faStar} />Phim Yêu Thích</Link>
                                                 <div onClick={handleLogout} className="profile-list-item"><FontAwesomeIcon icon={faRightFromBracket} />Đăng Xuất</div>
                                             </ul>

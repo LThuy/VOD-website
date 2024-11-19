@@ -32,7 +32,7 @@ function App() {
   
   return (
     <div className="App">
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={3000}/>
       {!isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify &&(
         <div id="header-container">
           <Header/>

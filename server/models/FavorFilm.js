@@ -1,19 +1,74 @@
 const mongoose = require('mongoose');
 
-const favorfilmSchema = new mongoose.Schema({
-    title: { type: String, required: true }, // Title of the film
-    description: { type: String },          // Short description of the film
-    releaseDate: { type: Date },            // Release date of the film
-    genres: [{ type: String }],             // Array of genres for the film
-    director: [{ type: String }],           // Array of directors
-    posterUrl: { type: String },            // URL to the poster image
-    trailerUrl: { type: String },           // URL to the trailer
-    runtime: { type: String },              // Runtime duration of the film
-    language: { type: String },             // Language of the film
-    cast: [{ type: String }],               // Array of actors/actresses
-    quality: { type: String },              // Quality (e.g., HD, FHD)
-    year: { type: Number },  
+const FavMovieSchema = new mongoose.Schema({
+  tmdb: {
+    type: { type: String, default: null },
+    id: { type: String, default: null },
+    season: { type: String, default: null },
+    vote_average: { type: Number, default: 0 },
+    vote_count: { type: Number, default: 0 },
+  },
+  imdb: {
+    id: { type: String, default: null },
+  },
+  created: {
+    time: { type: Date, required: true },
+  },
+  modified: {
+    time: { type: Date, required: true },
+  },
+  _id: { type: String, required: true }, // Maintain the API's specific ID format
+  name: { type: String, required: true },
+  slug: { type: String },
+  origin_name: { type: String },
+  content: { type: String },
+  type: { type: String },
+  status: { type: String },
+  poster_url: { type: String },
+  thumb_url: { type: String },
+  is_copyright: { type: Boolean, default: false },
+  sub_docquyen: { type: Boolean, default: false },
+  chieurap: { type: Boolean, default: false },
+  trailer_url: { type: String },
+  time: { type: String }, // Store as a string since it's "131 phút"
+  episode_current: { type: String },
+  episode_total: { type: String },
+  quality: { type: String },
+  lang: { type: String },
+  notify: { type: String },
+  showtimes: { type: String },
+  year: { type: Number },
+  view: { type: Number, default: 0 },
+  actor: [String], // Array of actor names
+  director: [String], // Array of director names
+  category: [
+    {
+      id: { type: String },
+      name: { type: String },
+      slug: { type: String },
+    },
+  ],
+  country: [
+    {
+      id: { type: String },
+      name: { type: String },
+      slug: { type: String },
+    },
+  ],
+  episodes: [
+    {
+      server_name: { type: String },
+      server_data: [
+        {
+          name: { type: String },
+          slug: { type: String },
+          filename: { type: String },
+          link_embed: { type: String },
+          link_m3u8: { type: String },
+        },
+      ],
+    },
+  ],
 });
 
-const Film = mongoose.model('favfilms', favorfilmSchema);
-module.exports = Film;
+module.exports = FavMovieSchema;
