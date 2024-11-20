@@ -12,6 +12,6 @@ router.post('/change-password', siteControllers.changePassword);
 //movie
 const movieControllers = require('../app/controllers/MovieControllers');
 router.get('/api/danh-sach/phim-le',movieControllers.getMovies);
-//
+// 
 
 module.exports = router;

@@ -93,7 +93,7 @@ const FavoriteFilm = () => {
                       <div className="film-favorite-item-img-container">
                         <img src={item.poster_url} alt={item.name} />
                       </div>
-                      <div className="film-item-iconplay">
+                      <div className="filmfavorite-item-iconplay">
                         <FontAwesomeIcon className="fa-circle-play" icon={faCirclePlay} />
                       </div>
                       <h4>{hanldeTruncateText(item.name)}</h4>

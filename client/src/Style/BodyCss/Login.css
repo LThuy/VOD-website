@@ -68,6 +68,13 @@
     text-decoration: none;
     color: red;
 }
+.guess-btn {
+    text-decoration: none;
+    color: white;
+    background-color: #000aff;
+    border-radius: 20px;
+    padding: 8px 15px;
+}
 
 .alert-message {
     border-radius: 10px;

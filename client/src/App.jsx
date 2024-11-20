@@ -9,9 +9,12 @@ import WatchFilm from './Components/Body/WatchFilm'
 import SearchResult from './Components/Body/SearchResult'
 import GenreFilm from './Components/Body/GenreFilm'
 import Login from './Components/Body/Login'
+import LoginAdmin from './Admin/Components/AdminLogin'
 import NoticeVerify from './Components/Body/NoticeVerify'
 import Register from './Components/Body/Register'
+import RegisterAdmin from './Admin/Components/AdminRegister'
 import VerifyEmail from './Ultil/Account/VerifyEmail';
+import VerifyEmailAdmin from './Ultil/Admin-Account/VerifyEmail';
 import SuccessNotice from './Components/Body/SuccesNotive';
 import Test from './Components/test'
 import './App.css'
@@ -45,9 +48,12 @@ function App() {
           <Route path="/test" element={<Test />} />
           <Route path="/verify" element={<NoticeVerify />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/admin/verify-email" element={<VerifyEmailAdmin />} />
           <Route path="/successnotice" element={<SuccessNotice />} />
           <Route path="/login" element={<Login setUserEmail={setUserEmail}/>} />
+          <Route path="/admin/login" element={<LoginAdmin setUserEmail={setUserEmail}/>} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin/register" element={<RegisterAdmin />} />
           <Route path="/profile" element={<Profile/>} />
           <Route path="/changepassword" element={<ChangePassword/>} />
           <Route path="/favorite" element={<FavoriteFilm/>} />

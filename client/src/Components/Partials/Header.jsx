@@ -63,6 +63,7 @@ function Header() {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('userEmail');
+        localStorage.removeItem('userId');
         setUserEmail(null); // Reset state
         setUserName(null); // Reset state
         navigate('/login');

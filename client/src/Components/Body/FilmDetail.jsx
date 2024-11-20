@@ -13,6 +13,7 @@ import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
 import LikeButton from '../Parts/LikeButton';
 import { toast } from "react-toastify";
+import CommentSection from '../Parts/Comment';
 
 function FilmDetail() {
     const { slug } = useParams();
@@ -173,7 +174,6 @@ function FilmDetail() {
             trailerRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     };
-
     return (
         <div>
             <div className="filmdetail-section">
@@ -265,6 +265,7 @@ function FilmDetail() {
                     </div>
                 )}
             </div>
+            <CommentSection userId={userId} filmId={film._id}/>
         </div>
     )
 }

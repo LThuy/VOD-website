@@ -10,8 +10,6 @@ class FilmControllers {
       userId,
       filmData
     } = req.body;
-    console.log("Received filmData:", filmData._id);
-    console.log("userId:", userId);
 
     try {
       // Validate filmData and userId
@@ -86,7 +84,7 @@ class FilmControllers {
           status: false,
           message: "User not found"
         });
-      }
+      } 
 
       const isFavorite = user.favoriteFilms.some(film => film._id.toString() === filmId);
       res.status(200).json({
@@ -129,34 +127,60 @@ class FilmControllers {
   }
 
   async deleteFavorFilm(req, res) {
-    const {
-      userId,
-      filmId
-    } = req.body;
-
+    const { userId, filmId } = req.body;
+  
     try {
+      // Validate inputs
+      if (!userId || !filmId) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid data: userId and filmId are required.",
+        });
+      }
+  
+      // Find the user by ID
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({
-          message: 'User not found'
+          status: false,
+          message: "User not found.",
         });
       }
-
+  
+      // Check if the film exists in the user's favorite list
+      const filmExists = user.favoriteFilms.some(
+        (film) => film._id.toString() === filmId
+      );
+      if (!filmExists) {
+        return res.status(404).json({
+          status: false,
+          message: "Film not found in the user's favorite list.",
+        });
+      }
+  
       // Remove the film from the user's favorite list
-      user.favoriteFilms = user.favoriteFilms.filter((id) => id.toString() !== filmId);
+      user.favoriteFilms = user.favoriteFilms.filter(
+        (film) => film._id.toString() !== filmId
+      );
+  
+      // Save the updated user document
       await user.save();
-
+  
       res.status(200).json({
-        message: 'Film removed from favorites',
-        favoriteFilms: user.favoriteFilms
+        status: true,
+        message: "Film removed from favorites successfully.",
+        favoriteFilms: user.favoriteFilms,
       });
     } catch (error) {
-      console.error(error);
+      console.error("Error removing favorite film:", error);
       res.status(500).json({
-        message: 'Server error'
+        status: false,
+        message: "An error occurred while removing the favorite film.",
       });
     }
   }
+  
+  
 }
 
 module.exports = new FilmControllers();

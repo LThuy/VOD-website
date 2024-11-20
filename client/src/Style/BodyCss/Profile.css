@@ -141,6 +141,22 @@
     overflow: hidden;
     position: relative;
 }
+.filmfavorite-item-iconplay {
+    position: absolute;
+    top: 35%;
+    left: 38%;
+    display: none;
+    cursor: pointer;
+    z-index: 1;
+}
+.filmfavorite-item-iconplay .fa-circle-play {
+    font-size: 80px;
+    color: #ff8a00;
+    opacity: 0.7;
+    animation: scale 0.5s ease-in-out;
+    transform: scale(0.8);
+}
+
 .film-favorite-item-img-container img{
     width: 200px;
     height: 300px;
@@ -159,8 +175,7 @@
     }
 }
 
-
-.film-favorite-item-img-container:hover ~ .film-item-iconplay{
+.film-favorite-item-img-container:hover ~ .filmfavorite-item-iconplay{
     display: block;
 }
 .film-favorite-item-img-container:hover img{

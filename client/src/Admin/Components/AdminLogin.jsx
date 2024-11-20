@@ -52,7 +52,7 @@ function Login({ setUserEmail }) {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch('http://localhost:5000/admin/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -96,9 +96,9 @@ function Login({ setUserEmail }) {
     <div className="login-container">
       <div className="form-login-container">
         <div className="form-login-header">
-          <h3>TTFILM</h3>
+          <h3>THFILM</h3>
           <p>LET YOUR HAIR DOWN</p>
-          <h2>LOGIN</h2>
+          <h2>ADMIN LOGIN</h2>
         </div>
         <div className="form-seciton">
           <form className="form-seciton-container" onSubmit={handleSubmit}>
@@ -129,18 +129,13 @@ function Login({ setUserEmail }) {
             </div>
             <div className="form-section_register mt-3">
               <span>Bạn chưa có tài khoản?</span>
-              <Link to={'/register'} className="register-btn">
+              <Link to={'/admin/register'} className="register-btn">
                 Đăng ký
               </Link>
             </div>
             <div className="form-section_register mt-2">
               <Link to={'/forget'} className="register-btn">
                 Bạn quên mật khẩu?
-              </Link>
-            </div>
-            <div className="form-section_register w-full mt-4">
-              <Link to={'/'} className="guess-btn">
-                Tiếp tục với tư cách Khách
               </Link>
             </div>
           </form>

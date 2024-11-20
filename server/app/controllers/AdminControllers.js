@@ -14,13 +14,13 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER, // Email address
         pass: process.env.EMAIL_APP_PASSWORD, // App password or email password
-    },
+    }, 
 });
 
 // Send a verification email
 const sendVerificationEmail = (email, token) => {
     const clientBaseUrl = process.env.CLIENT_BASE_URL || 'http://localhost:3000';
-    const verificationUrl = `${clientBaseUrl}/verify-email?token=${token}`;
+    const verificationUrl = `${clientBaseUrl}/admin/verify-email?token=${token}`;
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
@@ -51,43 +51,44 @@ const sendVerificationEmail = (email, token) => {
 
 
 
-class SiteControllers {
-    //GET login section : /checkLogin
-    async checkLogin(req, res) {
+class AdminControllers {
+     // [POST] /admin/login
+     async checkLoginAdmin(req, res) {
         const {
             email,
             password
         } = req.body;
-
         try {
+            console.log("OKKKK")
             // Check if the user exists in the database
-            const user = await User.findOne({
+            const admin = await Admin.findOne({
                 email
             });
-            if (!user) {
+            if (!admin) {
                 return res.status(400).json({
                     message: "Invalid email or password"
                 });
             }
 
             // Check if the account is verified
-            if (!user.verified) {
+            if (!admin.verified) {
                 return res.status(400).json({
                     message: "Please verify your email first"
                 });
             }
 
             // Compare the entered password with the hashed password
-            const isMatch = await bcrypt.compare(password, user.password);
+            const isMatch = await bcrypt.compare(password, admin.password);
             if (!isMatch) {
                 return res.status(400).json({
                     message: "Invalid email or password"
                 });
+                console.log("HELLO")
             }
 
             // Generate a token for successful login
             const token = jwt.sign({
-                userId: user._id
+                userId: admin._id
             }, jwtSecret, {
                 expiresIn: '1h'
             });
@@ -98,8 +99,8 @@ class SiteControllers {
             // });
             res.status(200).json({
                 token,
-                email: user.email,
-                userId: user._id
+                email: admin.email,
+                userId: admin._id
             });
         } catch (error) {
             console.error(error);
@@ -119,10 +120,10 @@ class SiteControllers {
         } = req.body;
 
         try {
-            const existingUser = await User.findOne({
+            const existingAdmin = await Admin.findOne({
                 email
             });
-            if (existingUser) {
+            if (existingAdmin) {
                 return res.status(400).json({
                     message: 'Email already exists'
                 });
@@ -137,17 +138,17 @@ class SiteControllers {
             const salt = await bcrypt.genSalt(saltRounds);
             const hashedPassword = await bcrypt.hash(password, salt);
 
-            const newUser = new User({
+            const newAdmin = new Admin({
                 email,
                 password: hashedPassword,
                 verified: false, // Add a field for verification status
             });
 
-            await newUser.save();
+            await newAdmin.save();
 
             // Generate a verification token (JWT)
             const token = jwt.sign({
-                userId: newUser._id
+                adminId: newAdmin._id
             }, process.env.JWT_SECRET, {
                 expiresIn: '1h'
             });
@@ -171,19 +172,20 @@ class SiteControllers {
         const {
             token
         } = req.query;
+        console.log("Not good")
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const user = await User.findById(decoded.userId);
+            const admin = await Admin.findById(decoded.adminId);
 
-            if (!user) {
+            if (!admin) {
                 return res.status(404).json({
-                    message: 'User not found'
+                    message: 'Admin not found'
                 });
             }
 
-            user.verified = true; // Set verified to true
-            await user.save();
+            admin.verified = true; // Set verified to true
+            await admin.save();
 
             res.status(200).json({
                 message: 'Email verified successfully! You can now log in.'
@@ -202,26 +204,26 @@ class SiteControllers {
             } = req.body;
 
             // Find the user by email
-            const user = await User.findOne({
+            const admin = await Admin.findOne({
                 email
             });
-            if (!user) {
+            if (!admin) {
                 return res.status(404).json({
                     message: 'User not found'
                 });
             }
 
             // Check if the user is already verified
-            if (user.verified) {
+            if (admin.verified) {
                 return res.status(400).json({
                     message: 'User is already verified'
                 });
             }
 
             // Generate a new verification token (if needed)
-            const verificationToken = user.verificationToken || crypto.randomBytes(32).toString('hex');
-            user.verificationToken = verificationToken;
-            await user.save();
+            const verificationToken = admin.verificationToken || crypto.randomBytes(32).toString('hex');
+            admin.verificationToken = verificationToken;
+            await admin.save();
 
             // Resend the email
             sendVerificationEmail(email, verificationToken);
@@ -257,17 +259,17 @@ class SiteControllers {
         }
 
         try {
-            const user = await User.findOne({
+            const admin = await Admin.findOne({
                 email
             });
-            if (!user) {
+            if (!admin) {
                 return res.status(404).json({
-                    message: 'User not found.'
+                    message: 'Admin not found.'
                 });
             }
 
             // Check if the old password matches
-            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            const isMatch = await bcrypt.compare(oldPassword, admin.password);
             if (!isMatch) {
                 return res.status(400).json({
                     message: 'Old password is incorrect.'
@@ -279,8 +281,8 @@ class SiteControllers {
             const hashedPassword = await bcrypt.hash(newPassword, salt);
 
             // Save the new password
-            user.password = hashedPassword;
-            await user.save();
+            admin.password = hashedPassword;
+            await admin.save();
 
             res.status(200).json({
                 message: 'Password changed successfully.'
@@ -298,6 +300,6 @@ class SiteControllers {
         req.session.destroy()
         res.redirect('/')
     }
-   
+
 }
-module.exports = new SiteControllers();
+module.exports = new AdminControllers();

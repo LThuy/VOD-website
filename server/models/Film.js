@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const FavMovieSchema = new mongoose.Schema({
+const Film = new mongoose.Schema({
   tmdb: {
     type: { type: String, default: null },
     id: { type: String, default: null },
@@ -71,4 +71,4 @@ const FavMovieSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = FavMovieSchema;
+module.exports = Film;
