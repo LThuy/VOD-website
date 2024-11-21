@@ -6,10 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const CommentSection = ({ userId, filmId }) => {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
-    const [sortStyle, setSortStyle] = useState("latest");
     // Check if the user is logged in
     const isLoggedIn = !!userId;
-
 
     // Fetch comments when the component mounts
     useEffect(() => {
@@ -20,6 +18,7 @@ const CommentSection = ({ userId, filmId }) => {
                 if (response.ok) {
                     console.log("Fetched comments:", result.comments); // Debug log
                     setComments(result.comments || []); // Ensure comments is always an array
+                    console.log(comments[0])
                 } else {
                     console.error("Error fetching comments:", result.message);
                 }
@@ -52,7 +51,7 @@ const CommentSection = ({ userId, filmId }) => {
                     },
                     body: JSON.stringify({
                         userId: userId,
-                        filmId,
+                        filmId: filmId,
                         content: newComment,
                     }),
                 });
@@ -73,17 +72,6 @@ const CommentSection = ({ userId, filmId }) => {
         }
     };
 
-
-    const handleSortChange = (e) => {
-        setSortStyle(e.target.value);
-    };
-
-    const sortedComments = [...comments].sort((a, b) => {
-        if (sortStyle === "latest") return b.createdAt - a.createdAt;
-        if (sortStyle === "Most Views") return b.views - a.views;
-        return 0;
-    });
-
     return (
         <div className="comment-section">
             <div className="comment-container">
@@ -92,18 +80,6 @@ const CommentSection = ({ userId, filmId }) => {
                         <p>
                             <span id="cmt-amount">{comments.length}</span> comments
                         </p>
-                        <div className="comment-sort-style">
-                            <span className="me-3">List style</span>
-                            <select
-                                name="sort-style"
-                                id="comment-sort-style-options"
-                                value={sortStyle}
-                                onChange={handleSortChange}
-                            >
-                                <option value="latest">Latest</option>
-                                <option value="Most Views">Most Views</option>
-                            </select>
-                        </div>
                     </div>
 
                     <div className="row comment-content mt-4">
@@ -124,15 +100,20 @@ const CommentSection = ({ userId, filmId }) => {
                     </div>
 
                     {/* Display Comments */}
-                    <div className="comments-container">
-                        {sortedComments.map((comment) => (
-                            <div key={comment.id} className="comment">
-                                <p><strong>{comment.user}</strong>:</p>
-                                <p>{comment.content}</p>
-                                <p><small>{new Date(comment.createdAt).toLocaleString()}</small></p>
-                            </div>
-                        ))}
+                    <div className={`comments-container ${comments.length > 0 ? 'haveComments' : ''}`}>
+                        {comments.length > 0 ? (
+                            comments.map((comment) => (
+                                <div key={comment._id} className="comment">
+                                    <p style={{display: "inline-block"}}><strong>{comment.user?.username || "Anonymous"}</strong>:</p>
+                                    <p style={{display: "inline-block", marginLeft: "16px"}}>{comment.content}</p>
+                                    <p style={{marginTop: '-16px'}}><small>{new Date(comment.createdAt).toLocaleString()}</small></p>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No comments available</p>
+                        )}
                     </div>
+
                 </div>
             </div>
         </div>

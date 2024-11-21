@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const filmSchema  = new mongoose.Schema({
+const HistFilmChema = new mongoose.Schema({
   tmdb: {
     type: { type: String, default: null },
     id: { type: String, default: null },
@@ -69,18 +69,6 @@ const filmSchema  = new mongoose.Schema({
       ],
     },
   ],
-  comments: [
-    {
-      content: { type: String, required: true },
-      user: {
-        id: { type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true },
-        username: { type: String, required: true },
-      },
-      createdAt: { type: Date, default: Date.now },
-      views: { type: Number, default: 0 },
-    },
-  ],
 });
 
-const Film = mongoose.model("films", filmSchema);
-module.exports = Film;
+module.exports = HistFilmChema;

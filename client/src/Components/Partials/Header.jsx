@@ -2,7 +2,7 @@ import React, { useState, useRef ,useEffect} from 'react';
 import { Link, useNavigate} from 'react-router-dom';
 import '../../Style/PartialsCss/Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faMagnifyingGlass, faUser,faStar,faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faList, faMagnifyingGlass, faUser,faStar,faRightFromBracket,faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import '../../Style/Responsive/Responsive.css'
 
 import { useHandleEnterSearchFilm } from '../../Ultil/Hepler/navigationHelpers'
@@ -137,8 +137,8 @@ function Header() {
                             </ul>
                         </nav>
                         <div className="user_search">
-                            <div className="user_search-search" onClick={hanldeSearchIconClick}>
-                                <FontAwesomeIcon className="user_search-searchicon" icon={faMagnifyingGlass} />
+                            <div className="user_search-search">
+                                <FontAwesomeIcon onClick={hanldeSearchIconClick} className="user_search-searchicon" icon={faMagnifyingGlass} />
                                 <div className={`inputbox transition-inputbox ${isOpen ? 'open' : ''}`}>
                                     <input onKeyDown={handleKeyDown} ref={inputBox} placeholder="Search Film Name" className="input-search" type="text" />
                                 </div>
@@ -157,6 +157,7 @@ function Header() {
                                             <ul className="profile-list">
                                                 <Link to={"/profile"} className="profile-list-item"> <FontAwesomeIcon icon={faUser} />Hồ Sơ</Link>
                                                 <Link to={"/favorite"} className="profile-list-item"> <FontAwesomeIcon icon={faStar} />Phim Yêu Thích</Link>
+                                                <Link to={"/history"} className="profile-list-item"> <FontAwesomeIcon icon={faClockRotateLeft} />Lịch sử xem phim</Link>
                                                 <div onClick={handleLogout} className="profile-list-item"><FontAwesomeIcon icon={faRightFromBracket} />Đăng Xuất</div>
                                             </ul>
                                         </div>

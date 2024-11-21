@@ -241,7 +241,7 @@ function FilmDetail() {
                             <div id="trailer-film" ref={trailerRef} className="filmdetail-container-video">
                                 <iframe className="filmdetail-video" src={embedUrl} width="640" height="480" allowFullScreen></iframe>
                             </div>
-
+                            <CommentSection userId={userId} filmId={film._id}/>
                             {/* Similar Films */}
                             <div className="filmdetail-container-similarfilm">
                                 <h1 className='mb-4'>CÓ THỂ BẠN CŨNG MUỐN XEM</h1>
@@ -265,7 +265,7 @@ function FilmDetail() {
                     </div>
                 )}
             </div>
-            <CommentSection userId={userId} filmId={film._id}/>
+            
         </div>
     )
 }

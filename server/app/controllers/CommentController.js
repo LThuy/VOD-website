@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const User = require('../../models/Account')
-const Favfilm = require('../../models/FavorFilm');
+const Film = require('../../models/Film');
+const Account = require('../../models/Account');
 const Comment = require('../../models/Comment');
 
 
@@ -11,68 +11,69 @@ class CommentController {
   //[POST] add comment
   async addNewComment(req, res) {
     const {
-      userId,
       filmId,
+      userId,
       content
     } = req.body;
-    console.log(content);
+    console.log(filmId)
 
     try {
-      if (!content || !filmId || !userId) {
-        return res.status(400).json({
-          message: "Content, filmId, and userId are required"
-        });
-      }
-
-      // Fetch the user from the Account model
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({
-          message: "User not found"
-        });
-      }
-
-      // Create a new comment
-      const newComment = new Comment({
-        content,
-        user: user._id, // Use the actual user ID from the Account model
-        filmId,
+      const film = await Film.findById(filmId);
+      if (!film) return res.status(404).json({
+        message: 'Film not found'
       });
 
-      await newComment.save();
+      const user = await Account.findById(userId);
+      if (!user) return res.status(404).json({
+        message: 'User not found'
+      });
+
+      const comment = {
+        content,
+        user: {
+          id: user._id,
+          username: user.username
+        },
+        createdAt: new Date(),
+      };
+      film.comments.push(comment);
+      await film.save();
 
       res.status(201).json({
         message: 'Comment added successfully',
-        comment: newComment,
+        comment
       });
     } catch (error) {
-      console.error("Error adding comment:", error);
+      console.error(error);
       res.status(500).json({
-        message: 'Server error while adding comment'
+        message: 'Failed to add comment'
       });
     }
   }
   async getComments(req, res) {
-    const { filmId } = req.query; // or req.body, depending on your implementation
+    const {
+      filmId
+    } = req.params;
+    // console.log(filmId)
 
     try {
-        console.log("Received filmId:", filmId);
+      // Find the film by ID
+      const film = await Film.findById(filmId); // Ensure Film is properly imported
+      if (!film) {
+        return res.status(404).json({
+          message: "Film not found"
+        });
+      }
 
-        if (!filmId) {
-            return res.status(400).json({ message: "Missing filmId parameter" });
-        }
-
-        // Verify that filmId is a valid ObjectId
-        if (!mongoose.Types.ObjectId.isValid(filmId)) {
-            return res.status(400).json({ message: "Invalid filmId format" });
-        }
-
-        // Proceed with the query
-        const comments = await Comment.find({ filmId });
-        res.status(200).json({ comments });
+      // Send the comments as a response
+      res.status(200).json({
+        comments: film.comments
+      });
     } catch (error) {
-        console.error("Error fetching comments:", error);
-        res.status(500).json({ message: "Internal server error" });
+      console.error("Error fetching comments:", error);
+      res.status(500).json({
+        message: "Error fetching comments"
+      });
     }
   }
 }

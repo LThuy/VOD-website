@@ -30,8 +30,6 @@ class FilmControllers {
         });
       }
 
-      console.log("User favorite films:", user.favoriteFilms);
-
       // Ensure favoriteFilms is an array and check if film already exists
       if (Array.isArray(user.favoriteFilms)) {
         const isFilmExists = user.favoriteFilms.some(
@@ -98,10 +96,6 @@ class FilmControllers {
       });
     }
   }
-
-
-
-
   async getFavorties(req, res) {
     const userId = req.params.userId;
 
@@ -177,6 +171,85 @@ class FilmControllers {
         status: false,
         message: "An error occurred while removing the favorite film.",
       });
+    }
+  }
+  // history film section
+  async addHistory(req, res) {
+    const { userId, filmData } = req.body;
+  
+    try {
+      // Validate userId and filmData
+      if (!userId || !filmData || !filmData._id) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid data: userId and filmData with _id are required.",
+        });
+      }
+  
+      // Find the user by ID
+      const user = await User.findById(userId).populate('historyFilms');
+  
+      if (!user) {
+        return res.status(404).json({
+          status: false,
+          message: "User not found",
+        });
+      }
+  
+      // Check if the film already exists in the historyFilms array
+      const isFilmExists = user.historyFilms.some(
+        (film) => film._id.toString() === filmData._id.toString()
+      );
+  
+      if (isFilmExists) {
+        return res.status(400).json({
+          status: false,
+          message: "This film has already been added to the history.",
+        });
+      }
+  
+      // Add the film to the historyFilms array
+      user.historyFilms.push(filmData);
+  
+      // Save the updated user document
+      await user.save();
+  
+      // Send success response
+      res.status(200).json({
+        status: true,
+        message: "Film added to history successfully!",
+        historyFilms: user.historyFilms,
+      });
+    } catch (error) {
+      console.error("Error adding history film:", error);
+      res.status(500).json({
+        status: false,
+        message: "An error occurred while adding the film to history.",
+      });
+    }
+  }
+  
+  async getHistoryFilm(req, res) {
+    const userId = req.params.userId;
+
+    try {
+      // Validate userId (ensure it's a valid ObjectId)
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
+  
+      // Retrieve the user with their favorite films
+      const user = await User.findById(userId).select('historyFilms');
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Return the user's favorite films
+      res.status(200).json(user.historyFilms);
+    } catch (error) {
+      console.error('Error retrieving favorite films:', error);
+      res.status(500).json({ message: 'Server error' });
     }
   }
   

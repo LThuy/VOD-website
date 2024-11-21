@@ -24,6 +24,7 @@ import { ToastContainer } from 'react-toastify';
 import Profile from './Components/Body/Profile';
 import ChangePassword from './Components/Body/ChangePassword';
 import FavoriteFilm from './Components/Body/FavoriteFilm';
+import HistoryFilm from './Components/Body/HistoryFilm';
 
 function App() {
   const location = useLocation();
@@ -64,6 +65,7 @@ function App() {
           <Route path="/profile" element={<Profile/>} />
           <Route path="/changepassword" element={<ChangePassword/>} />
           <Route path="/favorite" element={<FavoriteFilm/>} />
+          <Route path="/history" element={<HistoryFilm/>} />
           <Route path="/danh-sach/:slug" element={<TypeFilm />} />
           <Route path="/filmDetail/:slug" element={<FilmDetail />} />
           <Route path="/watchFilm/:slug" element={<WatchFilm />} />

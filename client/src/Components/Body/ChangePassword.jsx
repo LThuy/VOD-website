@@ -79,24 +79,24 @@ function ChangePassword() {
             <div className="profiledetail-container-item-info">
               <div className="profiledetail-container-item-info-text">
                 <form id="changepasswordForm" onSubmit={handleSubmit}>
-                  <div class="form-group">
+                  <div className="form-group">
                     <span>Email:</span>
-                    <input name="email" disabled class="form-input-email" type="text" value={userEmail} />
+                    <input name="email" disabled className="form-input-email" type="text" value={userEmail} />
                   </div>
-                  <div class="form-group">
+                  <div className="form-group">
                     <span>Enter Old Password:</span>
-                    <input name="oldPassword" class="form-input" type="password" onChange={handleChange} />
+                    <input name="oldPassword" className="form-input" type="password" onChange={handleChange} />
                   </div>
-                  <div class="form-group">
+                  <div className="form-group">
                     <span>Enter New Password:</span>
-                    <input name="newPassword" class="form-input" type="password" onChange={handleChange} />
+                    <input name="newPassword" className="form-input" type="password" onChange={handleChange} />
                   </div>
-                  <div class="form-group">
+                  <div className="form-group">
                     <span>Confirm New Password:</span>
-                    <input name="confirmPassword" class="form-input" type="password" onChange={handleChange} />
+                    <input name="confirmPassword" className="form-input" type="password" onChange={handleChange} />
                   </div>
                   <div className="form-group-btn">
-                    <button type="submit" class="form-submit-btn">Change Password</button>
+                    <button type="submit" className="form-submit-btn">Change Password</button>
                   </div>
 
                 </form>

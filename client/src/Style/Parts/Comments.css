@@ -2,7 +2,8 @@
 /* comment section */
 .comment-section {
     background-color: #1a1a1a;
-    padding-bottom: 30px;
+    padding-top: 20px;
+    padding-bottom: 10px;
 }
 .comment-container {
     width: 1000px;
@@ -15,16 +16,17 @@
     width: 800px;
     max-width: 100%;
     margin: 0 auto;
+    padding-bottom: 10px;
 }
 .comment-header {
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid #ccc;
-    padding-bottom: 20px;
 }
 .comment-header p {
     margin-top: 20px;
     font-weight: 700;
+    color: white;
 }
 .comment-sort-style {
     margin-top: 20px;
@@ -67,7 +69,19 @@
     margin-top: 50px;
     display: flex;
     flex-direction: column;
+    color: #ffffff;
 }
+
+.comments-container.haveComments {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    color: #000000;
+    background-color: #fff;
+    margin-bottom: 30px;
+}
+
 .comments-container-item {
     display: flex;
     margin-top: 10px;
@@ -86,3 +100,4 @@
     margin-left: 15px;
     margin-top: 5px;
 }
+
