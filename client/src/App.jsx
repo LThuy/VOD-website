@@ -16,6 +16,7 @@ import RegisterAdmin from './Admin/Components/AdminRegister'
 import VerifyEmail from './Ultil/Account/VerifyEmail';
 import VerifyEmailAdmin from './Ultil/Admin-Account/VerifyEmail';
 import SuccessNotice from './Components/Body/SuccesNotive';
+import SuccessVerifyAdmin from './Admin/Components/SuccessVerify';
 import Test from './Components/test'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -27,16 +28,21 @@ import FavoriteFilm from './Components/Body/FavoriteFilm';
 function App() {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
+  const isLoginAdminPage = location.pathname === '/admin/login';
   const isRegisterPage = location.pathname === '/register';
+  const isRegisterAdminPage = location.pathname === '/admin/register';
   const isNoticeVerify = location.pathname === '/verify';
+  const isNoticeVerifyAdmin = location.pathname === '/admin/verify';
   const isSuccessVerify = location.pathname === '/successnotice';
+  const isSuccessVerifyAdmin = location.pathname === '/admin/success-verify';
 
   const [userEmail, setUserEmail] = useState(null);
   
   return (
     <div className="App">
       <ToastContainer position="top-right" autoClose={3000}/>
-      {!isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify &&(
+      {!isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify && !isLoginAdminPage 
+        && !isRegisterAdminPage && !isNoticeVerifyAdmin && !isSuccessVerifyAdmin &&(
         <div id="header-container">
           <Header/>
         </div>
@@ -50,10 +56,11 @@ function App() {
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/admin/verify-email" element={<VerifyEmailAdmin />} />
           <Route path="/successnotice" element={<SuccessNotice />} />
+          <Route path="/admin/success-verify" element={<SuccessVerifyAdmin />} />
           <Route path="/login" element={<Login setUserEmail={setUserEmail}/>} />
           <Route path="/admin/login" element={<LoginAdmin setUserEmail={setUserEmail}/>} />
           <Route path="/register" element={<Register />} />
-          <Route path="/admin/register" element={<RegisterAdmin />} />
+          {/* <Route path="/admin/register" element={<RegisterAdmin />} /> */}
           <Route path="/profile" element={<Profile/>} />
           <Route path="/changepassword" element={<ChangePassword/>} />
           <Route path="/favorite" element={<FavoriteFilm/>} />
@@ -65,7 +72,8 @@ function App() {
         </Routes>
       </div>
       {
-        !isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify && (
+        !isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify && !isLoginAdminPage 
+        && !isRegisterAdminPage && !isNoticeVerifyAdmin && !isSuccessVerifyAdmin && (
           <div id="footer-container">
             <Footer />
           </div>

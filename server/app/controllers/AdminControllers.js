@@ -64,8 +64,9 @@ class AdminControllers {
             const admin = await Admin.findOne({
                 email
             });
+            console.log(admin)
             if (!admin) {
-                return res.status(400).json({
+                return res.status(400).json({ 
                     message: "Invalid email or password"
                 });
             }
@@ -82,8 +83,7 @@ class AdminControllers {
             if (!isMatch) {
                 return res.status(400).json({
                     message: "Invalid email or password"
-                });
-                console.log("HELLO")
+                });          
             }
 
             // Generate a token for successful login
@@ -183,14 +183,14 @@ class AdminControllers {
                     message: 'Admin not found'
                 });
             }
-
+ 
             admin.verified = true; // Set verified to true
             await admin.save();
 
             res.status(200).json({
                 message: 'Email verified successfully! You can now log in.'
             });
-        } catch (error) {
+        } catch (error) { 
             console.error(error);
             res.status(400).json({
                 message: 'Invalid or expired token'

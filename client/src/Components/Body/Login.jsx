@@ -146,6 +146,15 @@ function Login({ setUserEmail }) {
           </form>
         </div>
       </div>
+      <div className="carousel"> 
+        <div className="slides">
+          <div className="slide" style={{background: 'url(https://image.benq.com/is/image/benqco/cinehome-w1800i-immerse-yourself-%20in-4K?$ResponsivePreset$)'}}></div>
+          <div className="slide" style={{background: 'url(https://platform.polygon.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/24090985/jbareham_210927_ecl1085_grids_6up_master.jpg?quality=90&strip=all&crop=0%2C0%2C100%2C100&w=2400)'}}></div>
+          <div className="slide" style={{background: 'url(https://images2.alphacoders.com/689/689327.jpg)'}}></div>
+          <div className="slide" style={{background: 'url(https://images2.alphacoders.com/689/689327.jpg)'}}></div>
+          <div className="slide" style={{background: 'url(https://images2.alphacoders.com/689/689327.jpg)'}}></div>
+        </div>
+    </div>
     </div>
   );
 }

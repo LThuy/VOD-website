@@ -14,7 +14,7 @@ const VerifyEmail = () => {
             try {
                 const response = await axios.get(`http://localhost:5000/admin/verify-email?token=${token}`);
                 const message = response.data.message;
-                navigate('/successnotice', { state: { message } });
+                navigate('/admin/success-verify', { state: { message } });
             } catch (error) {
                 const errorMessage = error.response?.data?.message || 'Invalid or expired token!';
                 navigate('/error', { state: { message: errorMessage } });

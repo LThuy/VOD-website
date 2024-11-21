@@ -12,7 +12,7 @@ const AdminSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: true, 
       unique: true,
       lowercase: true,
       validate: {
@@ -26,7 +26,7 @@ const AdminSchema = new Schema(
       type: String,
       required: true,
       minlength: 6,
-      select: false, // Ensures password is not returned by default in queries
+      select: true, // Ensures password is not returned by default in queries
     },
     role: {
       type: String, 

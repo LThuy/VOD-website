@@ -93,7 +93,7 @@ function Login({ setUserEmail }) {
 
 
   return (
-    <div className="login-container">
+    <div className="login-container admin">
       <div className="form-login-container">
         <div className="form-login-header">
           <h3>THFILM</h3>
@@ -127,12 +127,12 @@ function Login({ setUserEmail }) {
                 Đăng nhập
               </button>
             </div>
-            <div className="form-section_register mt-3">
+            {/* <div className="form-section_register mt-3">
               <span>Bạn chưa có tài khoản?</span>
               <Link to={'/admin/register'} className="register-btn">
                 Đăng ký
               </Link>
-            </div>
+            </div> */}
             <div className="form-section_register mt-2">
               <Link to={'/forget'} className="register-btn">
                 Bạn quên mật khẩu?
