@@ -25,6 +25,7 @@ import Profile from './Components/Body/Profile';
 import ChangePassword from './Components/Body/ChangePassword';
 import FavoriteFilm from './Components/Body/FavoriteFilm';
 import HistoryFilm from './Components/Body/HistoryFilm';
+import ProtectedRoute from './Components/CheckToken/TokenCheckHandle';
 
 function App() {
   const location = useLocation();
@@ -50,8 +51,9 @@ function App() {
       )}
       
       <div id="body-content">
+        
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* <Route path="/" element={<Home />} /> */}
           <Route path="/test" element={<Test />} />
           <Route path="/verify" element={<NoticeVerify />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
@@ -62,7 +64,7 @@ function App() {
           <Route path="/admin/login" element={<LoginAdmin setUserEmail={setUserEmail}/>} />
           <Route path="/register" element={<Register />} />
           {/* <Route path="/admin/register" element={<RegisterAdmin />} /> */}
-          <Route path="/profile" element={<Profile/>} />
+          {/* <Route path="/profile" element={<Profile/>} />
           <Route path="/changepassword" element={<ChangePassword/>} />
           <Route path="/favorite" element={<FavoriteFilm/>} />
           <Route path="/history" element={<HistoryFilm/>} />
@@ -70,7 +72,88 @@ function App() {
           <Route path="/filmDetail/:slug" element={<FilmDetail />} />
           <Route path="/watchFilm/:slug" element={<WatchFilm />} />
           <Route path="/searchFilm/:slug" element={<SearchResult />} />
-          <Route path="/genre/:slug" element={<GenreFilm />} />
+          <Route path="/genre/:slug" element={<GenreFilm />} /> */}
+          {/* Protected Routes */}
+          <Route
+                path="/"
+                element={
+                    <ProtectedRoute>
+                        <Home />
+                    </ProtectedRoute>
+                }
+            />
+          <Route
+                path="/profile"
+                element={
+                    <ProtectedRoute>
+                        <Profile />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/changepassword"
+                element={
+                    <ProtectedRoute>
+                        <ChangePassword />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/favorite"
+                element={
+                    <ProtectedRoute>
+                        <FavoriteFilm />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/history"
+                element={
+                    <ProtectedRoute>
+                        <HistoryFilm />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/danh-sach/:slug"
+                element={
+                    <ProtectedRoute>
+                        <TypeFilm />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/filmDetail/:slug"
+                element={
+                    <ProtectedRoute>
+                        <FilmDetail />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/watchFilm/:slug"
+                element={
+                    <ProtectedRoute>
+                        <WatchFilm />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/searchFilm/:slug"
+                element={
+                    <ProtectedRoute>
+                        <SearchResult />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/genre/:slug"
+                element={
+                    <ProtectedRoute>
+                        <GenreFilm />
+                    </ProtectedRoute>
+                }
+            />
         </Routes>
       </div>
       {

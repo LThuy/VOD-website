@@ -74,6 +74,7 @@ function Login({ setUserEmail }) {
       localStorage.setItem('token', result.token);
       localStorage.setItem('userEmail', result.email); // Save user's email
       localStorage.setItem('userId', result.userId);
+      localStorage.setItem('userRole', result.role);
 
 
       // Optionally update the app state with the user's email

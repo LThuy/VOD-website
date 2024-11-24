@@ -65,6 +65,7 @@ class AdminControllers {
                 email
             });
             console.log(admin)
+            console.log(admin.role)
             if (!admin) {
                 return res.status(400).json({ 
                     message: "Invalid email or password"
@@ -100,7 +101,8 @@ class AdminControllers {
             res.status(200).json({
                 token,
                 email: admin.email,
-                userId: admin._id
+                userId: admin._id,
+                role: admin.role
             });
         } catch (error) {
             console.error(error);

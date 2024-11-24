@@ -376,10 +376,10 @@
     top: 100%;
     z-index: 999;
     background-color: #000000;
-    width: 200px;
+    width: 220px;
     border-radius: 10px;
     display: none;
-    left: 0;
+    right: -50px;
 }
 .profile-icon-container::before {
     background-color: transparent;
@@ -388,6 +388,7 @@
     content: "";
     position: absolute;
     bottom: 0;
+    right: 0;
 }
 .profile-icon-container:hover .sub-profilenav {
     display: block;

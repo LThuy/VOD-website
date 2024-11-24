@@ -2,7 +2,7 @@ import React, { useState, useRef ,useEffect} from 'react';
 import { Link, useNavigate} from 'react-router-dom';
 import '../../Style/PartialsCss/Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faMagnifyingGlass, faUser,faStar,faRightFromBracket,faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { faList, faMagnifyingGlass, faUser,faStar,faRightFromBracket,faClockRotateLeft,faPeopleRoof } from '@fortawesome/free-solid-svg-icons';
 import '../../Style/Responsive/Responsive.css'
 
 import { useHandleEnterSearchFilm } from '../../Ultil/Hepler/navigationHelpers'
@@ -50,13 +50,16 @@ function Header() {
     // render user's email
     const [userEmail, setUserEmail] = useState(null);
     const [userName, setUserName] = useState(null);
+    const  [userRole, setUserRole] = useState(null);
 
     useEffect(() => {
         const email = localStorage.getItem("userEmail");
+        const userrole = localStorage.getItem('userRole');
         if (email) {
             setUserEmail(email);
             const name = email.split("@")[0]; 
             setUserName(name);
+            setUserRole(userrole)
         }
     }, []);
 
@@ -158,6 +161,9 @@ function Header() {
                                                 <Link to={"/profile"} className="profile-list-item"> <FontAwesomeIcon icon={faUser} />Hồ Sơ</Link>
                                                 <Link to={"/favorite"} className="profile-list-item"> <FontAwesomeIcon icon={faStar} />Phim Yêu Thích</Link>
                                                 <Link to={"/history"} className="profile-list-item"> <FontAwesomeIcon icon={faClockRotateLeft} />Lịch sử xem phim</Link>
+                                                {userRole === 'admin' ? (
+                                                    <Link to={"/user-management"} className="profile-list-item"> <FontAwesomeIcon icon={faPeopleRoof} />Quán lí người dùng</Link>
+                                                ) : null}
                                                 <div onClick={handleLogout} className="profile-list-item"><FontAwesomeIcon icon={faRightFromBracket} />Đăng Xuất</div>
                                             </ul>
                                         </div>

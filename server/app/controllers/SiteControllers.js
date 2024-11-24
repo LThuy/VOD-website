@@ -89,7 +89,7 @@ class SiteControllers {
             const token = jwt.sign({
                 userId: user._id
             }, jwtSecret, {
-                expiresIn: '1h'
+                expiresIn: '10s'
             });
 
             // res.status(200).json({
@@ -99,7 +99,8 @@ class SiteControllers {
             res.status(200).json({
                 token,
                 email: user.email,
-                userId: user._id
+                userId: user._id,
+                role: user.role
             });
         } catch (error) {
             console.error(error);
