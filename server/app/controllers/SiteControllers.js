@@ -48,7 +48,17 @@ const sendVerificationEmail = (email, token) => {
         }
     });
 };
+// sende email forget pass
+const sendResetEmail = async (to, subject, html) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to,
+        subject,
+        html,
+    };
 
+    await transporter.sendMail(mailOptions);
+};
 
 
 class SiteControllers {
@@ -89,7 +99,7 @@ class SiteControllers {
             const token = jwt.sign({
                 userId: user._id
             }, jwtSecret, {
-                expiresIn: '10s'
+                expiresIn: '7d'
             });
 
             // res.status(200).json({
@@ -166,7 +176,6 @@ class SiteControllers {
             });
         }
     }
-
     // Verify email endpoint
     async verifyEmail(req, res) {
         const {
@@ -293,12 +302,111 @@ class SiteControllers {
             });
         }
     }
+    // [post] /forgetpassword
+    async forgetPassword(req, res) {
+        const { email } = req.body;
+    
+        try {
+            const account = await User.findOne({ email });
+            
+            if (!account) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Account not found'
+                });
+            }
+    
+            // Generate reset token
+            const resetToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            console.log('Generated reset token:', resetToken);
+    
+            account.verificationToken = resetToken;
+            await account.save();
+    
+            const clientBaseUrl = process.env.CLIENT_BASE_URL || 'http://localhost:3000';
+            const resetUrl = `${clientBaseUrl}/reset-password/${resetToken}`;
+    
+            const emailContent = `
+                <p>You requested to reset your password. Click the link below to reset it:</p>
+                <a href="${resetUrl}">Reset Password</a>
+                <p>If you didn't request this, ignore this email.</p>
+            `;
+    
+            try {
+                await sendResetEmail(email, 'Password Reset Request', emailContent);
+            } catch (emailError) {
+                console.error('Error sending reset email:', emailError);
+                return res.status(500).json({
+                    success: false,
+                    message: 'Failed to send reset email',
+                    error: emailError
+                });
+            }
+    
+            res.status(200).json({
+                success: true,
+                message: 'Password reset email sent'
+            });
+        } catch (error) {
+            console.error('Error during password reset:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Internal server error',
+                error
+            });
+        }
+    }
+    
+    async resetPassword(req, res) {
+        const { resetToken, password } = req.body;
+    
+        try {
+            console.log('Reset token received:', resetToken); // Log the token to check if it's correct
+    
+            // Check for a user matching the reset token
+            const user = await User.findOne({ verificationToken: resetToken });
+            
+            // Log the user to see which account is being returned
+            console.log('User found for password reset:', user);
+    
+            if (!user) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid or expired token.'
+                });
+            }
+    
+            // Hash the new password
+            const hashedPassword = await bcrypt.hash(password, 10);
+            console.log('Hashed password:', hashedPassword); // Log the hashed password
+    
+            // Update the password and clear the reset token
+            user.password = hashedPassword;
+            user.verificationToken = null; // Clear the reset token after the password has been reset
+    
+            // Save the updated user document
+            const savedUser = await user.save();
+            console.log('User saved successfully:', savedUser); // Log the saved user
+    
+            res.json({
+                success: true,
+                message: 'Password reset successfully.'
+            });
+        } catch (error) {
+            console.error('Error during password reset:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Server error.'
+            });
+        }
+    }
+    
 
     // [GET] /logout
     logout(req, res) {
         req.session.destroy()
         res.redirect('/')
     }
-   
+
 }
 module.exports = new SiteControllers();

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback,useMemo  } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,6 +14,7 @@ import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
 import LikeButton from '../Parts/LikeButton';
 import { toast } from "react-toastify";
 import CommentSection from '../Parts/Comment';
+
 
 function FilmDetail() {
     const { slug } = useParams();
@@ -33,6 +34,8 @@ function FilmDetail() {
     const handleClickFilmDetail = useHandleClickFilmDetail();
     const handleClickWathFilm = useHandleCLickWatchFilm();
     const handleTruncateText = useHandleTruncateText();
+
+
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -88,6 +91,7 @@ function FilmDetail() {
 
     // Fetch film details
     useEffect(() => {
+        window.scrollTo(0, 0);
         const fetchData = async () => {
             try {
                 setLoading(true);
@@ -177,95 +181,86 @@ function FilmDetail() {
     return (
         <div>
             <div className="filmdetail-section">
-                {loading ? (
-                    <div className="loading-container">
-                        <div className="loading-item">
-                            <FontAwesomeIcon className='icon-loading' icon={faSpinner} spin size="3x" />
-                            <h2>Thông cảm! Đợi chút nha...</h2>
+                <div className="filmdetail-container">
+                    {/* Film Details */}
+                    <div className="filmdetail-container-grid">
+                        <div className="filmdetail-container-poster">
+                            <div className="filmimg-container">
+                                <img id="film-img" src={film.thumb_url} alt={film.name} />
+                                <h1 id="nameFilm">{film.name}</h1>
+                                <h3 id="originameFilm">{`${film.origin_name} (${film.year})`}</h3>
+                                <button onClick={scrollToTrailer} className="trailer-btn">
+                                    <FontAwesomeIcon icon={faYoutube} /> Trailer
+                                </button>
+                                <button onClick={() => handleClickWathFilm(film.slug)} className="watch-btn">
+                                    <FontAwesomeIcon icon={faPlay} /> Xem Film
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ) : (
-                    <div className="filmdetail-container">
-                        {/* Film Details */}
-                        <div className="filmdetail-container-grid">
-                            <div className="filmdetail-container-poster">
-                                <div className="filmimg-container">
-                                    <img id="film-img" src={film.thumb_url} alt={film.name} />
-                                    <h1 id="nameFilm">{film.name}</h1>
-                                    <h3 id="originameFilm">{`${film.origin_name} (${film.year})`}</h3>
-                                    <button onClick={scrollToTrailer} className="trailer-btn">
-                                        <FontAwesomeIcon icon={faYoutube} /> Trailer
-                                    </button>
-                                    <button onClick={() => handleClickWathFilm(film.slug)} className="watch-btn">
-                                        <FontAwesomeIcon icon={faPlay} /> Xem Film
-                                    </button>
-                                </div>
-                            </div>
 
-                            {/* Film Information */}
-                            <div className="filmdetail-container-infor">
-                                <div className="filmdetaile-infor-item">
-                                    <h4 className="filmdetaile-infor-item_type">Bạn thích phim này chứ?</h4>
-                                    <LikeButton filmData={film} userId={userId} showToast={showToast} />
-                                    <p id="filmdetaile-infor-item-ratingstart-content"></p>
-                                    <p id="rating-stars-response"></p>
-                                    <h4 className="gern-info filmdetaile-infor-item_type">Genre: <span className="filmdetaile-infor-item_info">
-                                        {categoryNames}
-                                    </span></h4>
-                                    <h4 className="filmdetaile-infor-item_type">Actors: <span className="filmdetaile-infor-item_info">
-                                        {actorNames}
-                                    </span></h4>
-                                </div>
-                                <div className="filmdetaile-infor-item">
-                                    <h4 className="filmdetaile-infor-item_type">Year: <span className="filmdetaile-infor-item_info">{film.year}</span></h4>
-                                    <h4 className="filmdetaile-infor-item_type">Director: <span className="filmdetaile-infor-item_info">
-                                        {directorNames}
-                                    </span></h4>
-                                </div>
-                                <div className="filmdetaile-infor-item">
-                                    <h4 className="filmdetaile-infor-item_type">Country: <span className="filmdetaile-infor-item_info">
-                                        {countryNames}</span></h4>
-                                    <h4 className="filmdetaile-infor-item_type">Duration: <span className="filmdetaile-infor-item_info"><span id="duration">{film.time}</span></span></h4>
-                                </div>
-                                <div className="filmdetaile-infor-item">
-                                    <h4 className="filmdetaile-infor-item_type">Quality: <span className="filmdetaile-infor-item_info">{film.quality}</span></h4>
-                                    <h4 className="filmdetaile-infor-item_type">Status: <span className="filmdetaile-infor-item_info"><span id="duration">{film.episode_current}</span></span></h4>
-                                </div>
-                                <div className="filmdetaile-infor-review">
-                                    <h4 className="filmdetaile-infor-item_type">Review Film</h4>
-                                    <p>{film.content}</p>
-                                </div>
+                        {/* Film Information */}
+                        <div className="filmdetail-container-infor">
+                            <div className="filmdetaile-infor-item">
+                                <h4 className="filmdetaile-infor-item_type">Bạn thích phim này chứ?</h4>
+                                <LikeButton filmData={film} userId={userId} showToast={showToast} />
+                                <p id="filmdetaile-infor-item-ratingstart-content"></p>
+                                <p id="rating-stars-response"></p>
+                                <h4 className="gern-info filmdetaile-infor-item_type">Genre: <span className="filmdetaile-infor-item_info">
+                                    {categoryNames}
+                                </span></h4>
+                                <h4 className="filmdetaile-infor-item_type">Actors: <span className="filmdetaile-infor-item_info">
+                                    {actorNames}
+                                </span></h4>
                             </div>
+                            <div className="filmdetaile-infor-item">
+                                <h4 className="filmdetaile-infor-item_type">Year: <span className="filmdetaile-infor-item_info">{film.year}</span></h4>
+                                <h4 className="filmdetaile-infor-item_type">Director: <span className="filmdetaile-infor-item_info">
+                                    {directorNames}
+                                </span></h4>
+                            </div>
+                            <div className="filmdetaile-infor-item">
+                                <h4 className="filmdetaile-infor-item_type">Country: <span className="filmdetaile-infor-item_info">
+                                    {countryNames}</span></h4>
+                                <h4 className="filmdetaile-infor-item_type">Duration: <span className="filmdetaile-infor-item_info"><span id="duration">{film.time}</span></span></h4>
+                            </div>
+                            <div className="filmdetaile-infor-item">
+                                <h4 className="filmdetaile-infor-item_type">Quality: <span className="filmdetaile-infor-item_info">{film.quality}</span></h4>
+                                <h4 className="filmdetaile-infor-item_type">Status: <span className="filmdetaile-infor-item_info"><span id="duration">{film.episode_current}</span></span></h4>
+                            </div>
+                            <div className="filmdetaile-infor-review">
+                                <h4 className="filmdetaile-infor-item_type">Review Film</h4>
+                                <p>{film.content}</p>
+                            </div>
+                        </div>
 
-                            {/* Video Trailer */}
-                            <div id="trailer-film" ref={trailerRef} className="filmdetail-container-video">
-                                <iframe className="filmdetail-video" src={embedUrl} width="640" height="480" allowFullScreen></iframe>
-                            </div>
-                            <CommentSection userId={userId} filmId={film._id}/>
-                            {/* Similar Films */}
-                            <div className="filmdetail-container-similarfilm">
-                                <h1 className='mb-4'>CÓ THỂ BẠN CŨNG MUỐN XEM</h1>
-                                <div className="filmdetail-container-similarfilm-grid">
-                                    <div className='row'>
-                                        {similarFilms && similarFilms.map(item => (
-                                            <div key={item._id} onClick={() => handleClickFilmDetail(item.slug)} className="film-item col-6 col-xl-3 col-md-4">
-                                                <div className="film-item-img-container">
-                                                    <img src={imgUrl + item.poster_url} alt={item.name} />
-                                                </div>
-                                                <div className="film-item-iconplay">
-                                                    <FontAwesomeIcon className='fa-circle-play' icon={faCirclePlay} />
-                                                </div>
-                                                <h4>{handleTruncateText(item.name)}</h4>
+                        {/* Video Trailer */}
+                        <div id="trailer-film" ref={trailerRef} className="filmdetail-container-video">
+                            <iframe className="filmdetail-video" src={embedUrl} width="640" height="480" allowFullScreen></iframe>
+                        </div>
+                        <CommentSection userId={userId} filmId={film._id} />
+                        {/* Similar Films */}
+                        <div className="filmdetail-container-similarfilm">
+                            <h1 className='mb-4'>CÓ THỂ BẠN CŨNG MUỐN XEM</h1>
+                            <div className="filmdetail-container-similarfilm-grid">
+                                <div className='row'>
+                                    {similarFilms && similarFilms.map(item => (
+                                        <div key={item._id} onClick={() => handleClickFilmDetail(item.slug)} className="film-item col-6 col-xl-3 col-md-4">
+                                            <div className="film-item-img-container">
+                                                <img src={imgUrl + item.poster_url} alt={item.name} />
                                             </div>
-                                        ))}
-                                    </div>
+                                            <div className="film-item-iconplay">
+                                                <FontAwesomeIcon className='fa-circle-play' icon={faCirclePlay} />
+                                            </div>
+                                            <h4>{handleTruncateText(item.name)}</h4>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
             </div>
-            
+
         </div>
     )
 }

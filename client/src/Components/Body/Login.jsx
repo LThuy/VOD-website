@@ -104,7 +104,7 @@ function Login({ setUserEmail }) {
         </div>
         <div className="form-seciton">
           <form className="form-seciton-container" onSubmit={handleSubmit}>
-            <div className="form-seciton_input">
+            <div className="form-section_input">
               <input
                 className="formlogin-inputvalue"
                 type="email"
@@ -114,7 +114,7 @@ function Login({ setUserEmail }) {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="form-seciton_input mt-3">
+            <div className="form-section_input mt-3">
               <input
                 className="formlogin-inputvalue"
                 type="password"
@@ -124,7 +124,7 @@ function Login({ setUserEmail }) {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="form-seciton_btn mt-3">
+            <div className="form-section_input mt-3">
               <button className="login-btn" type="submit">
                 Đăng nhập
               </button>
@@ -136,7 +136,7 @@ function Login({ setUserEmail }) {
               </Link>
             </div>
             <div className="form-section_register mt-2">
-              <Link to={'/forget'} className="register-btn">
+              <Link to={'/forgetpassword'} className="register-btn">
                 Bạn quên mật khẩu?
               </Link>
             </div>

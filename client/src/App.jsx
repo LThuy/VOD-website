@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Routes, Route ,useLocation } from 'react-router-dom';
+import React, { useState, Suspense, lazy } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+
 import Header from './Components/Partials/Header'
 import Footer from './Components/Partials/Footer'
-import Home from './Components/Body/Home'
+// import Home from './Components/Body/Home'
 import TypeFilm from './Components/Body/typeFlim'
-import FilmDetail from './Components/Body/FilmDetail'
+// import FilmDetail from './Components/Body/FilmDetail'
 import WatchFilm from './Components/Body/WatchFilm'
 import SearchResult from './Components/Body/SearchResult'
 import GenreFilm from './Components/Body/GenreFilm'
@@ -26,45 +27,55 @@ import ChangePassword from './Components/Body/ChangePassword';
 import FavoriteFilm from './Components/Body/FavoriteFilm';
 import HistoryFilm from './Components/Body/HistoryFilm';
 import ProtectedRoute from './Components/CheckToken/TokenCheckHandle';
+import ForgetPass from './Components/Body/ForgetPass';
+import ResetPassword from './Components/Body/ResetPassword';
+
+const FilmDetail = lazy(() => import('./Components/Body/FilmDetail'));
+const Home = lazy(() => import('./Components/Body/Home'));
+
 
 function App() {
-  const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
-  const isLoginAdminPage = location.pathname === '/admin/login';
-  const isRegisterPage = location.pathname === '/register';
-  const isRegisterAdminPage = location.pathname === '/admin/register';
-  const isNoticeVerify = location.pathname === '/verify';
-  const isNoticeVerifyAdmin = location.pathname === '/admin/verify';
-  const isSuccessVerify = location.pathname === '/successnotice';
-  const isSuccessVerifyAdmin = location.pathname === '/admin/success-verify';
+    const location = useLocation();
+    const isLoginPage = location.pathname === '/login';
+    const isForgetPassPage = location.pathname === '/forgetpassword';
+    const isResetPassPage = location.pathname.startsWith('/reset-password');
+    const isLoginAdminPage = location.pathname === '/admin/login';
+    const isRegisterPage = location.pathname === '/register';
+    const isRegisterAdminPage = location.pathname === '/admin/register';
+    const isNoticeVerify = location.pathname === '/verify';
+    const isNoticeVerifyAdmin = location.pathname === '/admin/verify';
+    const isSuccessVerify = location.pathname === '/successnotice';
+    const isSuccessVerifyAdmin = location.pathname === '/admin/success-verify';
 
-  const [userEmail, setUserEmail] = useState(null);
-  
-  return (
-    <div className="App">
-      <ToastContainer position="top-right" autoClose={3000}/>
-      {!isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify && !isLoginAdminPage 
-        && !isRegisterAdminPage && !isNoticeVerifyAdmin && !isSuccessVerifyAdmin &&(
-        <div id="header-container">
-          <Header/>
-        </div>
-      )}
-      
-      <div id="body-content">
-        
-        <Routes>
-          {/* <Route path="/" element={<Home />} /> */}
-          <Route path="/test" element={<Test />} />
-          <Route path="/verify" element={<NoticeVerify />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
-          <Route path="/admin/verify-email" element={<VerifyEmailAdmin />} />
-          <Route path="/successnotice" element={<SuccessNotice />} />
-          <Route path="/admin/success-verify" element={<SuccessVerifyAdmin />} />
-          <Route path="/login" element={<Login setUserEmail={setUserEmail}/>} />
-          <Route path="/admin/login" element={<LoginAdmin setUserEmail={setUserEmail}/>} />
-          <Route path="/register" element={<Register />} />
-          {/* <Route path="/admin/register" element={<RegisterAdmin />} /> */}
-          {/* <Route path="/profile" element={<Profile/>} />
+    const [userEmail, setUserEmail] = useState(null);
+
+    return (
+        <div className="App">
+            <ToastContainer position="top-right" autoClose={3000} />
+            {!isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify && !isLoginAdminPage
+                && !isRegisterAdminPage && !isNoticeVerifyAdmin && !isSuccessVerifyAdmin && !isForgetPassPage && !isResetPassPage && (
+                    <div id="header-container">
+                        <Header />
+                    </div>
+                )}
+
+            <div id="body-content">
+
+                <Routes>
+                    {/* <Route path="/" element={<Home />} /> */}
+                    <Route path="/test" element={<Test />} />
+                    <Route path="/verify" element={<NoticeVerify />} />
+                    <Route path="/verify-email" element={<VerifyEmail />} />
+                    <Route path="/admin/verify-email" element={<VerifyEmailAdmin />} />
+                    <Route path="/successnotice" element={<SuccessNotice />} />
+                    <Route path="/admin/success-verify" element={<SuccessVerifyAdmin />} />
+                    <Route path="/login" element={<Login setUserEmail={setUserEmail} />} />
+                    <Route path="/admin/login" element={<LoginAdmin setUserEmail={setUserEmail} />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgetpassword" element={<ForgetPass />} />
+                    <Route path="/reset-password/:token" element={<ResetPassword />} />
+                    {/* <Route path="/admin/register" element={<RegisterAdmin />} /> */}
+                    {/* <Route path="/profile" element={<Profile/>} />
           <Route path="/changepassword" element={<ChangePassword/>} />
           <Route path="/favorite" element={<FavoriteFilm/>} />
           <Route path="/history" element={<HistoryFilm/>} />
@@ -73,100 +84,105 @@ function App() {
           <Route path="/watchFilm/:slug" element={<WatchFilm />} />
           <Route path="/searchFilm/:slug" element={<SearchResult />} />
           <Route path="/genre/:slug" element={<GenreFilm />} /> */}
-          {/* Protected Routes */}
-          <Route
-                path="/"
-                element={
-                    <ProtectedRoute>
-                        <Home />
-                    </ProtectedRoute>
-                }
-            />
-          <Route
-                path="/profile"
-                element={
-                    <ProtectedRoute>
-                        <Profile />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/changepassword"
-                element={
-                    <ProtectedRoute>
-                        <ChangePassword />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/favorite"
-                element={
-                    <ProtectedRoute>
-                        <FavoriteFilm />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/history"
-                element={
-                    <ProtectedRoute>
-                        <HistoryFilm />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/danh-sach/:slug"
-                element={
-                    <ProtectedRoute>
-                        <TypeFilm />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/filmDetail/:slug"
-                element={
-                    <ProtectedRoute>
-                        <FilmDetail />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/watchFilm/:slug"
-                element={
-                    <ProtectedRoute>
-                        <WatchFilm />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/searchFilm/:slug"
-                element={
-                    <ProtectedRoute>
-                        <SearchResult />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/genre/:slug"
-                element={
-                    <ProtectedRoute>
-                        <GenreFilm />
-                    </ProtectedRoute>
-                }
-            />
-        </Routes>
-      </div>
-      {
-        !isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify && !isLoginAdminPage 
-        && !isRegisterAdminPage && !isNoticeVerifyAdmin && !isSuccessVerifyAdmin && (
-          <div id="footer-container">
-            <Footer />
-          </div>
-        )
-      }
-      
-    </div>
-  );
+                    {/* Protected Routes */}
+                    <Route
+                        path="/"
+                        element={
+                            <ProtectedRoute>
+                                <Suspense fallback={<div>Đang tải, vui lòng đợi...</div>}>
+                                    <Home />
+                                </Suspense>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/profile"
+                        element={
+                            <ProtectedRoute>
+                                <Profile />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/changepassword"
+                        element={
+                            <ProtectedRoute>
+                                <ChangePassword />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/favorite"
+                        element={
+                            <ProtectedRoute>
+                                <FavoriteFilm />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/history"
+                        element={
+                            <ProtectedRoute>
+                                <HistoryFilm />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/danh-sach/:slug"
+                        element={
+                            <ProtectedRoute>
+                                <TypeFilm />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/filmDetail/:slug"
+                        element={
+                            <ProtectedRoute>
+                                <Suspense fallback={<div>Đang tải, vui lòng đợi...</div>}>
+                                    <FilmDetail />
+                                </Suspense>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/watchFilm/:slug"
+                        element={
+                            <ProtectedRoute>
+                                <WatchFilm />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/searchFilm/:slug"
+                        element={
+                            <ProtectedRoute>
+                                <SearchResult />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/genre/:slug"
+                        element={
+                            <ProtectedRoute>
+                                <GenreFilm />
+                            </ProtectedRoute>
+                        }
+                    />
+                </Routes>
+            </div>
+            {
+                !isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify && !isLoginAdminPage
+                && !isRegisterAdminPage && !isNoticeVerifyAdmin && !isSuccessVerifyAdmin && !isForgetPassPage && !isResetPassPage && (
+                    <div id="footer-container">
+                        <Footer />
+                    </div>
+                )
+            }
+
+        </div>
+    );
 }
 
 export default App;
