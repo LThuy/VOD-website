@@ -13,6 +13,7 @@ const useMovieData = () => {
     tvShows: [],
     slider: []
   });
+  const [isLoading, setIsLoading] = useState(true)
 
   const updateState = useCallback((data, key) => {
     if (data && (data.items || (data.data && data.data.items))) {
@@ -25,6 +26,7 @@ const useMovieData = () => {
   }, []);
 
   useEffect(() => {
+    setIsLoading(true)
     const fetchData = async () => {
       const endpoints = [
         { url: 'https://phimapi.com/danh-sach/phim-moi-cap-nhat?limit=12', key: 'phimmoiCN' },
@@ -42,12 +44,15 @@ const useMovieData = () => {
       } catch (error) {
         console.error('Error fetching movie data:', error);
       }
+      finally {
+        setIsLoading(false);
+      }
     };
 
     fetchData();
   }, [updateState]);
 
-  return movieData;
+  return {movieData,isLoading};
 };
 
 export default useMovieData;

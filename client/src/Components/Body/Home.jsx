@@ -7,9 +7,13 @@ import useMovieData from '../../Hooks/useMovieData';
 import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText';
 import FilmSection from '../Parts/FilmSection';
+import Skeleton from 'react-loading-skeleton'; 
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function Home() {
-  const { phimmoiCN, phimLe, phimBo, phimHH, tvShows, slider } = useMovieData();
+  const { movieData, isLoading } = useMovieData();
+  const { phimmoiCN, phimLe, phimBo, phimHH, tvShows, slider } = movieData;
+
   const handleClickFilmDetail = useHandleClickFilmDetail();
   const handleTruncateText = useHandleTruncateText();
 
@@ -59,6 +63,26 @@ function Home() {
       </div>
     </div>
   ), [slider, handleClickFilmDetail]);
+
+  if (isLoading)
+    return (
+      <div>
+        <div className="slider-container">
+          <div className="slider">
+              <Skeleton height={500} width={1000} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+          </div>
+        </div>
+        <div className="maincontainer">
+          <div className="grid home-container">
+            <FilmSection isLoading={isLoading} title="PHIM MỚI CẬP NHẬT" films={phimmoiCN} linkTo="/danh-sach/phim-moi-cap-nhat" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
+            <FilmSection isLoading={isLoading} title="PHIM LẺ" films={phimLe} linkTo="/danh-sach/phim-le" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
+            <FilmSection isLoading={isLoading} title="PHIM BỘ" films={phimBo} linkTo="/danh-sach/phim-bo" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
+            <FilmSection isLoading={isLoading} title="PHIM HOẠT HÌNH" films={phimHH} linkTo="/danh-sach/hoat-hinh" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
+            <FilmSection isLoading={isLoading} title="TV SHOWS" films={tvShows} linkTo="/danh-sach/tv-shows" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
+          </div>
+        </div>
+      </div>
+    )
 
   return (
     <div>

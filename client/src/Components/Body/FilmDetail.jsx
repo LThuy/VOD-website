@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo, Suspense, lazy } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo} from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,11 +14,12 @@ import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
 import LikeButton from '../Parts/LikeButton';
 import { toast } from "react-toastify";
 import CommentSection from '../Parts/Comment';
+import Skeleton from 'react-loading-skeleton';  // Import skeleton loader library
+import 'react-loading-skeleton/dist/skeleton.css';  
 
 
 function FilmDetail() {
     const { slug } = useParams();
-    const [loading, setLoading] = useState(false);
     const [film, setFilm] = useState({});
     const [actors, setActors] = useState([]);
     const [countries, setCountries] = useState([]);
@@ -35,6 +36,8 @@ function FilmDetail() {
     const handleClickWathFilm = useHandleCLickWatchFilm();
     const handleTruncateText = useHandleTruncateText();
 
+    // hanlde skeleton loading here
+    const [isLoading, setIsLoading] = useState(true);
 
 
     useEffect(() => {
@@ -94,7 +97,7 @@ function FilmDetail() {
         window.scrollTo(0, 0);
         const fetchData = async () => {
             try {
-                setLoading(true);
+                setIsLoading(true);
                 const [phimDetailData] = await fetchingApiData([`https://phimapi.com/phim/${slug}`]);
 
                 if (phimDetailData?.movie) {
@@ -108,7 +111,7 @@ function FilmDetail() {
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
-                setLoading(false);
+                setIsLoading(false);
             }
         };
 
@@ -178,6 +181,74 @@ function FilmDetail() {
             trailerRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     };
+
+    if (isLoading) {
+        return (
+            <div>
+            <div className="filmdetail-section">
+                <div className="filmdetail-container">
+                    {/* Film Details */}
+                    <div className="filmdetail-container-grid">
+                        <div className="filmdetail-container-poster">
+                            <div className="filmimg-container">
+                                <Skeleton height={500} width={1000} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                            </div>
+                        </div>
+
+                        {/* Film Information */}
+                        <div className="filmdetail-container-infor">
+                            <div className="filmdetaile-infor-item">
+                                <Skeleton height={40} width={350} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                <Skeleton height={40} width={100} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                            </div>
+                            <div className="filmdetaile-infor-item">
+                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                            </div>
+                            <div className="filmdetaile-infor-item">
+                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                            </div>
+                            <div className="filmdetaile-infor-item">
+                                <Skeleton height={40} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                <Skeleton height={40} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                            </div>
+                            <div className="filmdetaile-infor-review">
+                                <Skeleton height={40} width={150} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                <Skeleton height={150} width="100%" baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                            </div>
+                        </div>
+                        <Skeleton height={400} width="100%" baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                        {/* Similar Films */}
+                        <div className="filmdetail-container-similarfilm">
+                            <h1 className='mb-4'><Skeleton height={40} width={400} baseColor="#e0e0e0" highlightColor="#f5f5f5"/></h1>
+                            
+                            <div className="filmdetail-container-similarfilm-grid">
+                                <div className='row'>
+                                    <div className="col">
+                                        <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                    </div>
+                                    <div className="col">
+                                        <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                    </div>
+                                    <div className="col">
+                                        <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                    </div>
+                                    <div className="col">
+                                        <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        );
+    }
+
     return (
         <div>
             <div className="filmdetail-section">
@@ -203,8 +274,6 @@ function FilmDetail() {
                             <div className="filmdetaile-infor-item">
                                 <h4 className="filmdetaile-infor-item_type">Bạn thích phim này chứ?</h4>
                                 <LikeButton filmData={film} userId={userId} showToast={showToast} />
-                                <p id="filmdetaile-infor-item-ratingstart-content"></p>
-                                <p id="rating-stars-response"></p>
                                 <h4 className="gern-info filmdetaile-infor-item_type">Genre: <span className="filmdetaile-infor-item_info">
                                     {categoryNames}
                                 </span></h4>

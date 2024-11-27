@@ -9,6 +9,8 @@ import fetchingApiData from '../../Ultil/FetchingData/FetchingApi'
 import Pagination from '../Pagination/Pagination';
 import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function TypeFilm() {
     const { slug } = useParams();
@@ -63,7 +65,7 @@ function TypeFilm() {
         };
 
         fetchData();
-    }, [slug, currentPage,isNew])
+    }, [slug, currentPage, isNew])
 
 
     //mongo version
@@ -93,6 +95,38 @@ function TypeFilm() {
         document.title = dataFilm?.seoOnPage?.titlePage || 'Phim Bộ';
     }, [dataFilm]);
 
+    if (loading) {
+        return (
+            <div>
+                <div className="maincontainer">
+                    <div className="grid">
+                        <div className="row header-container">
+                            <div className="film-header-container">
+                                <Skeleton height={40} width="100%" baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                            </div>
+                        </div>
+                        <div className='row'>
+                            {[...Array(12)].map((_, index) => (
+                                <div
+                                    key={index}
+                                    className="film-item col-6 col-sm-4 col-md-4 col-lg-2"
+                                >
+                                    <div className="film-item-img-container">
+                                        <Skeleton height={270} width="100%" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="row pageNum-container">
+                            <div className="film-pageNum-continer">
+                                <Skeleton height={40} width={500} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
 
     return (
@@ -105,27 +139,32 @@ function TypeFilm() {
                         </div>
                     </div>
                     <div className='row'>
-                        {loading ? (
-                            <div className="loading-container">
-                                <div className="loading-item">
-                                    <FontAwesomeIcon className='icon-loading' icon={faSpinner} spin size="3x" />
-                                    <h2 className='mt-3'>Thông cảm! Đợi chút nha...</h2>
-                                </div>
-                            </div>
-                        ) : (
-                            film && film.map(item => (
+                        {film && film.length > 0 ? (
+                            film.map(item => (
                                 <div key={item._id} onClick={() => hanldeClickFilmDetail(item.slug)} className="film-item col col-lg-2 col-md-4">
                                     <div className="film-item-img-container">
                                         <img
                                             src={isNew ? item.poster_url : imgUrl + item.poster_url}
                                             alt={item.name}
                                         />
-
                                     </div>
                                     <div className="film-item-iconplay">
                                         <FontAwesomeIcon className='fa-circle-play' icon={faCirclePlay} />
                                     </div>
                                     <h4>{hanldeTruncateText(item.name)}</h4>
+                                </div>
+                            ))
+                        ) : (
+                            // If no films are available, show skeleton placeholders
+                            [...Array(12)].map((_, index) => (
+                                <div key={index} className="film-item col col-lg-2 col-md-4">
+                                    <div className="film-item-img-container">
+                                        <Skeleton height={270} width="100%" />
+                                    </div>
+                                    <div className="film-item-iconplay">
+                                        <Skeleton circle width={30} height={30} />
+                                    </div>
+                                    <Skeleton width="80%" height={20} />
                                 </div>
                             ))
                         )}

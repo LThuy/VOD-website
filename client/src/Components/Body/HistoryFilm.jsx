@@ -84,7 +84,7 @@ const HistoryFilm = () => {
                     </div>
                   </div>
                 ) : historyFilms && historyFilms.length > 0 ? (
-                  historyFilms.map((item) => (
+                  historyFilms.slice().reverse().map((item) => (
                     <div
                       key={item._id}
                       onClick={() => hanldeClickFilmDetail(item.slug)}
