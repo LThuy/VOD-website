@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 function Login({ setUserEmail }) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
@@ -93,6 +94,10 @@ function Login({ setUserEmail }) {
     }
   };
 
+  const handleGuestAccess = () => {
+    sessionStorage.setItem("isGuest", "true"); // Set guest status in sessionStorage
+  };
+
 
   return (
     <div className="login-container">
@@ -141,7 +146,7 @@ function Login({ setUserEmail }) {
               </Link>
             </div>
             <div className="form-section_register w-full mt-4">
-              <Link to={'/'} className="guess-btn">
+              <Link to={'/'} className="guess-btn" onClick={handleGuestAccess}>
                 Tiếp tục với tư cách Khách
               </Link>
             </div>

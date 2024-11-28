@@ -98,7 +98,7 @@ class SiteControllers {
             // Generate a token for successful login
             const token = jwt.sign({
                 userId: user._id
-            }, jwtSecret, {
+            }, jwtSecret, { 
                 expiresIn: '7d'
             });
 

@@ -59,10 +59,13 @@ const FilmSection = React.memo(({ isLoading, title, films, linkTo, handleClick, 
                 alt={item.name} 
                 loading="lazy" 
               />
-            </div>
-            <div className="film-item-iconplay">
+              <div className="film-item-iconplay">
               <FontAwesomeIcon className='fa-circle-play' icon={faCirclePlay} />
             </div>
+            </div>
+            {/* <div className="film-item-iconplay">
+              <FontAwesomeIcon className='fa-circle-play' icon={faCirclePlay} />
+            </div> */}
             <h4>{truncateText(item.name)}</h4>
           </div>
         ))}

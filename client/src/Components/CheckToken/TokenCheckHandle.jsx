@@ -16,8 +16,10 @@ function isTokenExpired(token) {
 
 const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem('token');
+    const isGuest = sessionStorage.getItem('isGuest')
+    console.log(!isGuest)
     
-    if (!token || isTokenExpired(token)) {
+    if (!isGuest && (!token || isTokenExpired(token))) {
         // Remove invalid or expired token from localStorage and redirect to login page
         localStorage.removeItem('token');
         return <Navigate to="/login" replace />;
