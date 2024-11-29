@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo} from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,8 +14,8 @@ import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
 import LikeButton from '../Parts/LikeButton';
 import { toast } from "react-toastify";
 import CommentSection from '../Parts/Comment';
-import Skeleton from 'react-loading-skeleton';  // Import skeleton loader library
-import 'react-loading-skeleton/dist/skeleton.css';  
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 
 function FilmDetail() {
@@ -39,7 +39,10 @@ function FilmDetail() {
     // hanlde skeleton loading here
     const [isLoading, setIsLoading] = useState(true);
 
+    const [showTrailer, setShowTrailer] = useState(false);
 
+    // Validate the embedUrl
+    
     useEffect(() => {
         window.scrollTo(0, 0);
         const userid = localStorage.getItem("userId");
@@ -95,6 +98,10 @@ function FilmDetail() {
     // Fetch film details
     useEffect(() => {
         window.scrollTo(0, 0);
+        setShowTrailer(false);
+        const timer = setTimeout(() => {
+            setShowTrailer(true);
+        }, 5000);
         const fetchData = async () => {
             try {
                 setIsLoading(true);
@@ -114,11 +121,10 @@ function FilmDetail() {
                 setIsLoading(false);
             }
         };
-
         fetchData();
-    }, [slug]); // Depend on slug
+        return () => clearTimeout(timer);
+    }, [slug]);
 
-    // Update embed URL and fetch similar films based on film type and category
     useEffect(() => {
         if (!film?._id) return;
 
@@ -126,7 +132,11 @@ function FilmDetail() {
 
         const ytbUrlTrailer = film.trailer_url;
         const videoID = extractYouTubeID(ytbUrlTrailer);
-        setEmbedUrl(`https://www.youtube.com/embed/${videoID}`);
+        if (videoID) {
+            setEmbedUrl(`https://www.youtube.com/embed/${videoID}`);
+        } else {
+            setEmbedUrl(null); // No valid videoID means no trailer
+        }
 
         const fetchSimilarFilms = async () => {
             const typeMap = {
@@ -160,7 +170,7 @@ function FilmDetail() {
         };
 
         fetchSimilarFilms();
-    }, [film?._id, film?.type, film?.category]); // Only depend on necessary properties
+    }, [film?._id, film?.type, film?.category]);
 
     const extractYouTubeID = (url) => {
         try {
@@ -185,59 +195,60 @@ function FilmDetail() {
     if (isLoading) {
         return (
             <div>
-            <div className="filmdetail-section">
-                <div className="filmdetail-container">
-                    {/* Film Details */}
-                    <div className="filmdetail-container-grid">
-                        <div className="filmdetail-container-poster">
-                            <div className="filmimg-container">
-                                <Skeleton height={500} width={1000} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                <div className="filmdetail-section">
+                    <div className="filmdetail-container">
+                        {/* Film Details */}
+                        <div className="filmdetail-container-grid">
+                            <div className="filmdetail-container-poster">
+                                <div className="filmimg-container">
+                                    <Skeleton height={500} width={1000} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Film Information */}
-                        <div className="filmdetail-container-infor">
-                            <div className="filmdetaile-infor-item">
-                                <Skeleton height={40} width={350} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                <Skeleton height={40} width={100} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                            {/* Film Information */}
+                            <div className="filmdetail-container-infor">
+                                <div className="filmdetaile-infor-item">
+                                    <Skeleton height={40} width={350} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                    <Skeleton height={40} width={100} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                    <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                    <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                </div>
+                                <div className="filmdetaile-infor-item">
+                                    <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                    <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                </div>
+                                <div className="filmdetaile-infor-item">
+                                    <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                    <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                </div>
+                                <div className="filmdetaile-infor-item">
+                                    <Skeleton height={40} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                    <Skeleton height={40} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                </div>
+                                <div className="filmdetaile-infor-review">
+                                    <Skeleton height={40} width={150} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                    <Skeleton height={150} width="100%" baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                </div>
                             </div>
-                            <div className="filmdetaile-infor-item">
-                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                            </div>
-                            <div className="filmdetaile-infor-item">
-                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                <Skeleton height={40} width={300} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                            </div>
-                            <div className="filmdetaile-infor-item">
-                                <Skeleton height={40} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                <Skeleton height={40} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                            </div>
-                            <div className="filmdetaile-infor-review">
-                                <Skeleton height={40} width={150} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                <Skeleton height={150} width="100%" baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                            </div>
-                        </div>
-                        <Skeleton height={400} width="100%" baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                        {/* Similar Films */}
-                        <div className="filmdetail-container-similarfilm">
-                            <h1 className='mb-4'><Skeleton height={40} width={400} baseColor="#e0e0e0" highlightColor="#f5f5f5"/></h1>
-                            
-                            <div className="filmdetail-container-similarfilm-grid">
-                                <div className='row'>
-                                    <div className="col">
-                                        <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                    </div>
-                                    <div className="col">
-                                        <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                    </div>
-                                    <div className="col">
-                                        <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
-                                    </div>
-                                    <div className="col">
-                                        <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+                            <Skeleton height={400} width="100%" baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                            {/* Similar Films */}
+                            <div className="filmdetail-container-similarfilm">
+                                <h1 className='mb-4'><Skeleton height={40} width={400} baseColor="#e0e0e0" highlightColor="#f5f5f5" /></h1>
+
+                                <div className="filmdetail-container-similarfilm-grid">
+                                    <div className='row'>
+                                        <div className="col">
+                                            <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                        </div>
+                                        <div className="col">
+                                            <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                        </div>
+                                        <div className="col">
+                                            <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                        </div>
+                                        <div className="col">
+                                            <Skeleton height={300} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -245,9 +256,9 @@ function FilmDetail() {
                     </div>
                 </div>
             </div>
-        </div>
         );
     }
+    
 
     return (
         <div>
@@ -257,7 +268,19 @@ function FilmDetail() {
                     <div className="filmdetail-container-grid">
                         <div className="filmdetail-container-poster">
                             <div className="filmimg-container">
-                                <img id="film-img" src={film.thumb_url} alt={film.name} />
+                                {showTrailer && embedUrl ? (
+                                    <iframe
+                                        className="filmdetail-video"
+                                        allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                        src={`${embedUrl}?autoplay=1&controls=0`}
+                                        width="100%"
+                                        height="520"
+                                        allowFullScreen
+                                    ></iframe>
+                                ) : (
+                                    // Render the fallback image
+                                    <img id="film-img" src={film.thumb_url} alt={film.name} />
+                                )}
                                 <h1 id="nameFilm">{film.name}</h1>
                                 <h3 id="originameFilm">{`${film.origin_name} (${film.year})`}</h3>
                                 <button onClick={scrollToTrailer} className="trailer-btn">

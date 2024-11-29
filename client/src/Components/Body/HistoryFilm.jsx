@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../../Style/BodyCss/Profile.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faCirclePlay ,faTrash} from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faCirclePlay, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
+import Skeleton from 'react-loading-skeleton';  // Import skeleton loader library
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const HistoryFilm = () => {
   const [historyFilms, setHistoryFilms] = useState([]);
@@ -51,10 +53,33 @@ const HistoryFilm = () => {
 
   // Render loading state or error message if applicable
   if (loading) {
-    return <div className="loading-container">
-      <div className="loading-item">
-        <FontAwesomeIcon className='icon-loading' icon={faSpinner} spin size="3x" />
-        <h2>Thông cảm! Đợi chút nha...</h2>
+    return <div className="profiledetail-section">
+      <div className="profiledetail-container">
+        <div className="profiledetail-container-grid">
+          <div className="profiledetail-container-item">
+            <div className="profiledetail-container-item_header">
+              <Skeleton height={50} width="100%" baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+            </div>
+            <div className="profiledetail-container-item-info">
+              <div className="row favfilm-container">
+                {
+                  [...Array(3)].map((_, index) => (
+                    <div key={index} className="film-item col-6 col-lg-3 col-md-3 col-sm-4 col-xl-4">
+                      <div className="film-item-img-container">
+                        <Skeleton height={270} width={200} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                      </div>
+                      <div className="film-item-iconplay">
+                        <Skeleton circle width={30} height={30} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                      </div>
+                      <Skeleton width="80%" height={20} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     </div>;
   }
@@ -76,14 +101,7 @@ const HistoryFilm = () => {
             </div>
             <div className="profiledetail-container-item-info">
               <div className="row favfilm-container">
-                {loading ? (
-                  <div className="loading-container">
-                    <div className="loading-item">
-                      <FontAwesomeIcon className="icon-loading" icon={faSpinner} spin size="3x" />
-                      <h2 className="mt-3">Thông cảm! Đợi chút nha...</h2>
-                    </div>
-                  </div>
-                ) : historyFilms && historyFilms.length > 0 ? (
+                {historyFilms && historyFilms.length > 0 ? (
                   historyFilms.slice().reverse().map((item) => (
                     <div
                       key={item._id}

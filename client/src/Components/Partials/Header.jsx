@@ -1,8 +1,8 @@
-import React, { useState, useRef ,useEffect} from 'react';
-import { Link, useNavigate} from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import '../../Style/PartialsCss/Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faMagnifyingGlass, faUser,faStar,faRightFromBracket,faClockRotateLeft,faPeopleRoof } from '@fortawesome/free-solid-svg-icons';
+import { faList, faMagnifyingGlass, faUser, faStar, faRightFromBracket, faClockRotateLeft, faPeopleRoof, faPlus } from '@fortawesome/free-solid-svg-icons';
 import '../../Style/Responsive/Responsive.css'
 
 import { useHandleEnterSearchFilm } from '../../Ultil/Hepler/navigationHelpers'
@@ -50,14 +50,14 @@ function Header() {
     // render user's email
     const [userEmail, setUserEmail] = useState(null);
     const [userName, setUserName] = useState(null);
-    const  [userRole, setUserRole] = useState(null);
+    const [userRole, setUserRole] = useState(null);
 
     useEffect(() => {
         const email = localStorage.getItem("userEmail");
         const userrole = localStorage.getItem('userRole');
         if (email) {
             setUserEmail(email);
-            const name = email.split("@")[0]; 
+            const name = email.split("@")[0];
             setUserName(name);
             setUserRole(userrole)
         }
@@ -146,26 +146,48 @@ function Header() {
                                     <input onKeyDown={handleKeyDown} ref={inputBox} placeholder="Search Film Name" className="input-search" type="text" />
                                 </div>
                             </div>
-                            
+
                             <div className="account">
                                 {userName ? (
                                     <div className='profile-icon-container'>
                                         <Link to='/profile' className='user-afterlogin'>
                                             <div className="usericon-container">
                                                 <FontAwesomeIcon className="account-icon" icon={faUser} />
-                                                <span className="user-email">{userName}</span> 
+                                                <span className="user-email">{userName}</span>
                                             </div>
                                         </Link>
                                         <div className="sub-profilenav">
                                             <ul className="profile-list">
-                                                <Link to={"/profile"} className="profile-list-item"> <FontAwesomeIcon icon={faUser} />Hồ Sơ</Link>
-                                                <Link to={"/favorite"} className="profile-list-item"> <FontAwesomeIcon icon={faStar} />Phim Yêu Thích</Link>
-                                                <Link to={"/history"} className="profile-list-item"> <FontAwesomeIcon icon={faClockRotateLeft} />Lịch sử xem phim</Link>
-                                                {userRole === 'admin' ? (
-                                                    <Link to={"/user-management"} className="profile-list-item"> <FontAwesomeIcon icon={faPeopleRoof} />Quán lí người dùng</Link>
-                                                ) : null}
-                                                <div onClick={handleLogout} className="profile-list-item"><FontAwesomeIcon icon={faRightFromBracket} />Đăng Xuất</div>
+                                                <Link to={"/profile"} className="profile-list-item">
+                                                    <FontAwesomeIcon className="profile-icon" icon={faUser} />
+                                                    <span>Hồ Sơ</span>
+                                                </Link>
+                                                <Link to={"/favorite"} className="profile-list-item">
+                                                    <FontAwesomeIcon className="profile-icon" icon={faStar} />
+                                                    <span>Phim Yêu Thích</span>
+                                                </Link>
+                                                <Link to={"/history"} className="profile-list-item">
+                                                    <FontAwesomeIcon className="profile-icon" icon={faClockRotateLeft} />
+                                                    <span>Lịch sử xem phim</span>
+                                                </Link>
+                                                {userRole === "admin" && (
+                                                    <>
+                                                        <Link to={"/user-management"} className="profile-list-item">
+                                                            <FontAwesomeIcon className="profile-icon" icon={faPeopleRoof} />
+                                                            <span>Quản lý người dùng</span>
+                                                        </Link>
+                                                        <Link to={"/create-newfilm"} className="profile-list-item">
+                                                            <FontAwesomeIcon className="profile-icon" icon={faPlus} />
+                                                            <span>Đăng phim mới</span>
+                                                        </Link>
+                                                    </>
+                                                )}
+                                                <div onClick={handleLogout} className="profile-list-item">
+                                                    <FontAwesomeIcon className="profile-icon" icon={faRightFromBracket} />
+                                                    <span>Đăng Xuất</span>
+                                                </div>
                                             </ul>
+
                                         </div>
                                     </div>
                                 ) : (
@@ -174,7 +196,7 @@ function Header() {
                                     </Link>
                                 )}
                             </div>
-                            
+
                         </div>
                     </header>
                 </div>

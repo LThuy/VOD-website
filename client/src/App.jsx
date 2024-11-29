@@ -29,6 +29,8 @@ import HistoryFilm from './Components/Body/HistoryFilm';
 import ProtectedRoute from './Components/CheckToken/TokenCheckHandle';
 import ForgetPass from './Components/Body/ForgetPass';
 import ResetPassword from './Components/Body/ResetPassword';
+import CountryFilm from './Components/Body/CountryFilm';
+import CreateNewFilm from './Components/Body/CreateNewFilm';
 
 const FilmDetail = lazy(() => import('./Components/Body/FilmDetail'));
 const Home = lazy(() => import('./Components/Body/Home'));
@@ -104,6 +106,14 @@ function App() {
                         }
                     />
                     <Route
+                        path="/create-newfilm"
+                        element={
+                            <ProtectedRoute>
+                                <CreateNewFilm />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
                         path="/changepassword"
                         element={
                             <ProtectedRoute>
@@ -167,6 +177,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <GenreFilm />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/country/:slug"
+                        element={
+                            <ProtectedRoute>
+                                <CountryFilm />
                             </ProtectedRoute>
                         }
                     />

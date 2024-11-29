@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../Style/BodyCss/Login.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -8,6 +8,11 @@ import 'react-toastify/dist/ReactToastify.css';
 function Login({ setUserEmail }) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    document.title = "Login Page"
+  },[])
 
   // Custom validator
   const validateInput = () => {

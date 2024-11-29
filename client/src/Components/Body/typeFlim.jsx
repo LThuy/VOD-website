@@ -37,6 +37,9 @@ function TypeFilm() {
     //         });
     // }, []);
     useEffect(() => {
+        window.scrollTo(0,0);
+    },[])
+    useEffect(() => {
         if (slug !== "phim-moi-cap-nhat") {
             setIsNew(false)
         }

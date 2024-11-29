@@ -11,6 +11,7 @@ function Register() {
     confirmPassword: '',
   });
   const navigate = useNavigate();
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +81,7 @@ function Register() {
         </div>
         <div className="form-seciton">
           <form id="registerForm" className="form-seciton-container" onSubmit={handleSubmit}>
-            <div className="form-seciton_input">
+            <div className="form-section_input">
               <input
                 className="formlogin-inputvalue"
                 type="text"
@@ -90,7 +91,7 @@ function Register() {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="form-seciton_input mt-3">
+            <div className="form-section_input mt-3">
               <input
                 className="formlogin-inputvalue"
                 type="password"
@@ -100,7 +101,7 @@ function Register() {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="form-seciton_input mt-3">
+            <div className="form-section_input mt-3">
               <input
                 className="formlogin-inputvalue"
                 type="password"

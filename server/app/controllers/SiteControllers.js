@@ -98,7 +98,7 @@ class SiteControllers {
             // Generate a token for successful login
             const token = jwt.sign({
                 userId: user._id
-            }, jwtSecret, { 
+            }, jwtSecret, {
                 expiresIn: '7d'
             });
 
@@ -280,7 +280,7 @@ class SiteControllers {
             const isMatch = await bcrypt.compare(oldPassword, user.password);
             if (!isMatch) {
                 return res.status(400).json({
-                    message: 'Old password is incorrect.'
+                    message: 'Old password is incorrect.Try again!'
                 });
             }
 
@@ -304,34 +304,54 @@ class SiteControllers {
     }
     // [post] /forgetpassword
     async forgetPassword(req, res) {
-        const { email } = req.body;
-    
+        const {
+            email
+        } = req.body;
+
         try {
-            const account = await User.findOne({ email });
-            
+            const account = await User.findOne({
+                email
+            });
+
             if (!account) {
                 return res.status(404).json({
                     success: false,
                     message: 'Account not found'
                 });
             }
-    
+
             // Generate reset token
-            const resetToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const resetToken = jwt.sign({
+                email
+            }, process.env.JWT_SECRET, {
+                expiresIn: '1h'
+            });
             console.log('Generated reset token:', resetToken);
-    
+
             account.verificationToken = resetToken;
             await account.save();
-    
+
             const clientBaseUrl = process.env.CLIENT_BASE_URL || 'http://localhost:3000';
             const resetUrl = `${clientBaseUrl}/reset-password/${resetToken}`;
-    
+
             const emailContent = `
-                <p>You requested to reset your password. Click the link below to reset it:</p>
-                <a href="${resetUrl}">Reset Password</a>
-                <p>If you didn't request this, ignore this email.</p>
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;">
+                    <h2 style="color: #4CAF50; text-align: center;">Password Reset Request</h2>
+                    <p style="font-size: 16px; margin-bottom: 20px;">Hello,</p>
+                    <p style="font-size: 16px; margin-bottom: 20px;">
+                        You recently requested to reset your password. Click the button below to reset it:
+                    </p>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <a href="${resetUrl}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; font-size: 16px; border-radius: 5px;">Reset Password</a>
+                    </div>
+                    <p style="font-size: 16px; margin-bottom: 20px;">
+                        If you didn't request this, please ignore this email. Your account will remain secure.
+                    </p>
+                    <p style="font-size: 14px; color: #555;">Thank you,<br>The Support Team</p>
+                </div>
             `;
-    
+
+
             try {
                 await sendResetEmail(email, 'Password Reset Request', emailContent);
             } catch (emailError) {
@@ -342,7 +362,7 @@ class SiteControllers {
                     error: emailError
                 });
             }
-    
+
             res.status(200).json({
                 success: true,
                 message: 'Password reset email sent'
@@ -356,38 +376,43 @@ class SiteControllers {
             });
         }
     }
-    
+
     async resetPassword(req, res) {
-        const { resetToken, password } = req.body;
-    
+        const {
+            resetToken,
+            password
+        } = req.body;
+
         try {
             console.log('Reset token received:', resetToken); // Log the token to check if it's correct
-    
+
             // Check for a user matching the reset token
-            const user = await User.findOne({ verificationToken: resetToken });
-            
+            const user = await User.findOne({
+                verificationToken: resetToken
+            });
+
             // Log the user to see which account is being returned
             console.log('User found for password reset:', user);
-    
+
             if (!user) {
                 return res.status(400).json({
                     success: false,
                     message: 'Invalid or expired token.'
                 });
             }
-    
+
             // Hash the new password
             const hashedPassword = await bcrypt.hash(password, 10);
             console.log('Hashed password:', hashedPassword); // Log the hashed password
-    
+
             // Update the password and clear the reset token
             user.password = hashedPassword;
             user.verificationToken = null; // Clear the reset token after the password has been reset
-    
+
             // Save the updated user document
             const savedUser = await user.save();
             console.log('User saved successfully:', savedUser); // Log the saved user
-    
+
             res.json({
                 success: true,
                 message: 'Password reset successfully.'
@@ -400,7 +425,7 @@ class SiteControllers {
             });
         }
     }
-    
+
 
     // [GET] /logout
     logout(req, res) {

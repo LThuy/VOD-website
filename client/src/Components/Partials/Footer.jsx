@@ -3,6 +3,7 @@ import '../../Style/PartialsCss/Footer.css'; // Ensure the path to your CSS file
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 function Footer() {
     return (
@@ -17,21 +18,20 @@ function Footer() {
                             </ul>
                             <ul className="footer-genr-list col col-lg-2 col-md-4 col-6">
                                 <li className="footer-genr-list-item"><a style={{ color: '#66ad31' }} href="" className="footer-genr-list-item_link">Fantastic Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">American Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">Korean Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">China Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">ThaiLand Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">Honor Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">VietNam Film</a></li>
+                                <li className="footer-genr-list-item"><Link to={"/country/viet-nam"} href="" className="footer-genr-list-item_link">VietNam Film</Link></li>
+                                <li className="footer-genr-list-item"><Link to={"/country/au-my"} className="footer-genr-list-item_link">American Film</Link></li>
+                                <li className="footer-genr-list-item"><Link to={"/country/han-quoc"} href="" className="footer-genr-list-item_link">Korean Film</Link></li>
+                                <li className="footer-genr-list-item"><Link to={"/country/trung-quoc"} href="" className="footer-genr-list-item_link">China Film</Link></li>
+                                <li className="footer-genr-list-item"><Link to={"/country/thai-lan"} href="" className="footer-genr-list-item_link">ThaiLand Film</Link></li>
+                                <li className="footer-genr-list-item"><Link to={"/country/an-do"} href="" className="footer-genr-list-item_link">India Film</Link></li>
                             </ul>
                             <ul className="footer-genr-list col col-lg-2 col-md-4 col-6">
                                 <li className="footer-genr-list-item"><a style={{ color: '#66ad31' }} href="" className="footer-genr-list-item_link">New Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">Movie Theaters</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">Odd Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">Series Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">Action Film</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">Fantasy Movie</a></li>
-                                <li className="footer-genr-list-item"><a href="" className="footer-genr-list-item_link">Drama Film</a></li>
+                                <li className="footer-genr-list-item"><Link to="/danh-sach/phim-le" className="footer-genr-list-item_link">Movie Theaters</Link></li>
+                                <li className="footer-genr-list-item"><Link to="/danh-sach/phim-bo" className="footer-genr-list-item_link">Series Film</Link></li>
+                                <li className="footer-genr-list-item"><Link to={"/danh-sach"} className="footer-genr-list-item_link">Action Film</Link></li>
+                                <li className="footer-genr-list-item"><Link to={"/danh-sach"} className="footer-genr-list-item_link">Fantasy Movie</Link></li>
+                                <li className="footer-genr-list-item"><Link to={"/danh-sach"} className="footer-genr-list-item_link">Drama Film</Link></li>
                             </ul>
                             <ul className="footer-genr-list col col-lg-2 col-md-4 col-6">
                                 <li className="footer-genr-list-item"><a style={{ color: '#66ad31' }} href="" className="footer-genr-list-item_link">About Us</a></li>

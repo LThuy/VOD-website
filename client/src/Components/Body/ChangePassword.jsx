@@ -22,6 +22,9 @@ function ChangePassword() {
       navigate("/login");
     }
   }, [navigate]);
+  useEffect(() => {
+    document.title = "Change Your Password"
+  },[])
 
   const handleChange = (e) => {
     const { name, value } = e.target;

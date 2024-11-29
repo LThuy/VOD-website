@@ -8,7 +8,8 @@ import '../../Style/Responsive/Responsive.css'
 import fetchingApiData from '../../Ultil/FetchingData/FetchingApi'
 import {useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import {useHandleTruncateText} from '../../Ultil/Hepler/truncateText'
-
+import Skeleton from 'react-loading-skeleton';  // Import skeleton loader library
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function SearchResult() {
     const { slug } = useParams();
@@ -44,6 +45,34 @@ function SearchResult() {
     useEffect(() => {
         document.title = dataFilmResult?.seoOnPage?.titleHead || 'Kết quả tìm kiếm';
     }, [dataFilmResult]);
+
+    if (loading) {
+        return (
+            <div>
+                <div className="maincontainer">
+                    <div className="grid">
+                        <div className="row header-container">
+                            <div className="film-header-container">
+                                <Skeleton height={40} width="100%" baseColor="#e0e0e0" highlightColor="#f5f5f5" />
+                            </div>
+                        </div>
+                        <div className='row'>
+                            {[...Array(12)].map((_, index) => (
+                                <div
+                                    key={index}
+                                    className="film-item col-6 col-sm-4 col-md-4 col-lg-2"
+                                >
+                                    <div className="film-item-img-container">
+                                        <Skeleton height={270} width="100%" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div>

@@ -84,7 +84,6 @@
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-    /* Aligns span and input vertically */
 }
 
 .form-input-email {
@@ -175,7 +174,7 @@
     }
 }
 
-.film-favorite-item-img-container:hover ~ .filmfavorite-item-iconplay{
+.film-favorite-item-img-container:hover .filmfavorite-item-iconplay{
     display: block;
 }
 .film-favorite-item-img-container:hover img{
@@ -197,4 +196,14 @@
 }
 .film-item  {
     margin-bottom: 10px;
+}
+/* create new film */
+#create-newfilm {
+    width: 100%;
+}
+.form-create-group {
+    color: white;
+}
+.form-create-input {
+    margin-left: 10px;
 }

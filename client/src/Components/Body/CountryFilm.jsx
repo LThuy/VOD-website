@@ -12,7 +12,7 @@ import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-function GenreFilm() {
+function CountryFilm() {
     const { slug } = useParams();
     const [films, setFilms] = useState([]);
     const [filteredFilm, setFilteredFilms] = useState([]);
@@ -24,26 +24,28 @@ function GenreFilm() {
     const hanldeClickFilmDetail = useHandleClickFilmDetail();
     const hanldeTruncateText = useHandleTruncateText()
 
-    const specialGenre = {
-        "hanh-dong": "HÀNH ĐỘNG",
-        "tinh-cam": "TÌNH CẢM",
-        "hai-huoc": "HÀI HƯỚC",
-        "gia-dinh": "GIA ĐÌNH",
-        "chinh-kich": "CHÍNH KỊCH",
-        "hoat-hinh": "HOẠT HÌNH",
-        "khoa-hoc": "KHOA HỌC",
-        "phieu-luu": "PHIÊU LƯU",
-        "chien-tranh": "CHIẾN TRANH",
-        "the-thao": "THỂ THAO",
-        "lich-su": "LỊCH SỬ",
-        "bi-an": "BÍ ẨN",
-        "tam-li": "TÂM LÍ",
-        "co-trang": "CỔ TRANG",
-        "vo-thua": "VÕ TRANG",
-        "kinh-di": "KINH DỊ",
-        "vien-tuong": "VIỄN TƯỞNG"
+    const specialCountry = {
+        "viet-nam": "VIỆT NAM",
+        "au-my": "ÂU MỸ",
+        "trung-quoc": "TRUNG QUỐC",
+        "han-quoc": "HÀN QUỐC",
+        "nhat-ban": "NHẬT BẢN",
+        "an-do": "ẤN ĐỘ",
+        "anh": "ANH",
+        "phap": "PHÁP",
+        "duc": "ĐỨC",
+        "nga": "NGA",
+        "y": "Ý",
+        "tay-ban-nha": "TÂY BAN NHA",
+        "thai-lan": "THÁI LAN",
+        "philippines": "PHILIPPINES",
+        "uc": "ÚC",
+        "canada": "CANADA",
+        "brazil": "BRAZIL"
     };
+    
     useEffect(() => {
+        window.scrollTo(0, 0);
         const fetchData = async () => {
             setLoading(true)
             try {
@@ -63,15 +65,13 @@ function GenreFilm() {
             }
         };
 
-
-        setTitleGenre(specialGenre[slug])
-
+        setTitleGenre(specialCountry[slug])
         fetchData();
     }, [slug, currentPage])
 
     useEffect(() => {
         const filteredFilms = films.filter(item =>
-            item.category.some(category => slug.includes(category.slug))
+            item.country.some(country => slug.includes(country.slug))
         );
 
         setFilteredFilms(filteredFilms);
@@ -164,4 +164,4 @@ function GenreFilm() {
     )
 }
 
-export default GenreFilm
+export default CountryFilm

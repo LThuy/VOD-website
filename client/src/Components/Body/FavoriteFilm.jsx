@@ -89,7 +89,6 @@ const FavoriteFilm = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-  console.log(favoriteFilms)
 
   return (
     <div className="profiledetail-section">
