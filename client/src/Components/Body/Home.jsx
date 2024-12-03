@@ -1,14 +1,15 @@
 // src/components/Home.js
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, Suspense } from 'react';
 import '../../Style/BodyCss/Home.css';
 import '../../Style/All/grid.css';
 import '../../Style/Responsive/Responsive.css';
 import useMovieData from '../../Hooks/useMovieData';
 import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText';
-import FilmSection from '../Parts/FilmSection';
-import Skeleton from 'react-loading-skeleton'; 
+// import FilmSection from '../Parts/FilmSection';
+import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+const FilmSection = React.lazy(() => import('../Parts/FilmSection'));
 
 function Home() {
   const { movieData, isLoading } = useMovieData();
@@ -69,7 +70,7 @@ function Home() {
       <div>
         <div className="slider-container">
           <div className="slider">
-              <Skeleton height={500} width={1000} baseColor="#e0e0e0" highlightColor="#f5f5f5"/>
+            <Skeleton height={500} width={1000} baseColor="#e0e0e0" highlightColor="#f5f5f5" />
           </div>
         </div>
         <div className="maincontainer">
@@ -86,14 +87,141 @@ function Home() {
 
   return (
     <div>
+      {/* Render slider if needed */}
       {renderSlider}
+
       <div className="maincontainer">
         <div className="grid home-container">
-          <FilmSection title="PHIM MỚI CẬP NHẬT" films={phimmoiCN} linkTo="/danh-sach/phim-moi-cap-nhat" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
-          <FilmSection title="PHIM LẺ" films={phimLe} linkTo="/danh-sach/phim-le" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
-          <FilmSection title="PHIM BỘ" films={phimBo} linkTo="/danh-sach/phim-bo" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
-          <FilmSection title="PHIM HOẠT HÌNH" films={phimHH} linkTo="/danh-sach/hoat-hinh" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
-          <FilmSection title="TV SHOWS" films={tvShows} linkTo="/danh-sach/tv-shows" handleClick={handleClickFilmDetail} truncateText={handleTruncateText} />
+          {/* Lazy load each FilmSection */}
+          <Suspense
+            fallback={
+              <div>
+                <Skeleton width="200px" />
+                <div className="row">
+                  {[...Array(6)].map((_, index) => (
+                    <div key={index} className="film-item col-6 col-lg-2 col-md-4">
+                      <div className="film-item-img-container">
+                        <Skeleton height={250} width="100%" />
+                      </div>
+                      <Skeleton width="80%" height={20} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            }
+          >
+            <FilmSection
+              title="PHIM MỚI CẬP NHẬT"
+              films={phimmoiCN}
+              linkTo="/danh-sach/phim-moi-cap-nhat"
+              handleClick={handleClickFilmDetail}
+              truncateText={handleTruncateText}
+            />
+          </Suspense>
+
+          <Suspense
+            fallback={
+              <div>
+                <Skeleton width="200px" />
+                <div className="row">
+                  {[...Array(6)].map((_, index) => (
+                    <div key={index} className="film-item col-6 col-lg-2 col-md-4">
+                      <div className="film-item-img-container">
+                        <Skeleton height={250} width="100%" />
+                      </div>
+                      <Skeleton width="80%" height={20} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            }
+          >
+            <FilmSection
+              title="PHIM LẺ"
+              films={phimLe}
+              linkTo="/danh-sach/phim-le"
+              handleClick={handleClickFilmDetail}
+              truncateText={handleTruncateText}
+            />
+          </Suspense>
+
+          <Suspense
+            fallback={
+              <div>
+                <Skeleton width="200px" />
+                <div className="row">
+                  {[...Array(6)].map((_, index) => (
+                    <div key={index} className="film-item col-6 col-lg-2 col-md-4">
+                      <div className="film-item-img-container">
+                        <Skeleton height={250} width="100%" />
+                      </div>
+                      <Skeleton width="80%" height={20} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            }
+          >
+            <FilmSection
+              title="PHIM BỘ"
+              films={phimBo}
+              linkTo="/danh-sach/phim-bo"
+              handleClick={handleClickFilmDetail}
+              truncateText={handleTruncateText}
+            />
+          </Suspense>
+
+          <Suspense
+            fallback={
+              <div>
+                <Skeleton width="200px" />
+                <div className="row">
+                  {[...Array(6)].map((_, index) => (
+                    <div key={index} className="film-item col-6 col-lg-2 col-md-4">
+                      <div className="film-item-img-container">
+                        <Skeleton height={250} width="100%" />
+                      </div>
+                      <Skeleton width="80%" height={20} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            }
+          >
+            <FilmSection
+              title="PHIM HOẠT HÌNH"
+              films={phimHH}
+              linkTo="/danh-sach/hoat-hinh"
+              handleClick={handleClickFilmDetail}
+              truncateText={handleTruncateText}
+            />
+          </Suspense>
+
+          <Suspense
+            fallback={
+              <div>
+                <Skeleton width="200px" />
+                <div className="row">
+                  {[...Array(6)].map((_, index) => (
+                    <div key={index} className="film-item col-6 col-lg-2 col-md-4">
+                      <div className="film-item-img-container">
+                        <Skeleton height={250} width="100%" />
+                      </div>
+                      <Skeleton width="80%" height={20} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            }
+          >
+            <FilmSection
+              title="TV SHOWS"
+              films={tvShows}
+              linkTo="/danh-sach/tv-shows"
+              handleClick={handleClickFilmDetail}
+              truncateText={handleTruncateText}
+            />
+          </Suspense>
         </div>
       </div>
     </div>

@@ -42,7 +42,7 @@ function FilmDetail() {
     const [showTrailer, setShowTrailer] = useState(false);
 
     // Validate the embedUrl
-    
+
     useEffect(() => {
         window.scrollTo(0, 0);
         const userid = localStorage.getItem("userId");
@@ -258,7 +258,7 @@ function FilmDetail() {
             </div>
         );
     }
-    
+
 
     return (
         <div>
@@ -272,11 +272,14 @@ function FilmDetail() {
                                     <iframe
                                         className="filmdetail-video"
                                         allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                        src={`${embedUrl}?autoplay=1&controls=0`}
+                                        src={`${embedUrl}?autoplay=1&controls=0&modestbranding=1&showinfo=0&iv_load_policy=3`}
                                         width="100%"
                                         height="520"
                                         allowFullScreen
                                     ></iframe>
+
+
+
                                 ) : (
                                     // Render the fallback image
                                     <img id="film-img" src={film.thumb_url} alt={film.name} />
