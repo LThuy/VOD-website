@@ -38,7 +38,11 @@ const CreateNewFilm = () => {
     });
   };
   const handleChange = (e) => {
-
+    const { name, value } = e.target;
+    setFilmData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   }
   const handleFileChange = (e) => {
     const { name, files } = e.target;
@@ -51,7 +55,7 @@ const CreateNewFilm = () => {
       });
     }
   };
-  
+
 
   return (
     <div className="profiledetail-section">
@@ -63,274 +67,255 @@ const CreateNewFilm = () => {
             </div>
             <div className="profiledetail-container-item-info">
               <form id="create-newfilm" onSubmit={handleSubmit}>
-                <div className="row">
+                <div className="form-row-container">
                   {/* Film Name */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Film Name:</span>
+                  <div className="form-group">
+                    <label>Film Name:</label>
                     <input
                       name="name"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.name}
+                      value={filmData.name || ""}
                       onChange={handleChange}
                       required
                     />
                   </div>
 
                   {/* Slug */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Slug:</span>
+                  <div className="form-group">
+                    <label>Slug:</label>
                     <input
                       name="slug"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.slug}
+                      value={filmData.slug || ""}
                       onChange={handleChange}
                       required
                     />
                   </div>
+
                   {/* Origin Name */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Origin Name:</span>
+                  <div className="form-group">
+                    <label>Origin Name:</label>
                     <input
                       name="origin_name"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.origin_name}
+                      value={filmData.origin_name || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Content */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Content:</span>
+                  <div className="form-group full-width">
+                    <label>Content:</label>
                     <textarea
                       name="content"
-                      className="form-create-input"
-                      rows="4"
-                      value={filmData.content}
+                      rows="2"
+                      value={filmData.content || ""}
                       onChange={handleChange}
                     />
                   </div>
+
                   {/* Type */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Type:</span>
+                  <div className="form-group">
+                    <label>Type:</label>
                     <input
                       name="type"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.type}
+                      value={filmData.type || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Status */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Status:</span>
+                  <div className="form-group">
+                    <label>Status:</label>
                     <input
                       name="status"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.status}
+                      value={filmData.status || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Poster URL */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Poster URL:</span>
+                  <div className="form-group">
+                    <label>Poster URL:</label>
                     <input
                       name="poster_url"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.poster_url}
+                      value={filmData.poster_url || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Thumbnail URL */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Thumbnail URL:</span>
+                  <div className="form-group">
+                    <label>Thumbnail URL:</label>
                     <input
                       name="thumb_url"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.thumb_url}
+                      value={filmData.thumb_url || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Trailer URL */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Trailer URL:</span>
+                  <div className="form-group">
+                    <label>Trailer URL:</label>
                     <input
                       name="trailer_url"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.trailer_url}
+                      value={filmData.trailer_url || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Time */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Time (e.g., 131 minutes):</span>
+                  <div className="form-group">
+                    <label>Time (e.g., 131 minutes):</label>
                     <input
                       name="time"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.time}
+                      value={filmData.time || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Episode Current */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Episode Current:</span>
+                  <div className="form-group">
+                    <label>Episode Current:</label>
                     <input
                       name="episode_current"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.episode_current}
+                      value={filmData.episode_current || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Episode Total */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Episode Total:</span>
+                  <div className="form-group">
+                    <label>Episode Total:</label>
                     <input
                       name="episode_total"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.episode_total}
+                      value={filmData.episode_total || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Quality */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Quality:</span>
+                  <div className="form-group">
+                    <label>Quality:</label>
                     <input
                       name="quality"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.quality}
+                      value={filmData.quality || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Language */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Language:</span>
+                  <div className="form-group">
+                    <label>Language:</label>
                     <input
                       name="lang"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.lang}
+                      value={filmData.lang || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Notify */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Notify:</span>
+                  <div className="form-group">
+                    <label>Notify:</label>
                     <input
                       name="notify"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.notify}
+                      value={filmData.notify || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Showtimes */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Showtimes:</span>
+                  <div className="form-group">
+                    <label>Showtimes:</label>
                     <input
                       name="showtimes"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.showtimes}
+                      value={filmData.showtimes || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Year */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Year:</span>
+                  <div className="form-group">
+                    <label>Year:</label>
                     <input
                       name="year"
-                      className="form-create-input"
                       type="number"
-                      value={filmData.year}
+                      value={filmData.year || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Actors */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Actors:</span>
+                  <div className="form-group">
+                    <label>Actors:</label>
                     <input
                       name="actor"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.actor}
+                      value={filmData.actor || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Directors */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Directors:</span>
+                  <div className="form-group">
+                    <label>Directors:</label>
                     <input
                       name="director"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.director}
+                      value={filmData.director || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Categories */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Categories:</span>
+                  <div className="form-group">
+                    <label>Categories:</label>
                     <input
                       name="category"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.category}
+                      value={filmData.category || ""}
                       onChange={handleChange}
                     />
                   </div>
 
                   {/* Countries */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Countries:</span>
+                  <div className="form-group">
+                    <label>Countries:</label>
                     <input
                       name="country"
-                      className="form-create-input"
                       type="text"
-                      value={filmData.country}
+                      value={filmData.country || ""}
                       onChange={handleChange}
                     />
                   </div>
-                  {/* upload file */}
-                  {/* File Upload for MP4 */}
-                  <div className="form-create-group col-xl-6 col-lg-6 col-md-4 col-sm-4 col-12">
-                    <span>Upload MP4 File:</span>
+
+                  {/* Upload File */}
+                  <div className="form-group full-width">
+                    <label>Upload MP4 File:</label>
                     <input
                       name="videoFile"
-                      className="form-create-input"
                       type="file"
-                      accept="video/mp4" 
+                      accept="video/mp4"
                       onChange={handleFileChange}
                     />
                   </div>
-
                 </div>
               </form>
             </div>
+
+
           </div>
         </div>
       </div>
