@@ -2,6 +2,8 @@ const AWS = require("aws-sdk");
 const express = require("express");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
+const { Queue } = require("bullmq");
+const IORedis = require("ioredis");
 require('dotenv').config();
 
 const s3 = new AWS.S3({
@@ -33,18 +35,44 @@ class UploadController {
 //       res.status(500).send("Failed to upload file.");
 //     }
 //   }
+      // Initialize Redis connection with required options
+      const connection = new IORedis({
+        maxRetriesPerRequest: null, // Set this explicitly to null
+        enableReadyCheck: false, // Optional: Prevent ready checks for faster setup
+      });
+      const fileQueue = new Queue("encode-video", { connection });
 
-        try {
-            console.log("File uploaded successfully:", req.file);
+      const videoFile = req.files['video'] ? req.files['video'][0] : null;
 
-            res.status(200).json({
-            message: "File uploaded successfully",
-            file: req.file,
-            });
-        } catch (error) {
-            console.error("Error uploading file:", error);
-            res.status(500).json({ error: "Error uploading file" });
+      // console.log('File:', video); // The uploaded file
+      console.log('Body:', req.body.name);
+
+      // If the file is successfully uploaded
+      const uploadedFileName = videoFile.filename; 
+
+      await fileQueue.add(
+        "encode-video",
+        { fileName: uploadedFileName, folderPath: videoFile.destination },
+        {
+          attempts: 2,
+          backoff: {
+            type: "fixed",
+            delay: 10000, // thử lại sau 10
+          },
         }
+      );
+
+      try {
+          console.log("File uploaded successfully:", req.file);
+
+          res.status(200).json({
+          message: "File uploaded successfully",
+          file: req.file,
+          });
+      } catch (error) {
+          console.error("Error uploading file:", error);
+          res.status(500).json({ error: "Error uploading file" });
+      }
     
     }
 }
