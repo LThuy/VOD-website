@@ -222,14 +222,14 @@
     flex: 1 1 100%;
 }
 
-label {
+.form-group label {
     white-space: nowrap;
     width: 150px;
     font-weight: bold;
     color: white;
 }
 
-input,
+.form-control-create,
 textarea {
     flex: 1;
     padding: 8px;
@@ -240,7 +240,7 @@ textarea {
 }
 
 /* Input Focus */
-input:focus,
+.form-control-create:focus,
 textarea:focus {
     border-color: #007bff;
     outline: none;

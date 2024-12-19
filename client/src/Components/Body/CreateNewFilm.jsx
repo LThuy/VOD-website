@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import "../../Style/BodyCss/Profile.css";
 import { toast } from 'react-toastify';
@@ -128,6 +129,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Film Name:</label>
                     <input
+                      className="form-control-create"
                       name="name"
                       type="text"
                       value={filmData.name || ""}
@@ -140,6 +142,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Slug:</label>
                     <input
+                      className="form-control-create"
                       name="slug"
                       type="text"
                       value={filmData.slug || ""}
@@ -152,6 +155,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Origin Name:</label>
                     <input
+                      className="form-control-create"
                       name="origin_name"
                       type="text"
                       value={filmData.origin_name || ""}
@@ -174,6 +178,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Type:</label>
                     <input
+                      className="form-control-create"
                       name="type"
                       type="text"
                       value={filmData.type || ""}
@@ -185,6 +190,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Status:</label>
                     <input
+                      className="form-control-create"
                       name="status"
                       type="text"
                       value={filmData.status || ""}
@@ -196,6 +202,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Poster URL:</label>
                     <input
+                      className="form-control-create"
                       name="poster_url"
                       type="text"
                       value={filmData.poster_url || ""}
@@ -207,6 +214,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Thumbnail URL:</label>
                     <input
+                      className="form-control-create"
                       name="thumb_url"
                       type="text"
                       value={filmData.thumb_url || ""}
@@ -218,6 +226,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Trailer URL:</label>
                     <input
+                      className="form-control-create"
                       name="trailer_url"
                       type="text"
                       value={filmData.trailer_url || ""}
@@ -229,6 +238,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Time (e.g., 131 minutes):</label>
                     <input
+                      className="form-control-create"
                       name="time"
                       type="text"
                       value={filmData.time || ""}
@@ -240,6 +250,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Episode Current:</label>
                     <input
+                      className="form-control-create"
                       name="episode_current"
                       type="text"
                       value={filmData.episode_current || ""}
@@ -251,6 +262,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Episode Total:</label>
                     <input
+                      className="form-control-create"
                       name="episode_total"
                       type="text"
                       value={filmData.episode_total || ""}
@@ -262,6 +274,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Quality:</label>
                     <input
+                      className="form-control-create"
                       name="quality"
                       type="text"
                       value={filmData.quality || ""}
@@ -273,6 +286,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Language:</label>
                     <input
+                      className="form-control-create"
                       name="lang"
                       type="text"
                       value={filmData.lang || ""}
@@ -284,6 +298,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Notify:</label>
                     <input
+                      className="form-control-create"
                       name="notify"
                       type="text"
                       value={filmData.notify || ""}
@@ -295,6 +310,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Showtimes:</label>
                     <input
+                      className="form-control-create"
                       name="showtimes"
                       type="text"
                       value={filmData.showtimes || ""}
@@ -306,6 +322,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Year:</label>
                     <input
+                      className="form-control-create"
                       name="year"
                       type="number"
                       value={filmData.year || ""}
@@ -317,6 +334,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Actors:</label>
                     <input
+                      className="form-control-create"
                       name="actor"
                       type="text"
                       value={filmData.actor || ""}
@@ -328,6 +346,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Directors:</label>
                     <input
+                      className="form-control-create-create"
                       name="director"
                       type="text"
                       value={filmData.director || ""}
@@ -339,6 +358,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Categories:</label>
                     <input
+                      className="form-control-create"
                       name="category"
                       type="text"
                       value={filmData.category || ""}
@@ -350,6 +370,7 @@ const CreateNewFilm = () => {
                   <div className="form-group">
                     <label>Countries:</label>
                     <input
+                      className="form-control-create"
                       name="country"
                       type="text"
                       value={filmData.country || ""}
@@ -361,6 +382,7 @@ const CreateNewFilm = () => {
                   <div className="form-group full-width">
                     <label>Upload MP4 File:</label>
                     <input
+                      className="form-control-create"
                       name="video"
                       type="file"
                       accept="video/mp4"

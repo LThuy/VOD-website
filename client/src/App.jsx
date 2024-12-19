@@ -32,6 +32,8 @@ import ResetPassword from './Components/Body/ResetPassword';
 import CountryFilm from './Components/Body/CountryFilm';
 import CreateNewFilm from './Components/Body/CreateNewFilm';
 
+// const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
+
 const FilmDetail = lazy(() => import('./Components/Body/FilmDetail'));
 const Home = lazy(() => import('./Components/Body/Home'));
 
@@ -113,6 +115,14 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+                    {/* <Route
+                        path="/user-management"
+                        element={
+                            <ProtectedRoute>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    /> */}
                     <Route
                         path="/changepassword"
                         element={
