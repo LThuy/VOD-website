@@ -31,6 +31,7 @@ import ForgetPass from './Components/Body/ForgetPass';
 import ResetPassword from './Components/Body/ResetPassword';
 import CountryFilm from './Components/Body/CountryFilm';
 import CreateNewFilm from './Components/Body/CreateNewFilm';
+import YearFilm from './Components/Body/YearFilm';
 
 // const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
@@ -187,6 +188,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <GenreFilm />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/year/:slug"
+                        element={
+                            <ProtectedRoute>
+                                <YearFilm />
                             </ProtectedRoute>
                         }
                     />

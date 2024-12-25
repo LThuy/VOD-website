@@ -173,7 +173,7 @@
     position: absolute;
     height: 3px;
     left: 0;
-    width:78px;
+    width:140px;
     bottom: 20px;
     transform-origin: right;
     transform: scaleX(0);
@@ -268,7 +268,7 @@
 }
 .subnav-topphim {
     background-color: black;
-    width: 270px;
+    width: 200px;
     top: 40px;
     color: white;
     padding-bottom: 10px;

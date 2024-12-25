@@ -123,17 +123,17 @@ function Header() {
                                 <li className="nav-item" onClick={closeNav}><Link to="/danh-sach/phim-le" className="nav-item_link">Phim Lẻ</Link></li>
                                 <li className="nav-item" onClick={closeNav}><Link to="/danh-sach/phim-bo" className="nav-item_link">Phim Bộ</Link></li>
                                 <li className="nav-item topphim-hover">
-                                    <a className="nav-item_link" href="">Top Film</a>
+                                    <a className="nav-item_link" href="">Năm Phát Hành</a>
                                     <div className="subnav-topphim">
                                         <ul className="topphim-list">
-                                            <li className="topphim-list-item"><a className="topphim-list-item_link" href="">Top IMDB</a></li>
-                                            <li className="topphim-list-item"><a className="topphim-list-item_link" href="">Netflix Film</a></li>
-                                            <li className="topphim-list-item"><a className="topphim-list-item_link" href="">Marvel Film</a></li>
+                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2024'}>2024</Link></li>
+                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2023'}>2023</Link></li>
+                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2022'}>2022</Link></li>
                                         </ul>
                                         <ul className="topphim-list">
-                                            <li className="topphim-list-item"><a className="topphim-list-item_link" href="">Hot Film</a></li>
-                                            <li className="topphim-list-item"><a className="topphim-list-item_link" href="">DC Comic</a></li>
-                                            <li className="topphim-list-item"><a className="topphim-list-item_link" href="">HD Film</a></li>
+                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2021'}>2021</Link></li>
+                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2020'}>2020</Link></li>
+                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2019'}>2019</Link></li>
                                         </ul>
                                     </div>
                                 </li>
