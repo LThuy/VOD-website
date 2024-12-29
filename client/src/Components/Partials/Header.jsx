@@ -72,6 +72,7 @@ function Header() {
         navigate('/login');
     };
 
+    
 
     return (
         <header>
@@ -172,10 +173,10 @@ function Header() {
                                                 </Link>
                                                 {userRole === "admin" && (
                                                     <>
-                                                        <Link to={"/user-management"} className="profile-list-item">
+                                                        <a href={`http://localhost:3001/dashboard?username=${encodeURIComponent(userName)}`} className="profile-list-item">
                                                             <FontAwesomeIcon className="profile-icon" icon={faPeopleRoof} />
-                                                            <span>Quản lý người dùng</span>
-                                                        </Link>
+                                                            <span>Dashboard</span>
+                                                        </a>
                                                         <Link to={"/create-newfilm"} className="profile-list-item">
                                                             <FontAwesomeIcon className="profile-icon" icon={faPlus} />
                                                             <span>Đăng phim mới</span>

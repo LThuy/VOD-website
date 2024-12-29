@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   CAvatar,
   CBadge,
@@ -8,6 +8,7 @@ import {
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
+  // CText,
 } from '@coreui/react'
 import {
   cilBell,
@@ -24,11 +25,47 @@ import CIcon from '@coreui/icons-react'
 
 import avatar8 from './../../assets/images/avatars/8.jpg'
 
+
+
 const AppHeaderDropdown = () => {
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    // Check if the username is in the query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const usernameFromURL = urlParams.get('username');
+    console.log(usernameFromURL)
+    if (usernameFromURL) {
+      // Store username in localStorage
+      localStorage.setItem('username', usernameFromURL);
+      
+
+      // Reload the page to apply the username from localStorage
+      window.location.href = 'http://localhost:3001';
+    } else {
+      // If username is not in the query string, get it from localStorage
+      const storedUsername = localStorage.getItem('username');
+      if (storedUsername) {
+        setUsername(storedUsername);
+      }
+    }
+  }, []);
+
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
-        <CAvatar src={avatar8} size="md" />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column', 
+            alignItems: 'center',    
+            justifyContent: 'center',
+            padding: '4px',
+          }}
+        >
+          <CAvatar src={avatar8} size="md" />
+          <p className="text-primary my-0">{username || 'Loading...'}</p>
+        </div>
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>

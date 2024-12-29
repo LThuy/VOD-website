@@ -433,5 +433,13 @@ class SiteControllers {
         res.redirect('/')
     }
 
+    getDashboard(req, res) {
+        const { username } = req.body;
+        console.log('Received username:', username);
+      
+        // Redirect to localhost:3000 with username as query parameter
+        res.redirect(`http://localhost:3001?username=${encodeURIComponent(username)}`);
+    }
+
 }
 module.exports = new SiteControllers();
