@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   CButton,
   CCard,
@@ -14,7 +16,7 @@ import {
 import { DocsComponents, DocsExample } from 'src/components'
 
 function CreateFilm() {
-
+    const [file, setFile] = useState(null);
     const [filmData, setFilmData] = useState({
         name: "",
         slug: "",
@@ -33,12 +35,18 @@ function CreateFilm() {
         notify: "",
         showtimes: "",
         year: "",
-        actor: "",
-        director: "",
-        category: "",
-        country: "",
-        video: null,
+        actor: [],
+        director: [],
+        category: [],
+        country: [],
     });
+
+     // Create a FormData object
+    const formData = new FormData();
+
+    // Append the file
+    formData.append('video', file);
+    formData.append('name', filmData.name);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -46,12 +54,15 @@ function CreateFilm() {
     };
 
     const handleFileChange = (e) => {
-        setFilmData({ ...filmData, video: e.target.files[0] });
+        // setFilmData({ ...filmData, video: e.target.files[0] });
+        setFile(e.target.files[0]);
     };
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Form Submitted:", filmData);
+        console.log("Form Submitted:", formData);
         // Add your API or form submission logic here
         e.preventDefault();
         try {
