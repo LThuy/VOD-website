@@ -3,9 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 
 import Header from './Components/Partials/Header'
 import Footer from './Components/Partials/Footer'
-// import Home from './Components/Body/Home'
 import TypeFilm from './Components/Body/typeFlim'
-// import FilmDetail from './Components/Body/FilmDetail'
 import WatchFilm from './Components/Body/WatchFilm'
 import SearchResult from './Components/Body/SearchResult'
 import GenreFilm from './Components/Body/GenreFilm'
@@ -13,7 +11,6 @@ import Login from './Components/Body/Login'
 import LoginAdmin from './Admin/Components/AdminLogin'
 import NoticeVerify from './Components/Body/NoticeVerify'
 import Register from './Components/Body/Register'
-import RegisterAdmin from './Admin/Components/AdminRegister'
 import VerifyEmail from './Ultil/Account/VerifyEmail';
 import VerifyEmailAdmin from './Ultil/Admin-Account/VerifyEmail';
 import SuccessNotice from './Components/Body/SuccesNotive';
@@ -33,7 +30,6 @@ import CountryFilm from './Components/Body/CountryFilm';
 import CreateNewFilm from './Components/Body/CreateNewFilm';
 import YearFilm from './Components/Body/YearFilm';
 
-// const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
 const FilmDetail = lazy(() => import('./Components/Body/FilmDetail'));
 const Home = lazy(() => import('./Components/Body/Home'));
@@ -41,29 +37,27 @@ const Home = lazy(() => import('./Components/Body/Home'));
 
 function App() {
     const location = useLocation();
-    const isLoginPage = location.pathname === '/login';
-    const isForgetPassPage = location.pathname === '/forgetpassword';
-    const isResetPassPage = location.pathname.startsWith('/reset-password');
-    const isLoginAdminPage = location.pathname === '/admin/login';
-    const isRegisterPage = location.pathname === '/register';
-    const isRegisterAdminPage = location.pathname === '/admin/register';
-    const isNoticeVerify = location.pathname === '/verify';
-    const isNoticeVerifyAdmin = location.pathname === '/admin/verify';
-    const isSuccessVerify = location.pathname === '/successnotice';
-    const isSuccessVerifyAdmin = location.pathname === '/admin/success-verify';
-
     const [userEmail, setUserEmail] = useState(null);
+    const shouldDisplayLayout = (pathname) => {
+        const excludedPaths = [
+            '/login', '/register', '/verify', '/successnotice',
+            '/admin/login', '/admin/register', '/admin/verify',
+            '/admin/success-verify', '/forgetpassword', '/reset-password',
+        ];
+        return !excludedPaths.some((path) => pathname.startsWith(path));
+    };
 
+    const displayLayout = shouldDisplayLayout(location.pathname);
+
+    const LazyComponent = ({ component: Component }) => (
+        <Suspense fallback={<div>Loading, please wait...</div>}>
+            <Component />
+        </Suspense>
+    );
     return (
         <div className="App">
             <ToastContainer position="top-right" autoClose={3000} />
-            {!isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify && !isLoginAdminPage
-                && !isRegisterAdminPage && !isNoticeVerifyAdmin && !isSuccessVerifyAdmin && !isForgetPassPage && !isResetPassPage && (
-                    <div id="header-container">
-                        <Header />
-                    </div>
-                )}
-
+            {displayLayout && <Header />}
             <div id="body-content">
 
                 <Routes>
@@ -209,15 +203,7 @@ function App() {
                     />
                 </Routes>
             </div>
-            {
-                !isLoginPage && !isRegisterPage && !isNoticeVerify && !isSuccessVerify && !isLoginAdminPage
-                && !isRegisterAdminPage && !isNoticeVerifyAdmin && !isSuccessVerifyAdmin && !isForgetPassPage && !isResetPassPage && (
-                    <div id="footer-container">
-                        <Footer />
-                    </div>
-                )
-            }
-
+            {displayLayout && <Footer />}
         </div>
     );
 }
