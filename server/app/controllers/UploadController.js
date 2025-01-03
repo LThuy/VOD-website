@@ -45,7 +45,7 @@ class UploadController {
       const videoFile = req.files['video'] ? req.files['video'][0] : null;
 
       // console.log('File:', video); // The uploaded file
-      console.log('Body:', req.body.name);
+      console.log('Body:', videoFile); 
 
       // If the file is successfully uploaded
       const uploadedFileName = videoFile.filename; 

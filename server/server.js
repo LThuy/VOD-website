@@ -5,13 +5,28 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const route = require('./routes/index');
 const app = express();
+const path = require('path');
 const port = 5000;
 require('dotenv').config();
 
 // Middleware
 app.use(bodyParser.json());
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
+
+// app.use(cors({
+//   origin: 'http://localhost:3000'
+// })); 
+ 
+
+
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+      } else {
+          callback(new Error('Not allowed by CORS'));
+      }
+  }
 }));
 
 // MongoDB connection
