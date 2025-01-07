@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState }  from 'react'
 import classNames from 'classnames'
 
 import {
@@ -18,6 +18,11 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
+  CModal,
+  CModalHeader,
+  CModalBody,
+  CModalFooter,
+  CModalTitle,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {
@@ -41,167 +46,246 @@ import {
   cilPeople,
   cilUser,
   cilUserFemale,
+  cilLockLocked,
+  cilLockUnlocked,
 } from '@coreui/icons'
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
+import avatarPlaceholder from 'src/assets/images/avatars/10.png'
+import { toast } from 'react-toastify'
 
 function User() {
+  const [users, setUsers] = useState([])
+  const [modalVisible, setModalVisible] = useState(false)
+  const [selectedUser, setSelectedUser] = useState(null)
 
-  const tableExample = [{
-      avatar: {
-        src: avatar1,
-        status: 'success'
-      },
-      user: {
-        name: 'Yiorgos Avraamu',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: {
-        name: 'USA',
-        flag: cifUs
-      },
-      usage: {
-        value: 50,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'success',
-      },
-      payment: {
-        name: 'Mastercard',
-        icon: cibCcMastercard
-      },
-      activity: '10 sec ago',
-    },
-    {
-      avatar: {
-        src: avatar2,
-        status: 'danger'
-      },
-      user: {
-        name: 'Avram Tarasios',
-        new: false,
-        registered: 'Jan 1, 2023',
-      },
-      country: {
-        name: 'Brazil',
-        flag: cifBr
-      },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'info',
-      },
-      payment: {
-        name: 'Visa',
-        icon: cibCcVisa
-      },
-      activity: '5 minutes ago',
-    },
-    {
-      avatar: {
-        src: avatar3,
-        status: 'warning'
-      },
-      user: {
-        name: 'Quintin Ed',
-        new: true,
-        registered: 'Jan 1, 2023'
-      },
-      country: {
-        name: 'India',
-        flag: cifIn
-      },
-      usage: {
-        value: 74,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'warning',
-      },
-      payment: {
-        name: 'Stripe',
-        icon: cibCcStripe
-      },
-      activity: '1 hour ago',
-    },
-    {
-      avatar: {
-        src: avatar4,
-        status: 'secondary'
-      },
-      user: {
-        name: 'Enéas Kwadwo',
-        new: true,
-        registered: 'Jan 1, 2023'
-      },
-      country: {
-        name: 'France',
-        flag: cifFr
-      },
-      usage: {
-        value: 98,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'danger',
-      },
-      payment: {
-        name: 'PayPal',
-        icon: cibCcPaypal
-      },
-      activity: 'Last month',
-    },
-    {
-      avatar: {
-        src: avatar5,
-        status: 'success'
-      },
-      user: {
-        name: 'Agapetus Tadeáš',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: {
-        name: 'Spain',
-        flag: cifEs
-      },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'primary',
-      },
-      payment: {
-        name: 'Google Wallet',
-        icon: cibCcApplePay
-      },
-      activity: 'Last week',
-    },
-    {
-      avatar: {
-        src: avatar6,
-        status: 'danger'
-      },
-      user: {
-        name: 'Friderik Dávid',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: {
-        name: 'Poland',
-        flag: cifPl
-      },
-      usage: {
-        value: 43,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'success',
-      },
-      payment: {
-        name: 'Amex',
-        icon: cibCcAmex
-      },
-      activity: 'Last week',
-    },
-  ]
+  // const tableExample = [{
+  //     avatar: {
+  //       src: avatar1,
+  //       status: 'success'
+  //     },
+  //     user: {
+  //       name: 'Yiorgos Avraamu',
+  //       new: true,
+  //       registered: 'Jan 1, 2023',
+  //     },
+  //     country: {
+  //       name: 'USA',
+  //       flag: cifUs
+  //     },
+  //     usage: {
+  //       value: 50,
+  //       period: 'Jun 11, 2023 - Jul 10, 2023',
+  //       color: 'success',
+  //     },
+  //     payment: {
+  //       name: 'Mastercard',
+  //       icon: cibCcMastercard
+  //     },
+  //     activity: '10 sec ago',
+  //     locked: true,
+  //   },
+  //   // {
+  //   //   avatar: {
+  //   //     src: avatar2,
+  //   //     status: 'danger'
+  //   //   },
+  //   //   user: {
+  //   //     name: 'Avram Tarasios',
+  //   //     new: false,
+  //   //     registered: 'Jan 1, 2023',
+  //   //   },
+  //   //   country: {
+  //   //     name: 'Brazil',
+  //   //     flag: cifBr
+  //   //   },
+  //   //   usage: {
+  //   //     value: 22,
+  //   //     period: 'Jun 11, 2023 - Jul 10, 2023',
+  //   //     color: 'info',
+  //   //   },
+  //   //   payment: {
+  //   //     name: 'Visa',
+  //   //     icon: cibCcVisa
+  //   //   },
+  //   //   activity: '5 minutes ago',
+  //   // },
+  //   // {
+  //   //   avatar: {
+  //   //     src: avatar3,
+  //   //     status: 'warning'
+  //   //   },
+  //   //   user: {
+  //   //     name: 'Quintin Ed',
+  //   //     new: true,
+  //   //     registered: 'Jan 1, 2023'
+  //   //   },
+  //   //   country: {
+  //   //     name: 'India',
+  //   //     flag: cifIn
+  //   //   },
+  //   //   usage: {
+  //   //     value: 74,
+  //   //     period: 'Jun 11, 2023 - Jul 10, 2023',
+  //   //     color: 'warning',
+  //   //   },
+  //   //   payment: {
+  //   //     name: 'Stripe',
+  //   //     icon: cibCcStripe
+  //   //   },
+  //   //   activity: '1 hour ago',
+  //   // },
+  //   // {
+  //   //   avatar: {
+  //   //     src: avatar4,
+  //   //     status: 'secondary'
+  //   //   },
+  //   //   user: {
+  //   //     name: 'Enéas Kwadwo',
+  //   //     new: true,
+  //   //     registered: 'Jan 1, 2023'
+  //   //   },
+  //   //   country: {
+  //   //     name: 'France',
+  //   //     flag: cifFr
+  //   //   },
+  //   //   usage: {
+  //   //     value: 98,
+  //   //     period: 'Jun 11, 2023 - Jul 10, 2023',
+  //   //     color: 'danger',
+  //   //   },
+  //   //   payment: {
+  //   //     name: 'PayPal',
+  //   //     icon: cibCcPaypal
+  //   //   },
+  //   //   activity: 'Last month',
+  //   // },
+  //   // {
+  //   //   avatar: {
+  //   //     src: avatar5,
+  //   //     status: 'success'
+  //   //   },
+  //   //   user: {
+  //   //     name: 'Agapetus Tadeáš',
+  //   //     new: true,
+  //   //     registered: 'Jan 1, 2023',
+  //   //   },
+  //   //   country: {
+  //   //     name: 'Spain',
+  //   //     flag: cifEs
+  //   //   },
+  //   //   usage: {
+  //   //     value: 22,
+  //   //     period: 'Jun 11, 2023 - Jul 10, 2023',
+  //   //     color: 'primary',
+  //   //   },
+  //   //   payment: {
+  //   //     name: 'Google Wallet',
+  //   //     icon: cibCcApplePay
+  //   //   },
+  //   //   activity: 'Last week',
+  //   // },
+  //   // {
+  //   //   avatar: {
+  //   //     src: avatar6,
+  //   //     status: 'danger'
+  //   //   },
+  //   //   user: {
+  //   //     name: 'Friderik Dávid',
+  //   //     new: true,
+  //   //     registered: 'Jan 1, 2023',
+  //   //   },
+  //   //   country: {
+  //   //     name: 'Poland',
+  //   //     flag: cifPl
+  //   //   },
+  //   //   usage: {
+  //   //     value: 43,
+  //   //     period: 'Jun 11, 2023 - Jul 10, 2023',
+  //   //     color: 'success',
+  //   //   },
+  //   //   payment: {
+  //   //     name: 'Amex',
+  //   //     icon: cibCcAmex
+  //   //   },
+  //   //   activity: 'Last week',
+  //   // },
+  // ]
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/info/users')
+        if (!response.ok) {
+          throw new Error('Failed to fetch users')
+        }
+        const data = await response.json()
+        // Add "timeAgo" property for each user
+        const usersWithTimeAgo = data.map(user => ({
+          ...user,
+          timeAgo: timeAgo(user.lastLogin) // Add human-readable time
+        }));
+        setUsers(usersWithTimeAgo);
+      } catch (error) {
+        console.error('Error fetching users:', error)
+      }
+    }
+
+    fetchUsers()
+  }, [])
+
+  const timeAgo = (timestamp) => {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffInSeconds = Math.floor((now - past) / 1000);
+
+    if (diffInSeconds < 60) return `${diffInSeconds} sec ago`;
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+  };
+
+  const toggleModal = (user) => {
+    setSelectedUser(user)
+    setModalVisible(!modalVisible)
+  }
+
+  const handleLockUnlock = async () => {
+    if (selectedUser) {
+      try {
+        const response = await fetch(`http://localhost:5000/info/users/${selectedUser._id}/lock`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ locked: !selectedUser.locked }),
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to update user status')
+        }
+
+        const updatedUser = await response.json()
+
+        // Update the user list with the updated user data
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user._id === updatedUser._id ? updatedUser : user
+          )
+        )
+
+        toast.success(
+          `${updatedUser.username} has been ${updatedUser.locked ? 'locked' : 'unlocked'}`
+        )
+      } catch (error) {
+        toast.error('Error updating user status')
+        console.error('Error:', error)
+      }
+    }
+    setModalVisible(false)
+  }
+  
 
   return (
     <div className='user-container'>
@@ -213,47 +297,59 @@ function User() {
                         <CIcon icon={cilPeople} />
                     </CTableHeaderCell>
                     <CTableHeaderCell className="bg-body-tertiary">User</CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
+                    {/* <CTableHeaderCell className="bg-body-tertiary text-center">
                         Country
-                    </CTableHeaderCell>
+                    </CTableHeaderCell> */}
                     <CTableHeaderCell className="bg-body-tertiary">Usage</CTableHeaderCell>
                     <CTableHeaderCell className="bg-body-tertiary text-center">
-                        Payment Method
+                        Lock/Unlock
                     </CTableHeaderCell>
                     <CTableHeaderCell className="bg-body-tertiary">Activity</CTableHeaderCell>
                     </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                    {tableExample.map((item, index) => (
+                    {users.map((user, index) => (
                     <CTableRow v-for="item in tableItems" key={index}>
                         <CTableDataCell className="text-center">
-                        <CAvatar size="md" src={item.avatar.src} status={item.avatar.status} />
+                        <CAvatar
+                          size="md"
+                          src={avatarPlaceholder}
+                          status= 'success'
+                        />
                         </CTableDataCell>
                         <CTableDataCell>
-                        <div>{item.user.name}</div>
+                        <div>{user.username}</div>
                         <div className="small text-body-secondary text-nowrap">
-                            <span>{item.user.new ? 'New' : 'Recurring'}</span> | Registered:{' '}
-                            {item.user.registered}
+                            <span> New </span>                  
                         </div>
                         </CTableDataCell>
-                        <CTableDataCell className="text-center">
+                        {/* <CTableDataCell className="text-center">
                         <CIcon size="xl" icon={item.country.flag} title={item.country.name} />
-                        </CTableDataCell>
+                        </CTableDataCell> */}
                         <CTableDataCell>
                         <div className="d-flex justify-content-between text-nowrap">
-                            <div className="fw-semibold">{item.usage.value}%</div>
+                            <div className="fw-semibold">100%</div>
                             <div className="ms-3">
-                            <small className="text-body-secondary">{item.usage.period}</small>
+                            <small className="text-body-secondary">10</small>
                             </div>
                         </div>
-                        <CProgress thin color={item.usage.color} value={item.usage.value} />
+                        <CProgress thin color='red' value = {50} />
                         </CTableDataCell>
-                        <CTableDataCell className="text-center">
+                        {/* <CTableDataCell className="text-center">
                         <CIcon size="xl" icon={item.payment.icon} />
+                        </CTableDataCell> */}
+                        <CTableDataCell className="text-center">
+                        <CButton
+                          color="link"
+                          onClick={() => toggleModal(user)}
+                          title={user.locked ? 'Unlock User' : 'Lock User'}
+                        >
+                          <CIcon icon={user.locked ? cilLockLocked : cilLockUnlocked} size="xl" />
+                        </CButton>
                         </CTableDataCell>
                         <CTableDataCell>
                         <div className="small text-body-secondary text-nowrap">Last login</div>
-                        <div className="fw-semibold text-nowrap">{item.activity}</div>
+                        <div className="fw-semibold text-nowrap">{user.timeAgo}</div>
                         </CTableDataCell>
                     </CTableRow>
                     ))}
@@ -261,6 +357,26 @@ function User() {
             </CTable>
                               
         </CRow>
+         {/* Lock/Unlock Confirmation Modal */}
+        {selectedUser && (
+          <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+            <CModalHeader>
+              <CModalTitle>{selectedUser.locked ? 'Unlock User' : 'Lock User'}</CModalTitle>
+            </CModalHeader>
+            <CModalBody>
+              Are you sure you want to {selectedUser.locked ? 'unlock' : 'lock'}{' '}
+              <strong>{selectedUser.username}</strong>?
+            </CModalBody>
+            <CModalFooter>
+              <CButton color="secondary" onClick={() => setModalVisible(false)}>
+                Cancel
+              </CButton>
+              <CButton color="primary" onClick={handleLockUnlock}>
+                Confirm
+              </CButton>
+            </CModalFooter>
+          </CModal>
+      )}
     </div>
   )
 }

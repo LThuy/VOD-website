@@ -31,7 +31,12 @@ const AccountSchema = new mongoose.Schema({
     type: String
   },
   favoriteFilms: [FavMovieSchema],
-  historyFilms: [HistFilmChema]
+  historyFilms: [HistFilmChema],
+  locked: {
+    type: Boolean,
+    default: false
+  },
+  lastLogin: { type: Date },
 });
 
 module.exports = mongoose.model('Account', AccountSchema);

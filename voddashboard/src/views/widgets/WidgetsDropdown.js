@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 
 import {
@@ -18,6 +18,8 @@ import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
 const WidgetsDropdown = (props) => {
   const widgetChartRef1 = useRef(null)
   const widgetChartRef2 = useRef(null)
+  const [userCount, setUserCount] = useState(0);
+  const [users, setUsers] = useState([])
 
   useEffect(() => {
     document.documentElement.addEventListener('ColorSchemeChange', () => {
@@ -37,6 +39,24 @@ const WidgetsDropdown = (props) => {
     })
   }, [widgetChartRef1, widgetChartRef2])
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/info/users');
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        const data = await response.json();
+        setUsers(data);
+        setUserCount(data.length); 
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
   return (
     <CRow className={props.className} xs={{ gutter: 4 }}>
       <CCol sm={6} xl={4} xxl={3}>
@@ -44,10 +64,10 @@ const WidgetsDropdown = (props) => {
           color="primary"
           value={
             <>
-              26K{' '}
-              <span className="fs-6 fw-normal">
+              {userCount}{' '}
+              {/* <span className="fs-6 fw-normal">
                 (-12.4% <CIcon icon={cilArrowBottom} />)
-              </span>
+              </span> */}
             </>
           }
           title="Users"

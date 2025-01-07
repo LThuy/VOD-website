@@ -74,9 +74,17 @@ class SiteControllers {
             const user = await User.findOne({
                 email
             });
+
             if (!user) {
                 return res.status(400).json({
                     message: "Invalid email or password"
+                });
+            }
+
+            // Check if the account is locked
+            if (user.locked) {
+                return res.status(403).json({
+                    message: "This account has been locked. Please contact support for assistance."
                 });
             }
 
@@ -94,6 +102,10 @@ class SiteControllers {
                     message: "Invalid email or password"
                 });
             }
+
+            // Update lastLogin time
+            user.lastLogin = new Date();
+            await user.save();
 
             // Generate a token for successful login
             const token = jwt.sign({

@@ -234,7 +234,7 @@ const Dashboard = () => {
         </CCardFooter>
       </CCard>
       {/* <WidgetsBrand className="mb-4" withCharts /> */}
-      <CRow>
+      {/* <CRow>
         <CCol xs>
           <CCard className="mb-4">
             <CCardHeader>Traffic {' & '} Sales</CCardHeader>
@@ -303,83 +303,15 @@ const Dashboard = () => {
 
                   <div className="mb-5"></div>
 
-                  {/* {progressGroupExample3.map((item, index) => (
-                    <div className="progress-group" key={index}>
-                      <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">
-                          {item.value}{' '}
-                          <span className="text-body-secondary small">({item.percent}%)</span>
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="success" value={item.percent} />
-                      </div>
-                    </div>
-                  ))} */}
+                 
                 </CCol>
               </CRow>
 
               <br />
-
-              <CTable align="middle" className="mb-0 border" hover responsive>
-                <CTableHead className="text-nowrap">
-                  <CTableRow>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      <CIcon icon={cilPeople} />
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">User</CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      Country
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">Usage</CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      Payment Method
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">Activity</CTableHeaderCell>
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody>
-                  {tableExample.map((item, index) => (
-                    <CTableRow v-for="item in tableItems" key={index}>
-                      <CTableDataCell className="text-center">
-                        <CAvatar size="md" src={item.avatar.src} status={item.avatar.status} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div>{item.user.name}</div>
-                        <div className="small text-body-secondary text-nowrap">
-                          <span>{item.user.new ? 'New' : 'Recurring'}</span> | Registered:{' '}
-                          {item.user.registered}
-                        </div>
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CIcon size="xl" icon={item.country.flag} title={item.country.name} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="d-flex justify-content-between text-nowrap">
-                          <div className="fw-semibold">{item.usage.value}%</div>
-                          <div className="ms-3">
-                            <small className="text-body-secondary">{item.usage.period}</small>
-                          </div>
-                        </div>
-                        <CProgress thin color={item.usage.color} value={item.usage.value} />
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CIcon size="xl" icon={item.payment.icon} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="small text-body-secondary text-nowrap">Last login</div>
-                        <div className="fw-semibold text-nowrap">{item.activity}</div>
-                      </CTableDataCell>
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow>
+      </CRow> */}
     </>
   )
 }
