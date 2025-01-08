@@ -105,11 +105,13 @@ function FilmDetail() {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const [phimDetailData] = await fetchingApiData([`https://phimapi.com/phim/${slug}`]);
-
-                if (phimDetailData?.movie) {
-                    const { movie } = phimDetailData;
-                    setFilm(movie);
+                const phimDetailData = await fetchingApiData([`http://localhost:5000/film/${slug}`]);
+                // const [phimDetailData] = await fetchingApiData([`https://phimapi.com/phim/${slug}`]);
+            
+                if (phimDetailData[0]) {
+                    const { movie } = phimDetailData[0];
+                    setFilm(phimDetailData[0]);
+                    console.log(film)
                     setActors(movie.actor || []);
                     setCountries(movie.country || []);
                     setDirectors(movie.director || []);
@@ -333,6 +335,7 @@ function FilmDetail() {
                             <iframe className="filmdetail-video" src={embedUrl} width="640" height="480" allowFullScreen></iframe>
                         </div>
                         <CommentSection userId={userId} filmId={film._id} />
+                        
                         {/* Similar Films */}
                         <div className="filmdetail-container-similarfilm">
                             <h1 className='mb-4'>CÓ THỂ BẠN CŨNG MUỐN XEM</h1>

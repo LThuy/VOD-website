@@ -8,6 +8,7 @@ const CommentSection = ({ userId, filmId }) => {
     const [newComment, setNewComment] = useState("");
     // Check if the user is logged in
     const isLoggedIn = !!userId;
+    console.log(filmId)
 
     // Fetch comments when the component mounts
     useEffect(() => {

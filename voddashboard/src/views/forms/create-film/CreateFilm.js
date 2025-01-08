@@ -22,6 +22,8 @@ function CreateFilm() {
   const [progress, setProgress] = useState(0)
   const [loading, setLoading] = useState(false)
   const [file, setFile] = useState(null)
+  const [fileThumb, setFileThumb] = useState(null)
+  const [filePoster, setFilePoster] = useState(null)
   const [filmData, setFilmData] = useState({
     name: '',
     slug: '',
@@ -29,8 +31,8 @@ function CreateFilm() {
     content: '',
     type: '',
     status: '',
-    poster_url: '',
-    thumb_url: '',
+    // poster_url: '',
+    // thumb_url: '',
     trailer_url: '',
     time: '',
     episode_current: '',
@@ -52,7 +54,10 @@ function CreateFilm() {
 
   // Append the file
   formData.append('video', file)
+  formData.append('poster_url', filePoster)
+  formData.append('thumb_url', fileThumb)
   formData.append('name', filmData.name)
+  formData.append('slug', filmData.slug)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -62,6 +67,16 @@ function CreateFilm() {
   const handleFileChange = (e) => {
     // setFilmData({ ...filmData, video: e.target.files[0] });
     setFile(e.target.files[0])
+  }
+
+  const handleThumbChange = (e) => {
+    // setFilmData({ ...filmData, video: e.target.files[0] });
+    setFileThumb(e.target.files[0])
+  }
+
+  const handlePosterChange = (e) => {
+    // setFilmData({ ...filmData, video: e.target.files[0] });
+    setFilePoster(e.target.files[0])
   }
 
   const navigate = useNavigate()
@@ -207,9 +222,8 @@ function CreateFilm() {
                   <CFormLabel>Poster URL:</CFormLabel>
                   <CFormInput
                     name="poster_url"
-                    type="text"
-                    value={filmData.poster_url}
-                    onChange={handleChange}
+                    type="file"
+                    onChange={handlePosterChange}
                   />
                 </div>
 
@@ -218,9 +232,8 @@ function CreateFilm() {
                   <CFormLabel>Thumbnail URL:</CFormLabel>
                   <CFormInput
                     name="thumb_url"
-                    type="text"
-                    value={filmData.thumb_url}
-                    onChange={handleChange}
+                    type="file"
+                    onChange={handleThumbChange}
                   />
                 </div>
 

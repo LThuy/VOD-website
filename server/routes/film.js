@@ -11,6 +11,10 @@ router.delete('/remove-favorite', filmControllers.deleteFavorFilm)
 // get history
 router.post('/addToHistory', filmControllers.addHistory)
 router.get('/gethistory/:userId', filmControllers.getHistoryFilm)
+// get new-film
+router.get('/list/new', filmControllers.getNewestFilm)
+// get film-detail
+router.get('/:slug', filmControllers.getFilmDetails)
 
 
 module.exports = router;

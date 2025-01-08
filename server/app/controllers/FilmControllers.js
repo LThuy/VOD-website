@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const User = require('../../models/Account')
 const Favfilm = require('../../models/FavorFilm');
+const Film = require('../../models/Film');
 
 class FilmControllers {
   async addFavorite(req, res) {
@@ -252,7 +253,71 @@ class FilmControllers {
       res.status(500).json({ message: 'Server error' });
     }
   }
+
+  //Get New Film
+  async getNewestFilm(req, res) {
+    try {
+      const { page = 1, limit = 10 } = req.query; // Get pagination parameters
   
+      // Retrieve films from the database with pagination
+      const films = await Film.find()
+        .skip((page - 1) * limit) // Skipping the documents for pagination
+        .limit(limit) // Limiting the number of films returned
+        .exec();
+  
+      // Get the total number of films for pagination
+      const totalFilms = await Film.countDocuments();
+  
+      // Format the response
+      const response = {
+        status: true,
+        items: films.map(film => ({
+          _id: film._id,
+          name: film.name,
+          slug: film.slug,
+          origin_name: film.origin_name,
+          poster_url: film.poster_url,
+          thumb_url: film.thumb_url,
+          year: film.year,
+        })),
+        pagination: {
+          totalItems: totalFilms,
+          totalItemsPerPage: limit,
+          currentPage: parseInt(page),
+          totalPages: Math.ceil(totalFilms / limit),
+        },
+      };
+  
+      // Return the formatted response
+      res.json(response);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ status: false, message: 'Error retrieving films' });
+    }
+  }
+  
+  //Get Film Detail
+  async getFilmDetails(req, res) {
+    try {
+      // Extract slug from the request parameters
+      const { slug } = req.params;
+      console.log(slug)
+  
+      // Find the film by slug in the database
+      const film = await Film.findOne({ "slug" : slug });
+  
+      // If film not found, return a 404 response
+      if (!film) {
+        return res.status(404).json({ status: false, message: 'Film not found' });
+      }
+  
+      // Return the entire film document
+      res.json(film);
+    } catch (error) {
+      console.error('Error fetching film by slug:', error);
+      res.status(500).json({ status: false, message: 'Server error' });
+    }
+  }
   
 }
 
