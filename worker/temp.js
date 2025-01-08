@@ -134,29 +134,11 @@ worker.on("completed", (job) => {
 const bucketName = process.env.BUCKET_OUTPUT;
 
 async function handleJob(job) {
-  
-  // const { fileName, folderPath, thumbFileName, posterFileName } = job.data;
-  // Extracting `files` array from job.data
-  const { files = [] } = job.data;
-
-  // Ensure the array contains all required items
-  const videoData = files.find((file) => file.type === 'video') || {};
-  const thumbData = files.find((file) => file.type === 'thumbnail') || {};
-  const posterData = files.find((file) => file.type === 'poster') || {};
-
-  // Access their properties
-  const fileName = videoData.fileName;
-  const folderPath = videoData.folderPath;
-
-  const thumbFileName = thumbData.fileName;
-
-  const posterFileName = posterData.fileName;
-
+  const { fileName, folderPath } = job.data;
   console.log(`Starting to process video: ${fileName}`);
-  
 
   const inputPath = path.join(folderPath, fileName);
-  const baseName = path.basename(fileName, path.extname(fileName)); // e.g., video_123
+  const baseName = path.basename(fileName, path.extname(fileName));
   const outputDir = path.resolve(__dirname, "temp_videos", baseName);
 
   // Create a temporary local directory for processing
@@ -219,40 +201,25 @@ async function handleJob(job) {
 
     console.log("Master playlist created.");
 
-    // Upload video files to S3
+    // Upload files to S3
     await uploadDirectory(outputDir, `videos/${baseName}`);
 
-    console.log("Video files uploaded to S3 successfully.");
+    console.log("All files uploaded to S3 successfully.");
 
-    // Upload thumb file to S3
-    if (thumbFileName) {
-      const thumbPath = path.join(folderPath, thumbFileName);
-      const thumbS3Key = `videos/${baseName}/thumb/${thumbFileName}`;
-      await uploadFile(thumbPath, bucketName, thumbS3Key);
-      console.log("Thumb uploaded successfully.");
-    }
-
-    // Upload poster file to S3
-    if (posterFileName) {
-      const posterPath = path.join(folderPath, posterFileName);
-      const posterS3Key = `videos/${baseName}/poster/${posterFileName}`;
-      await uploadFile(posterPath, bucketName, posterS3Key);
-      console.log("Poster uploaded successfully.");
-    }
-
-    // Clean up local files (optional)
-    async function cleanUpDirectory(dirPath) {
-      try {
-        await fs.rm(dirPath, { recursive: true, force: true });
-        console.log("Local files deleted successfully.");
-      } catch (err) {
-        console.error("Error deleting local files:", err);
-      }
-    }
-
-    await cleanUpDirectory(outputDir);
+    // // Clean up local files
+    // async function cleanUpDirectory(dirPath) {
+    //   try {
+    //     await fs.rm(dirPath, { recursive: true, force: true });
+    //     console.log("Local files deleted successfully.");
+    //   } catch (err) {
+    //     console.error("Error deleting local files:", err);
+    //   }
+    // }
+    
+    // // Clean up
+    // await cleanUpDirectory(outputDir);
   } catch (err) {
-    console.error("Error processing job:", err);
+    console.error("Error processing video:", err);
   }
 }
 

@@ -12,6 +12,9 @@ import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import 'video.js/dist/video-js.css'; 
+import videojs from 'video.js';
+import VideoPlayerSection from '../test.jsx'
 
 function WatchFilm() {
     const { slug } = useParams();
@@ -40,17 +43,17 @@ function WatchFilm() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [phimDetailData] = await fetchingApiData([
-                    `https://phimapi.com/phim/${slug}`,
+                const phimDetailData = await fetchingApiData([
+                    `http://localhost:5000/film/${slug}`,
                 ]);
 
-                if (phimDetailData && phimDetailData.movie) {
-                    setFilm(phimDetailData.movie)
-                    setActors(phimDetailData.movie.actor || []);
-                    setCountries(phimDetailData.movie.country || []);
-                    setDirectors(phimDetailData.movie.director || []);
-                    setCategory(phimDetailData.movie.category || []);
-                    setEpisodes(phimDetailData.episodes || []);
+                if (phimDetailData[0]) {
+                    setFilm(phimDetailData[0])
+                    setActors(phimDetailData[0].actor || []);
+                    setCountries(phimDetailData[0].country || []);
+                    setDirectors(phimDetailData[0].director || []);
+                    setCategory(phimDetailData[0].category || []);
+                    setEpisodes(phimDetailData[0].episodes || []);
 
                     if (phimDetailData.episodes.length > 0 && phimDetailData.episodes[0].server_data.length > 0) {
                         const firstLinkEmbed = phimDetailData.episodes[0].server_data[0].link_embed;
@@ -216,9 +219,9 @@ function WatchFilm() {
                                     width="auto"
                                     height="480"
                                     allowFullScreen
-                                    title="Film Video"
+                                    title="Film Video"                             
                                 ></iframe>
-
+                                
                                 {/* Episode Header */}
                                 <h3 className="episode-header">Danh Sách Tập Phim</h3>
 

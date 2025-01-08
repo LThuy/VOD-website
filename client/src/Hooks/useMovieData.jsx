@@ -29,7 +29,8 @@ const useMovieData = () => {
     setIsLoading(true)
     const fetchData = async () => {
       const endpoints = [
-        { url: 'https://phimapi.com/danh-sach/phim-moi-cap-nhat?limit=12', key: 'phimmoiCN' },
+        // { url: 'https://phimapi.com/danh-sach/phim-moi-cap-nhat?limit=12', key: 'phimmoiCN' },
+        { url: 'http://localhost:5000/film/list/new', key: 'phimmoiCN' },
         { url: 'https://phimapi.com/v1/api/danh-sach/phim-le?limit=12', key: 'phimLe' },
         { url: 'https://phimapi.com/v1/api/danh-sach/phim-bo?limit=12', key: 'phimBo' },
         { url: 'https://phimapi.com/v1/api/danh-sach/hoat-hinh?limit=12', key: 'phimHH' },
