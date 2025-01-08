@@ -3,8 +3,119 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const User = require('../../models/Account')
 const Favfilm = require('../../models/FavorFilm');
+const Film = require('../../models/Film');
 
 class FilmControllers {
+
+  // [GET] :get films
+  async getFilms(req, res) {
+    try {
+      // Fetch all films from the database
+      const films = await Film.find();
+
+      // Respond with the retrieved films
+      res.status(200).json({
+        success: true,
+        data: films,
+      });
+    } catch (error) {
+      // Handle errors
+      res.status(500).json({
+        success: false,
+        message: 'Error retrieving films',
+        error: error.message,
+      });
+    }
+  }
+  // [GET] : Get film by ID
+  async getFilmById(req, res) {
+    const { filmId } = req.params; // Get filmId from URL parameter
+
+    try {
+      const film = await Film.findById(filmId); // Find film by ID
+
+      if (!film) {
+        return res.status(404).json({
+          success: false,
+          message: 'Film not found',
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        data: film, // Send the film data as response
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Error retrieving film',
+        error: error.message,
+      });
+    }
+  }
+
+  // [DELETE] :delete a film
+  async deleteFilm(req, res) {
+    const { filmId } = req.params; 
+
+    try {
+      // Find and delete the film by its _id
+      const deletedFilm = await Film.findByIdAndDelete(filmId);
+
+      if (!deletedFilm) {
+        return res.status(404).json({
+          success: false,
+          message: 'Film not found',
+        });
+      }
+
+      // Respond with success message after deletion
+      res.status(200).json({
+        success: true,
+        message: 'Film deleted successfully',
+      });
+    } catch (error) {
+      // Handle errors
+      res.status(500).json({
+        success: false,
+        message: 'Error deleting film',
+        error: error.message,
+      });
+    }
+  }
+  // [PUT] : Edit film
+  async editFilm(req, res) {
+    const { filmId } = req.params;
+    const updatedData = req.body;
+    console.log(updatedData)
+    try {
+      const film = await Film.findByIdAndUpdate(filmId, updatedData, {
+        new: true, // Return the updated document
+        runValidators: true, // Ensure validation occurs during the update
+      });
+
+      if (!film) {
+        return res.status(404).json({
+          success: false,
+          message: 'Film not found',
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Film updated successfully',
+        data: film,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Error updating film',
+        error: error.message,
+      });
+    }
+  }
+
+  // [POST] : add favorite film
   async addFavorite(req, res) {
     const {
       userId,

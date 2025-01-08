@@ -3,6 +3,12 @@ const router = express.Router();
 
 const filmControllers = require('../app/controllers/FilmControllers');
 
+// get all film
+router.get('/get-film', filmControllers.getFilms)
+router.get('/get-film/:filmId', filmControllers.getFilmById)
+router.delete('/delete-film/:filmId', filmControllers.deleteFilm);
+router.put('/update-film/:filmId', filmControllers.editFilm);
+
 // account section routes
 router.post('/add-favorite', filmControllers.addFavorite)
 router.post('/is-favorite', filmControllers.checkFavorite)

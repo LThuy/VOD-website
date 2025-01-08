@@ -37,6 +37,8 @@ const Select = React.lazy(() => import('./views/forms/select/Select'))
 const Validation = React.lazy(() => import('./views/forms/validation/Validation'))
 const CreateFilm = React.lazy(() => import('./views/forms/create-film/CreateFilm'))
 const Users = React.lazy(() => import('./views/infor/Users'))
+const FilmLibrary = React.lazy(() => import('./views/film/FilmLibrary'))
+const EditFilm = React.lazy(() => import('./views/film/EditFilm'))
 
 const Charts = React.lazy(() => import('./views/charts/Charts'))
 
@@ -91,6 +93,8 @@ const routes = [
   { path: '/forms/validation', name: 'Validation', element: Validation },
   { path: '/forms/create-film', name: 'Create New Film', element: CreateFilm }, //form create film
   { path: '/infor/user', name: 'User Information', element: Users }, //form create film
+  { path: '/film/manage-library', name: 'Film Library', element: FilmLibrary }, //manage film library
+  { path: '/film/edit-film/:filmId', name: 'Edit Film', element: EditFilm }, //edit film library
   { path: '/icons', exact: true, name: 'Icons', element: CoreUIIcons },
   { path: '/icons/coreui-icons', name: 'CoreUI Icons', element: CoreUIIcons },
   { path: '/icons/flags', name: 'Flags', element: Flags },

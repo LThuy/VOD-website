@@ -225,18 +225,22 @@ function WatchFilm() {
                                 {/* Episode Buttons */}
                                 <div className="episodeBtn-container">
                                     {episodes.map((episode, episodeIndex) => (
-                                        episode.server_data.map((server, serverIndex) => (
-                                            <button
-                                                key={`${episodeIndex}-${serverIndex}`}
-                                                data-link={server.link_embed}
-                                                className={`episode-button ${selectedEpisode === server.link_embed ? 'active' : ''}`}
-                                                onClick={() => handleEpisodeClick(server.link_embed, server.name)}
-                                            >
-                                                {server.name}
-                                            </button>
-                                        ))
+                                        <div key={episodeIndex}>
+                                            <h5 style={{color: "white"}}>{episode.server_name}</h5>
+                                            {episode.server_data.map((server, serverIndex) => (
+                                                <button
+                                                    key={`${episodeIndex}-${serverIndex}`}
+                                                    data-link={server.link_embed}
+                                                    className={`episode-button ${selectedEpisode === server.link_embed ? 'active' : ''}`}
+                                                    onClick={() => handleEpisodeClick(server.link_embed, server.name)}
+                                                >
+                                                    {server.name}
+                                                </button>
+                                            ))}
+                                        </div>
                                     ))}
                                 </div>
+
                             </div>
                         </div>
                         {/* Film Information */}
