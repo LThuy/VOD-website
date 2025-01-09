@@ -3,11 +3,23 @@ const router = express.Router();
 
 const filmControllers = require('../app/controllers/FilmControllers');
 
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/') // specify your upload directory
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname)
+    }
+});
+const upload = multer({
+    storage: storage
+});
 // get all film
 router.get('/get-film', filmControllers.getFilms)
 router.get('/get-film/:filmId', filmControllers.getFilmById)
 router.delete('/delete-film/:filmId', filmControllers.deleteFilm);
-router.put('/update-film/:filmId', filmControllers.editFilm);
+router.put('/update-film/:filmId', upload.single('video'), filmControllers.editFilm);
 
 // account section routes
 router.post('/add-favorite', filmControllers.addFavorite)

@@ -5,7 +5,10 @@ const User = require('../../models/Account')
 const Favfilm = require('../../models/FavorFilm');
 const Film = require('../../models/Film');
 
+
+  
 class FilmControllers {
+
 
   // [GET] :get films
   async getFilms(req, res) {
@@ -29,7 +32,9 @@ class FilmControllers {
   }
   // [GET] : Get film by ID
   async getFilmById(req, res) {
-    const { filmId } = req.params; // Get filmId from URL parameter
+    const {
+      filmId
+    } = req.params; // Get filmId from URL parameter
 
     try {
       const film = await Film.findById(filmId); // Find film by ID
@@ -56,7 +61,9 @@ class FilmControllers {
 
   // [DELETE] :delete a film
   async deleteFilm(req, res) {
-    const { filmId } = req.params; 
+    const {
+      filmId
+    } = req.params;
 
     try {
       // Find and delete the film by its _id
@@ -86,27 +93,91 @@ class FilmControllers {
   // [PUT] : Edit film
   async editFilm(req, res) {
     const { filmId } = req.params;
-    const updatedData = req.body;
-    console.log(updatedData)
+    let updatedData = { ...req.body };
+  
     try {
-      const film = await Film.findByIdAndUpdate(filmId, updatedData, {
-        new: true, // Return the updated document
-        runValidators: true, // Ensure validation occurs during the update
-      });
-
+      // Parse the stringified arrays
+      if (updatedData.category) {
+        try {
+          updatedData.category = JSON.parse(updatedData.category);
+        } catch (e) {
+          console.error('Error parsing category:', e);
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid category data format',
+          });
+        }
+      }
+  
+      if (updatedData.country) {
+        try {
+          updatedData.country = JSON.parse(updatedData.country);
+        } catch (e) {
+          console.error('Error parsing country:', e);
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid country data format',
+          });
+        }
+      }
+  
+      if (updatedData.actor) {
+        try {
+          updatedData.actor = JSON.parse(updatedData.actor);
+        } catch (e) {
+          updatedData.actor = updatedData.actor.split(',').map(item => item.trim());
+        }
+      }
+  
+      if (updatedData.director) {
+        try {
+          updatedData.director = JSON.parse(updatedData.director);
+        } catch (e) {
+          updatedData.director = updatedData.director.split(',').map(item => item.trim());
+        }
+      }
+  
+      // Convert boolean strings to actual booleans
+      if (updatedData.is_copyright) {
+        updatedData.is_copyright = updatedData.is_copyright === 'true';
+      }
+      if (updatedData.sub_docquyen) {
+        updatedData.sub_docquyen = updatedData.sub_docquyen === 'true';
+      }
+      if (updatedData.chieurap) {
+        updatedData.chieurap = updatedData.chieurap === 'true';
+      }
+  
+      // Convert year to number if present
+      if (updatedData.year) {
+        updatedData.year = parseInt(updatedData.year, 10);
+      }
+  
+      console.log('Processed update data:', updatedData);
+  
+      const film = await Film.findByIdAndUpdate(
+        filmId,
+        updatedData,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+  
       if (!film) {
         return res.status(404).json({
           success: false,
           message: 'Film not found',
         });
       }
-
+  
       res.status(200).json({
         success: true,
         message: 'Film updated successfully',
         data: film,
       });
     } catch (error) {
+      console.error('Update error:', error);
       res.status(500).json({
         success: false,
         message: 'Error updating film',
@@ -193,7 +264,7 @@ class FilmControllers {
           status: false,
           message: "User not found"
         });
-      } 
+      }
 
       const isFavorite = user.favoriteFilms.some(film => film._id.toString() === filmId);
       res.status(200).json({
@@ -213,27 +284,36 @@ class FilmControllers {
     try {
       // Validate userId (ensure it's a valid ObjectId)
       if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({ message: 'Invalid user ID' });
+        return res.status(400).json({
+          message: 'Invalid user ID'
+        });
       }
-  
+
       // Retrieve the user with their favorite films
       const user = await User.findById(userId).select('favoriteFilms');
-  
+
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({
+          message: 'User not found'
+        });
       }
-  
+
       // Return the user's favorite films
       res.status(200).json(user.favoriteFilms);
     } catch (error) {
       console.error('Error retrieving favorite films:', error);
-      res.status(500).json({ message: 'Server error' });
+      res.status(500).json({
+        message: 'Server error'
+      });
     }
   }
 
   async deleteFavorFilm(req, res) {
-    const { userId, filmId } = req.body;
-  
+    const {
+      userId,
+      filmId
+    } = req.body;
+
     try {
       // Validate inputs
       if (!userId || !filmId) {
@@ -242,7 +322,7 @@ class FilmControllers {
           message: "Invalid data: userId and filmId are required.",
         });
       }
-  
+
       // Find the user by ID
       const user = await User.findById(userId);
       if (!user) {
@@ -251,7 +331,7 @@ class FilmControllers {
           message: "User not found.",
         });
       }
-  
+
       // Check if the film exists in the user's favorite list
       const filmExists = user.favoriteFilms.some(
         (film) => film._id.toString() === filmId
@@ -262,15 +342,15 @@ class FilmControllers {
           message: "Film not found in the user's favorite list.",
         });
       }
-  
+
       // Remove the film from the user's favorite list
       user.favoriteFilms = user.favoriteFilms.filter(
         (film) => film._id.toString() !== filmId
       );
-  
+
       // Save the updated user document
       await user.save();
-  
+
       res.status(200).json({
         status: true,
         message: "Film removed from favorites successfully.",
@@ -286,8 +366,11 @@ class FilmControllers {
   }
   // history film section
   async addHistory(req, res) {
-    const { userId, filmData } = req.body;
-  
+    const {
+      userId,
+      filmData
+    } = req.body;
+
     try {
       // Validate userId and filmData
       if (!userId || !filmData || !filmData._id) {
@@ -296,35 +379,35 @@ class FilmControllers {
           message: "Invalid data: userId and filmData with _id are required.",
         });
       }
-  
+
       // Find the user by ID
       const user = await User.findById(userId).populate('historyFilms');
-  
+
       if (!user) {
         return res.status(404).json({
           status: false,
           message: "User not found",
         });
       }
-  
+
       // Check if the film already exists in the historyFilms array
       const isFilmExists = user.historyFilms.some(
         (film) => film._id.toString() === filmData._id.toString()
       );
-  
+
       if (isFilmExists) {
         return res.status(400).json({
           status: false,
           message: "This film has already been added to the history.",
         });
       }
-  
+
       // Add the film to the historyFilms array
       user.historyFilms.push(filmData);
-  
+
       // Save the updated user document
       await user.save();
-  
+
       // Send success response
       res.status(200).json({
         status: true,
@@ -339,45 +422,53 @@ class FilmControllers {
       });
     }
   }
-  
+
   async getHistoryFilm(req, res) {
     const userId = req.params.userId;
 
     try {
       // Validate userId (ensure it's a valid ObjectId)
       if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({ message: 'Invalid user ID' });
+        return res.status(400).json({
+          message: 'Invalid user ID'
+        });
       }
-  
+
       // Retrieve the user with their favorite films
       const user = await User.findById(userId).select('historyFilms');
-  
+
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({
+          message: 'User not found'
+        });
       }
-  
+
       // Return the user's favorite films
       res.status(200).json(user.historyFilms);
     } catch (error) {
       console.error('Error retrieving favorite films:', error);
-      res.status(500).json({ message: 'Server error' });
+      res.status(500).json({
+        message: 'Server error'
+      });
     }
   }
 
   //Get New Film
   async getNewestFilm(req, res) {
     try {
-      const { page = 1, limit = 10 } = req.query; // Get pagination parameters
-  
+      const {
+        page = 1, limit = 10
+      } = req.query; // Get pagination parameters
+
       // Retrieve films from the database with pagination
       const films = await Film.find()
         .skip((page - 1) * limit) // Skipping the documents for pagination
         .limit(limit) // Limiting the number of films returned
         .exec();
-  
+
       // Get the total number of films for pagination
       const totalFilms = await Film.countDocuments();
-  
+
       // Format the response
       const response = {
         status: true,
@@ -397,38 +488,51 @@ class FilmControllers {
           totalPages: Math.ceil(totalFilms / limit),
         },
       };
-  
+
       // Return the formatted response
       res.json(response);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ status: false, message: 'Error retrieving films' });
+      res.status(500).json({
+        status: false,
+        message: 'Error retrieving films'
+      });
     }
   }
-  
+
   //Get Film Detail
   async getFilmDetails(req, res) {
     try {
       // Extract slug from the request parameters
-      const { slug } = req.params;
+      const {
+        slug
+      } = req.params;
       console.log(slug)
-  
+
       // Find the film by slug in the database
-      const film = await Film.findOne({ "slug" : slug });
-  
+      const film = await Film.findOne({
+        "slug": slug
+      });
+
       // If film not found, return a 404 response
       if (!film) {
-        return res.status(404).json({ status: false, message: 'Film not found' });
+        return res.status(404).json({
+          status: false,
+          message: 'Film not found'
+        });
       }
-  
+
       // Return the entire film document
       res.json(film);
     } catch (error) {
       console.error('Error fetching film by slug:', error);
-      res.status(500).json({ status: false, message: 'Server error' });
+      res.status(500).json({
+        status: false,
+        message: 'Server error'
+      });
     }
   }
-  
+
 }
 
 module.exports = new FilmControllers();

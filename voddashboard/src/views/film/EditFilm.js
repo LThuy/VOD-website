@@ -74,7 +74,11 @@ function EditFilm() {
     // Append film data fields to formData
     console.log('filmData:', filmData);
     Object.keys(filmData).forEach((key) => {
-      formData.append(key, filmData[key]);
+      if (key === 'category' || key === 'country' || key === 'actor' || key === 'director') {
+        formData.append(key, JSON.stringify(filmData[key]));
+      } else {
+        formData.append(key, filmData[key]);
+      }
     });
 
     if (file) {
@@ -84,11 +88,11 @@ function EditFilm() {
     try {
       const response = await axios.put(
         `http://localhost:5000/film/update-film/${filmId}`,
-        filmData,
+        formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-          },
+          }
         }
       );
 
