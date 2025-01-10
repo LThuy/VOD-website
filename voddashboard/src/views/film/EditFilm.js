@@ -36,10 +36,12 @@ function EditFilm() {
     notify: '',
     showtimes: '',
     year: '',
-    actor: '',
-    director: '',
-    category: '',
-    country: '',
+    actor: [],
+    director: [],
+    category: [],
+    country: [],
+    comments: [],
+    episodes: []
   });
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
@@ -73,13 +75,16 @@ function EditFilm() {
     const formData = new FormData();
     // Append film data fields to formData
     console.log('filmData:', filmData);
+
+
     Object.keys(filmData).forEach((key) => {
-      if (key === 'category' || key === 'country' || key === 'actor' || key === 'director') {
-        formData.append(key, JSON.stringify(filmData[key]));
-      } else {
-        formData.append(key, filmData[key]);
-      }
-    });
+    if (Array.isArray(filmData[key])) {
+      // This will handle all array fields (category, country, actor, director, comments)
+      formData.append(key, JSON.stringify(filmData[key]));
+    } else {
+      formData.append(key, filmData[key]);
+    }
+  });
 
     if (file) {
       formData.append('video', file);
@@ -107,6 +112,30 @@ function EditFilm() {
       setLoading(false);
     }
   };
+
+  const [countries, setCountries] = useState([]);
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    // Create a Set to ensure unique country names
+    const uniqueCountries = new Set();
+    const uniqueCategories = new Set();
+  
+    // Add country names to the Set
+    filmData.country.forEach((country) => {
+      uniqueCountries.add(country.name);
+    });
+
+    filmData.category.forEach((cate) => {
+      uniqueCategories.add(cate.name);
+    });
+  
+    // Convert the Set back to an array and update the state
+    setCountries(Array.from(uniqueCountries));
+    setCategories(Array.from(uniqueCategories));
+  }, [filmData.country,filmData.category]); 
+
+
+
 
   return (
     <div>
@@ -331,7 +360,7 @@ function EditFilm() {
                     <CFormInput
                     name="category"
                     type="text"
-                    value={filmData.category}
+                    value={categories.join(',')}
                     onChange={handleChange}
                     />
                 </div>
@@ -342,7 +371,7 @@ function EditFilm() {
                     <CFormInput
                     name="country"
                     type="text"
-                    value={filmData.country}
+                    value={countries.join(", ")}
                     onChange={handleChange}
                     />
                 </div>

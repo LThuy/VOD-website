@@ -96,80 +96,84 @@ class FilmControllers {
     let updatedData = { ...req.body };
   
     try {
-      // Parse the stringified arrays
-      if (updatedData.category) {
-        try {
-          updatedData.category = JSON.parse(updatedData.category);
-        } catch (e) {
-          console.error('Error parsing category:', e);
-          return res.status(400).json({
-            success: false,
-            message: 'Invalid category data format',
-          });
-        }
-      }
-  
-      if (updatedData.country) {
-        try {
-          updatedData.country = JSON.parse(updatedData.country);
-        } catch (e) {
-          console.error('Error parsing country:', e);
-          return res.status(400).json({
-            success: false,
-            message: 'Invalid country data format',
-          });
-        }
-      }
-  
-      if (updatedData.actor) {
-        try {
-          updatedData.actor = JSON.parse(updatedData.actor);
-        } catch (e) {
-          updatedData.actor = updatedData.actor.split(',').map(item => item.trim());
-        }
-      }
-  
-      if (updatedData.director) {
-        try {
-          updatedData.director = JSON.parse(updatedData.director);
-        } catch (e) {
-          updatedData.director = updatedData.director.split(',').map(item => item.trim());
+      // Array of fields that need to be parsed from JSON
+      const arrayFields = ['category', 'country', 'actor', 'director', 'comments', 'episodes'];
+      
+      // Parse all array fields or use existing data
+      for (const field of arrayFields) {
+        if (updatedData[field]) {
+          try {
+            if (Array.isArray(updatedData[field])) {
+              continue;
+            }
+            updatedData[field] = JSON.parse(updatedData[field]);
+          } catch (e) {
+            console.error(`Error parsing ${field}:`, e);
+            if (field === 'actor' || field === 'director') {
+              updatedData[field] = updatedData[field].split(',').map(item => item.trim());
+            } else {
+              updatedData[field] = [];
+            }
+          }
         }
       }
   
       // Convert boolean strings to actual booleans
-      if (updatedData.is_copyright) {
-        updatedData.is_copyright = updatedData.is_copyright === 'true';
-      }
-      if (updatedData.sub_docquyen) {
-        updatedData.sub_docquyen = updatedData.sub_docquyen === 'true';
-      }
-      if (updatedData.chieurap) {
-        updatedData.chieurap = updatedData.chieurap === 'true';
-      }
+      const booleanFields = ['is_copyright', 'sub_docquyen', 'chieurap'];
+      booleanFields.forEach(field => {
+        if (updatedData[field] !== undefined) {
+          updatedData[field] = updatedData[field] === 'true';
+        }
+      });
   
       // Convert year to number if present
       if (updatedData.year) {
         updatedData.year = parseInt(updatedData.year, 10);
       }
   
-      console.log('Processed update data:', updatedData);
+      // Find the existing film first
+      const existingFilm = await Film.findById(filmId);
+      if (!existingFilm) {
+        return res.status(404).json({
+          success: false,
+          message: 'Film not found',
+        });
+      }
+  
+      // Keep existing arrays if not provided in update
+      arrayFields.forEach(field => {
+        if (!updatedData[field] || (Array.isArray(updatedData[field]) && updatedData[field].length === 0)) {
+          updatedData[field] = existingFilm[field];
+        }
+      });
+  
+      // Add or update timestamp fields
+      updatedData.modified = {
+        time: new Date()
+      };
+  
+      // Keep the original creation time
+      if (existingFilm.created && existingFilm.created.time) {
+        updatedData.created = {
+          time: existingFilm.created.time
+        };
+      } else {
+        // If for some reason created time doesn't exist, set it
+        updatedData.created = {
+          time: new Date()
+        };
+      }
+  
+      console.log('Final processed update data:', updatedData);
   
       const film = await Film.findByIdAndUpdate(
         filmId,
         updatedData,
         {
           new: true,
-          runValidators: true,
+          runValidators: true
         }
       );
-  
-      if (!film) {
-        return res.status(404).json({
-          success: false,
-          message: 'Film not found',
-        });
-      }
   
       res.status(200).json({
         success: true,
