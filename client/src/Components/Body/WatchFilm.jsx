@@ -40,6 +40,15 @@ function WatchFilm() {
     };
 
     useEffect(() => {
+        // Automatically click the first button of the first server if available
+        if (episodes.length > 0 && episodes[0].server_data.length > 0) {
+            const firstServer = episodes[0].server_data[0];
+            handleEpisodeClick(firstServer.link_embed, firstServer.name);
+        }
+    }, [episodes, handleEpisodeClick]);
+    
+
+    useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
@@ -214,7 +223,7 @@ function WatchFilm() {
                                 {/* Embedded Video */}
                                 <iframe
                                     className="filmdetail-video"
-                                    src={selectedEpisode}
+                                    src={selectedEpisode ? selectedEpisode : "https://player.phimapi.com/player/?url="}
                                     frameBorder="0"
                                     width="auto"
                                     height="480"
@@ -227,9 +236,24 @@ function WatchFilm() {
 
                                 {/* Episode Buttons */}
                                 <div className="episodeBtn-container">
-                                    {episodes.map((episode, episodeIndex) => (
+                                    {/* {episodes.map((episode, episodeIndex) => (
                                         <div key={episodeIndex}>
                                             <h5 style={{color: "white"}}>{episode.server_name}</h5>
+                                            {episode.server_data.map((server, serverIndex) => (
+                                                <button
+                                                    key={`${episodeIndex}-${serverIndex}`}
+                                                    data-link={server.link_embed}
+                                                    className={`episode-button ${selectedEpisode === server.link_embed ? 'active' : ''}`}
+                                                    onClick={() => handleEpisodeClick(server.link_embed, server.name)}
+                                                >
+                                                    {server.name}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ))} */}
+                                     {episodes.map((episode, episodeIndex) => (
+                                        <div key={episodeIndex}>
+                                            <h5 style={{ color: 'white' }}>{episode.server_name}</h5>
                                             {episode.server_data.map((server, serverIndex) => (
                                                 <button
                                                     key={`${episodeIndex}-${serverIndex}`}

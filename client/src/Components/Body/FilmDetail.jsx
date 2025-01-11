@@ -112,10 +112,10 @@ function FilmDetail() {
                     const { movie } = phimDetailData[0];
                     setFilm(phimDetailData[0]);
                     console.log(film)
-                    setActors(movie.actor || []);
-                    setCountries(movie.country || []);
-                    setDirectors(movie.director || []);
-                    setCategory(movie.category || []);
+                    setActors(phimDetailData[0].actor || []);
+                    setCountries(phimDetailData[0].country || []);
+                    setDirectors(phimDetailData[0].director || []);
+                    setCategory(phimDetailData[0].category || []);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);

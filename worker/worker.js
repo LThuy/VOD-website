@@ -167,8 +167,8 @@ async function handleJob(job) {
   // Define video qualities
   const qualities = [
     { name: "360p", resolution: "640x360", bitrate: "800k" },
-    { name: "480p", resolution: "854x480", bitrate: "1400k" },
-    { name: "720p", resolution: "1280x720", bitrate: "2800k" },
+    // { name: "480p", resolution: "854x480", bitrate: "1400k" },
+    // { name: "720p", resolution: "1280x720", bitrate: "2800k" },
   ];
 
   const playlistPaths = [];
@@ -209,14 +209,13 @@ async function handleJob(job) {
     const masterPlaylistContent = playlistPaths
       .map(
         ({ path, resolution }) =>
-          `#EXT-X-STREAM-INF:BANDWIDTH=${getBitrate(resolution)},RESOLUTION=${resolution}\n${path.replace(
-            outputDir,
-            ""
-          )}`
+         `#EXT-X-STREAM-INF:BANDWIDTH=${getBitrate(resolution)},RESOLUTION=${resolution}\n${path.replace(
+          outputDir, // Remove leading slash if present
+          ""
+        ).replace("\\","").replace("\\","/")}`
       )
       .join("\n");
     fs.writeFileSync(masterPlaylistPath, `#EXTM3U\n${masterPlaylistContent}`);
-
     console.log("Master playlist created.");
 
     // Upload video files to S3

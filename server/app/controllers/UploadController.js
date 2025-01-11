@@ -144,8 +144,8 @@ class UploadController {
         _id: new mongoose.Types.ObjectId().toString(),  // Unique identifier for the film
         status: 'inactive',
         type: 'Drama',
-        poster_url: `https://d104go8mhut32c.cloudfront.net/${baseName}/poster/${posterFile.filename}`,
-        thumb_url: `https://d104go8mhut32c.cloudfront.net/${baseName}/thumb/${thumbFile.filename}`,
+        poster_url: `https://d104go8mhut32c.cloudfront.net/videos/${baseName}/poster/${posterFile.filename}`,
+        thumb_url: `https://d104go8mhut32c.cloudfront.net/videos/${baseName}/thumb/${thumbFile.filename}`,
         tmdb: {
           type: 'movie',
           id: '12345',
@@ -178,8 +178,8 @@ class UploadController {
                 name: name,        // Episode name
                 slug: slug,       // Episode slug for URL routing
                 filename: videoFile.filename, // Filename for the episode
-                link_embed: `https://player.phimapi.com/player/?url=https://d104go8mhut32c.cloudfront.net/${baseName}/thumb/${thumbFile.filename}`,  // Embed link for player
-                link_m3u8: `https://d104go8mhut32c.cloudfront.net/${baseName}/thumb/${thumbFile.filename}`    // M3U8 link for streaming
+                link_embed: `https://player.phimapi.com/player/?url=https://d104go8mhut32c.cloudfront.net/videos/${baseName}/master.m3u8`,  // Embed link for player
+                link_m3u8: `https://d104go8mhut32c.cloudfront.net/videos/${baseName}/master.m3u8`    // M3U8 link for streaming
               }
             ]
           }
