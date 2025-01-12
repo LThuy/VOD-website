@@ -7,10 +7,10 @@ import TypeFilm from './Components/Body/typeFlim'
 import WatchFilm from './Components/Body/WatchFilm'
 import SearchResult from './Components/Body/SearchResult'
 import GenreFilm from './Components/Body/GenreFilm'
-import Login from './Components/Body/Login'
+import Login from './Components/Login/Login'
 import LoginAdmin from './Admin/Components/AdminLogin'
 import NoticeVerify from './Components/Body/NoticeVerify'
-import Register from './Components/Body/Register'
+import Register from './Components/Login/Register'
 import VerifyEmail from './Ultil/Account/VerifyEmail';
 import VerifyEmailAdmin from './Ultil/Admin-Account/VerifyEmail';
 import SuccessNotice from './Components/Body/SuccesNotive';
@@ -24,8 +24,8 @@ import ChangePassword from './Components/Body/ChangePassword';
 import FavoriteFilm from './Components/Body/FavoriteFilm';
 import HistoryFilm from './Components/Body/HistoryFilm';
 import ProtectedRoute from './Components/CheckToken/TokenCheckHandle';
-import ForgetPass from './Components/Body/ForgetPass';
-import ResetPassword from './Components/Body/ResetPassword';
+import ForgetPass from './Components/Login/ForgetPass';
+import ResetPassword from './Components/Login/ResetPassword';
 import CountryFilm from './Components/Body/CountryFilm';
 import CreateNewFilm from './Components/Body/CreateNewFilm';
 import YearFilm from './Components/Body/YearFilm';

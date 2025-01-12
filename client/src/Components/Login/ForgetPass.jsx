@@ -8,6 +8,7 @@ import axios from 'axios';
 function ForgetPass() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Validate email
   const validateInput = () => {
@@ -35,6 +36,7 @@ function ForgetPass() {
     if (!validateInput()) {
       return;
     }
+    setIsSubmitting(true);
 
     try {
       // Send a POST request to the server
@@ -56,6 +58,8 @@ function ForgetPass() {
     } catch (error) {
       toast.error('An error occurred while sending the password reset email.');
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -81,8 +85,12 @@ function ForgetPass() {
               />
             </div>
             <div className="form-seciton_btn mt-3">
-              <button className="login-btn" type="submit">
-                Send 
+              <button
+                className="login-btn"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending...' : 'Send'}
               </button>
             </div>
             <div className="form-section_register mt-3">
