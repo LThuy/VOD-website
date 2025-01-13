@@ -225,7 +225,7 @@ function WatchFilm() {
                                     className="filmdetail-video"
                                     src={selectedEpisode ? selectedEpisode : "https://player.phimapi.com/player/?url="}
                                     frameBorder="0"
-                                    width="auto"
+                                    width="100%"
                                     height="480"
                                     allowFullScreen
                                     title="Film Video"                             

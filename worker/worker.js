@@ -185,22 +185,54 @@ async function handleJob(job) {
       playlistPaths.push({ path: playlistPath, resolution: quality.resolution });
 
       await new Promise((resolve, reject) => {
-        ffmpeg(inputPath)
-          .size(quality.resolution)
-          .videoBitrate(quality.bitrate)
-          .addOption("-hls_time", "5")
-          .addOption("-hls_list_size", "0")
-          .addOption("-hls_segment_filename", `${qualityDir}/output%03d.ts`)
-          .output(playlistPath)
-          .on("error", (err) => {
-            console.error(`FFmpeg error for ${fileName} (${quality.name}):`, err);
-            reject(err);
-          })
-          .on("end", () => {
-            console.log(`Finished encoding ${quality.name}`);
-            resolve();
-          })
-          .run();
+        // ffmpeg(inputPath)
+        //   .size(quality.resolution)
+        //   .videoBitrate(quality.bitrate)
+        //   .addOption("-hls_time", "5")
+        //   .addOption("-hls_list_size", "0")
+        //   .addOption("-hls_segment_filename", `${qualityDir}/output%03d.ts`)
+        //   .output(playlistPath)
+        //   .on("error", (err) => {
+        //     console.error(`FFmpeg error for ${fileName} (${quality.name}):`, err);
+        //     reject(err);
+        //   })
+        //   .on("end", () => {
+        //     console.log(`Finished encoding ${quality.name}`);
+        //     resolve();
+        //   })
+        //   .run();
+          ffmpeg(inputPath)
+            .size(quality.resolution)               // Set video resolution
+            .videoBitrate(quality.bitrate)          // Set video bitrate
+            .addOption('-c:v', 'libx264')           // Use H.264 codec for video
+            .addOption('-preset', 'fast')           // Fast encoding preset
+            .addOption('-c:a', 'aac')               // Use AAC codec for audio
+            .addOption('-ar', '48000')              // Set audio sample rate
+            .addOption('-b:a', '128k')              // Set audio bitrate
+            .addOption('-hls_time', '5')            // Segment duration for HLS
+            .addOption('-hls_list_size', '0')       // Save all segments in the playlist
+            .addOption('-hls_segment_filename', `${qualityDir}/output%03d.ts`) // Naming pattern for segments
+            .output(playlistPath)
+            .on('start', (cmd) => {
+              console.log(`FFmpeg started with command: ${cmd}`);
+            })
+            .on('progress', (progress) => {
+              console.log(`Processing frame: ${progress.frames}`);
+            })
+            .on('stderr', (stderrLine) => {
+              if (stderrLine.includes('.ts')) {
+                console.log(`Segment created: ${stderrLine}`);
+              }
+            })
+            .on('error', (err) => {
+              console.error(`FFmpeg error for ${fileName} (${quality.name}):`, err.message);
+              reject(err);
+            })
+            .on('end', () => {
+              console.log(`Finished encoding ${quality.name}`);
+              resolve();
+            })
+            .run();
       });
     }
 

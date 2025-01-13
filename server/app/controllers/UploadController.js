@@ -138,6 +138,8 @@ class UploadController {
       // Create the film object to be saved to the database
       const newFilm = new Film({
         name: name,
+        origin_name: name,
+        content: slug,
         slug: slug,
         created: { time: new Date() },
         modified: { time: new Date() },
