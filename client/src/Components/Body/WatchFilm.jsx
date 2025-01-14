@@ -13,8 +13,7 @@ import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'video.js/dist/video-js.css'; 
-import videojs from 'video.js';
-import VideoPlayerSection from '../test.jsx'
+import VideoPlayerHLS from '../Parts/VideoPlayer';
 
 function WatchFilm() {
     const { slug } = useParams();
@@ -26,6 +25,8 @@ function WatchFilm() {
     const [category, setCategory] = useState([])
     const [currentEpisode, setCurrentEpisode] = useState('FullHD | Vietsub')
     const [episodes, setEpisodes] = useState([])
+    const [thumbnail, setThumbnail] = useState('')
+    const [poster, setPoster] = useState('')
     const [selectedEpisode, setSelectedEpisode] = useState('');
     const handleClickFilmDetail = useHandleClickFilmDetail()
     const handleTruncateText = useHandleTruncateText()
@@ -35,7 +36,7 @@ function WatchFilm() {
 
     const handleEpisodeClick = (link_embed, currentEpisode) => {
         window.scrollTo(0, 0);
-        setSelectedEpisode(link_embed);
+        setSelectedEpisode(link_embed); 
         setCurrentEpisode(currentEpisode)
     };
 
@@ -43,7 +44,7 @@ function WatchFilm() {
         // Automatically click the first button of the first server if available
         if (episodes.length > 0 && episodes[0].server_data.length > 0) {
             const firstServer = episodes[0].server_data[0];
-            handleEpisodeClick(firstServer.link_embed, firstServer.name);
+            handleEpisodeClick(firstServer.link_m3u8, firstServer.name);
         }
     }, [episodes, handleEpisodeClick]);
     
@@ -63,9 +64,11 @@ function WatchFilm() {
                     setDirectors(phimDetailData[0].director || []);
                     setCategory(phimDetailData[0].category || []);
                     setEpisodes(phimDetailData[0].episodes || []);
+                    setThumbnail(phimDetailData[0].thumb_url || []);
+                    setPoster(phimDetailData[0].poster_url || []);
 
                     if (phimDetailData.episodes.length > 0 && phimDetailData.episodes[0].server_data.length > 0) {
-                        const firstLinkEmbed = phimDetailData.episodes[0].server_data[0].link_embed;
+                        const firstLinkEmbed = phimDetailData.episodes[0].server_data[0].link_m3u8;
                         setSelectedEpisode(firstLinkEmbed);
                     } else {
                         console.log('No episodes or server data found');
@@ -221,15 +224,26 @@ function WatchFilm() {
                                 </div>
 
                                 {/* Embedded Video */}
-                                <iframe
+                                <div
                                     className="filmdetail-video"
-                                    src={selectedEpisode ? selectedEpisode : "https://player.phimapi.com/player/?url="}
-                                    frameBorder="0"
-                                    width="100%"
-                                    height="480"
-                                    allowFullScreen
-                                    title="Film Video"                             
-                                ></iframe>
+                                    title="Film Video"
+                                    style={{
+                                        height: '480px',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <VideoPlayerHLS
+                                        selectedEpisode={selectedEpisode}
+                                        thumbnail = {thumbnail}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            marrgin: '0',
+                                        }}
+                                        poster={poster}
+                                    />
+                                </div>
+
                                 
                                 {/* Episode Header */}
                                 <h3 className="episode-header">Danh Sách Tập Phim</h3>
@@ -257,9 +271,9 @@ function WatchFilm() {
                                             {episode.server_data.map((server, serverIndex) => (
                                                 <button
                                                     key={`${episodeIndex}-${serverIndex}`}
-                                                    data-link={server.link_embed}
-                                                    className={`episode-button ${selectedEpisode === server.link_embed ? 'active' : ''}`}
-                                                    onClick={() => handleEpisodeClick(server.link_embed, server.name)}
+                                                    data-link={server.link_m3u8}
+                                                    className={`episode-button ${selectedEpisode === server.link_m3u8 ? 'active' : ''}`}
+                                                    onClick={() => handleEpisodeClick(server.link_m3u8, server.name)}
                                                 >
                                                     {server.name}
                                                 </button>
