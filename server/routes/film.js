@@ -33,6 +33,8 @@ router.get('/gethistory/:userId', filmControllers.getHistoryFilm)
 router.get('/list/new', filmControllers.getNewestFilm)
 // get film-detail
 router.get('/:slug', filmControllers.getFilmDetails)
+// set film active for displaying
+router.post('/setActive', filmControllers.setFilmActive)
 
 
 module.exports = router;

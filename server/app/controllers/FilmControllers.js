@@ -465,7 +465,7 @@ class FilmControllers {
       } = req.query; // Get pagination parameters
 
       // Retrieve films from the database with pagination
-      const films = await Film.find()
+      const films = await Film.find({ status: "active" })
         .skip((page - 1) * limit) // Skipping the documents for pagination
         .limit(limit) // Limiting the number of films returned
         .exec();
@@ -536,6 +536,53 @@ class FilmControllers {
       });
     }
   }
+
+  //Set Film Active
+  async setFilmActive(req, res) {
+    try {
+      // Extract slugPayload from the request body
+      const { slug } = req.body;
+  
+      // Ensure the slugPayload contains the slug
+      if (!slug) {
+        return res.status(400).json({
+          status: false,
+          message: 'Slug is required',
+        });
+      }
+  
+      console.log(`Received slug: ${slug}`);
+  
+      // Find the film by slug and update its status to "active"
+      const updatedFilm = await Film.findOneAndUpdate(
+        { slug: slug }, // Match condition
+        { $set: { status: 'active' } }, // Update the status field
+        { new: true } // Return the updated document
+      );
+  
+      // If film not found, return a 404 response
+      if (!updatedFilm) {
+        return res.status(404).json({
+          status: false,
+          message: 'Film not found',
+        });
+      }
+  
+      // Return the updated film document
+      res.json({
+        status: true,
+        message: 'Film status updated to active',
+        data: updatedFilm,
+      });
+    } catch (error) {
+      console.error('Error setting film status to active:', error);
+      res.status(500).json({
+        status: false,
+        message: 'Server error',
+      });
+    }
+  }
+  
 
 }
 

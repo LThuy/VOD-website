@@ -4,6 +4,7 @@ const fs = require("fs");
 const { Worker } = require("bullmq");
 const IORedis = require("ioredis");
 const AWS = require('aws-sdk');
+const axios = require('axios');
 require('dotenv').config();
 const { S3Client } = require('@aws-sdk/client-s3');
 const { Upload } = require("@aws-sdk/lib-storage");
@@ -143,6 +144,7 @@ async function handleJob(job) {
   const videoData = files.find((file) => file.type === 'video') || {};
   const thumbData = files.find((file) => file.type === 'thumbnail') || {};
   const posterData = files.find((file) => file.type === 'poster') || {};
+  const slugData = files.find((file) => file.type === 'slug') || {};
 
   // Access their properties
   const fileName = videoData.fileName;
@@ -167,8 +169,8 @@ async function handleJob(job) {
   // Define video qualities
   const qualities = [
     { name: "360p", resolution: "640x360", bitrate: "800k" },
-    // { name: "480p", resolution: "854x480", bitrate: "1400k" },
-    // { name: "720p", resolution: "1280x720", bitrate: "2800k" },
+    { name: "480p", resolution: "854x480", bitrate: "1400k" },
+    { name: "720p", resolution: "1280x720", bitrate: "2800k" },
   ];
 
   const playlistPaths = [];
@@ -270,6 +272,29 @@ async function handleJob(job) {
       await uploadFile(posterPath, bucketName, posterS3Key);
       console.log("Poster uploaded successfully.");
     }
+
+    console.log(slugData + "hahaaaaa")
+    if (slugData && slugData.value) {
+      const slugPayload = {
+        slug: slugData.value,
+      };
+
+      console.log("Sending slug data to the local server:", slugPayload);
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/film/setActive",
+          { slug: slugData.value }, 
+          { headers: { "Content-Type": "application/json" } }
+        );
+        console.log(response.message);
+      } catch (error) {
+        console.error("Error posting data:", error.response?.data || error.message);
+      }
+
+      console.log("Slug data sent to the local server successfully.");
+    }
+
 
     // Clean up local files (optional)
     async function cleanUpDirectory(dirPath) {
