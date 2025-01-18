@@ -37,6 +37,10 @@ const AccountSchema = new mongoose.Schema({
     default: false
   },
   lastLogin: { type: Date },
+  onlineTime: {
+    type: Number,
+    default: 0, // Time in milliseconds
+  },
 });
 
 module.exports = mongoose.model('Account', AccountSchema);
