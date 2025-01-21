@@ -10,8 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.723.0",
-    "@aws-sdk/lib-storage": "^3.723.0",
+    "@aws-sdk/client-s3": "^3.731.1",
+    "@aws-sdk/lib-storage": "^3.731.1",
     "aws-sdk": "^2.1692.0",
     "axios": "^1.7.9",
     "bullmq": "^5.32.0",
@@ -21,6 +21,7 @@
     "ioredis": "^5.4.1",
     "os": "^0.1.2",
     "path": "^0.12.7",
-    "rimraf": "^6.0.1"
+    "rimraf": "^6.0.1",
+    "stream": "^0.0.3"
   }
 }
