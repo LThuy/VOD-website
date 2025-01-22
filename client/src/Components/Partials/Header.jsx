@@ -4,11 +4,11 @@ import '../../Style/PartialsCss/Header.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faMagnifyingGlass, faUser, faStar, faRightFromBracket, faClockRotateLeft, faPeopleRoof, faPlus } from '@fortawesome/free-solid-svg-icons';
 import '../../Style/Responsive/Responsive.css'
-
 import { useHandleEnterSearchFilm } from '../../Ultil/Hepler/navigationHelpers'
-
+import axios from 'axios';
 function Header() {
     const navigate = useNavigate()
+    const [showModal, setShowModal] = useState(false);
     const [isOpen, setOpen] = useState(false)
     const inputBox = useRef(null)
     const handleEnterSearchFilm = useHandleEnterSearchFilm()
@@ -63,13 +63,29 @@ function Header() {
         }
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userEmail');
-        localStorage.removeItem('userId');
-        setUserEmail(null); // Reset state
-        setUserName(null); // Reset state
-        navigate('/login');
+    const handleLogout = async  () => {
+        
+        try {
+            // Make a POST request to your server's logout endpoint
+            const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
+            await axios.post('http://localhost:5000/logout', { userId }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token if required
+                },
+            });
+    
+            // Clear client-side data
+            localStorage.removeItem('token');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userId');
+            setUserEmail(null); // Reset state
+            setUserName(null); // Reset state
+    
+            // Navigate to login page
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout failed:', error.response?.data || error.message);
+        }
     };
 
     
@@ -183,7 +199,7 @@ function Header() {
                                                         </Link>
                                                     </>
                                                 )}
-                                                <div onClick={handleLogout} className="profile-list-item">
+                                                 <div onClick={() => setShowModal(true)} className="profile-list-item">
                                                     <FontAwesomeIcon className="profile-icon" icon={faRightFromBracket} />
                                                     <span>Đăng Xuất</span>
                                                 </div>
@@ -203,6 +219,55 @@ function Header() {
                 </div>
             </div>
             <div className={`overlay ${isNavOpen ? 'open' : ''}`} onClick={closeNav} />
+            {/* Logout Confirmation Modal */}
+            <div>
+            {/* Custom Bootstrap Modal */}
+            <div
+                className={`modal fade ${showModal ? "show d-block" : "d-none"}`}
+                tabIndex="-1"
+                role="dialog"
+                style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
+            >
+                <div className="modal-dialog modal-dialog-centered" role="document">
+                <div className="modal-content border-0 shadow-lg">
+                    <div className="modal-header bg-danger text-white">
+                    <h5 className="modal-title">
+                        <FontAwesomeIcon icon={faRightFromBracket} className="me-2" />
+                        Confirm Logout
+                    </h5>
+                    <button
+                        type="button"
+                        className="btn-close btn-close-white"
+                        onClick={() => setShowModal(false)}
+                        aria-label="Close"
+                    ></button>
+                    </div>
+                    <div className="modal-body text-center">
+                    <p className="fs-5">
+                        Are you sure you want to log out? You will need to log back in
+                        to continue using your account.
+                    </p>
+                    </div>
+                    <div className="modal-footer justify-content-center">
+                    <button
+                        type="button"
+                        className="btn btn-danger btn-lg px-4"
+                        onClick={handleLogout}
+                    >
+                        Yes, Log Out
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-secondary btn-lg px-4"
+                        onClick={() => setShowModal(false)}
+                    >
+                        Cancel
+                    </button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
         </header>
     );
 }

@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-
+const trackLogin = require('../middleware/AccountTracktime');
 const siteControllers = require('../app/controllers/SiteControllers');
 
 // account section routes
 router.post('/login',siteControllers.checkLogin);
+router.post('/logout',siteControllers.logout);
 router.post('/register',siteControllers.createAccount);
 router.post('/resend-verification',siteControllers.resentEmail);
 router.get('/verify-email', siteControllers.verifyEmail); 

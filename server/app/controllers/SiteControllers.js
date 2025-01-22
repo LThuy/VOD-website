@@ -77,21 +77,21 @@ class SiteControllers {
 
             if (!user) {
                 return res.status(400).json({
-                    message: "Invalid email or password"
+                    message: "Invalid email or password",
                 });
             }
 
             // Check if the account is locked
             if (user.locked) {
                 return res.status(403).json({
-                    message: "This account has been locked. Please contact support for assistance."
+                    message: "This account has been locked. Please contact support for assistance.",
                 });
             }
 
             // Check if the account is verified
             if (!user.verified) {
                 return res.status(400).json({
-                    message: "Please verify your email first"
+                    message: "Please verify your email first",
                 });
             }
 
@@ -99,38 +99,42 @@ class SiteControllers {
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(400).json({
-                    message: "Invalid email or password"
+                    message: "Invalid email or password",
                 });
             }
 
             // Update lastLogin time
             user.lastLogin = new Date();
+
+            // Add a session start time
+            user.sessions = user.sessions || []; // Ensure the sessions field exists
+            user.sessions.push({
+                startTime: new Date()
+            }); // Add a new session with the current time
+
             await user.save();
 
             // Generate a token for successful login
             const token = jwt.sign({
                 userId: user._id
             }, jwtSecret, {
-                expiresIn: '7d'
+                expiresIn: '7d',
             });
 
-            // res.status(200).json({
-            //     message: "Login successful",
-            //     token
-            // });
             res.status(200).json({
                 token,
                 email: user.email,
                 userId: user._id,
-                role: user.role
+                role: user.role,
             });
         } catch (error) {
             console.error(error);
             res.status(500).json({
-                message: "Server error"
+                message: "Server error",
             });
         }
     }
+
 
 
     //POST register section : /createAccount
@@ -440,15 +444,44 @@ class SiteControllers {
 
 
     // [GET] /logout
-    logout(req, res) {
-        req.session.destroy()
-        res.redirect('/')
+    async logout(req, res) {
+        const {
+            userId
+        } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({
+                message: 'User ID is required'
+            });
+        }
+
+        try {
+            const user = await User.findById(userId);
+
+            if (user && user.sessions.length > 0) {
+                const activeSession = user.sessions[user.sessions.length - 1];
+                activeSession.endTime = Date.now();
+                activeSession.duration = Math.floor((activeSession.endTime - activeSession.startTime) / 1000);
+                await user.save();
+            }
+
+            res.status(200).json({
+                message: 'Logout successful'
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({
+                message: 'Server error during logout'
+            });
+        }
     }
 
     getDashboard(req, res) {
-        const { username } = req.body;
+        const {
+            username
+        } = req.body;
         console.log('Received username:', username);
-      
+
         // Redirect to localhost:3000 with username as query parameter
         res.redirect(`http://localhost:3001?username=${encodeURIComponent(username)}`);
     }

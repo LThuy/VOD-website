@@ -57,27 +57,57 @@ function User() {
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
 
+  const [onlineTime, setOnlineTime] = useState(0);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/info/users')
+        const response = await fetch('http://localhost:5000/info/users');
         if (!response.ok) {
-          throw new Error('Failed to fetch users')
+          throw new Error('Failed to fetch users');
         }
-        const data = await response.json()
-        // Add "timeAgo" property for each user
-        const usersWithTimeAgo = data.map(user => ({
-          ...user,
-          timeAgo: timeAgo(user.lastLogin) // Add human-readable time
-        }));
-        setUsers(usersWithTimeAgo);
-      } catch (error) {
-        console.error('Error fetching users:', error)
-      }
-    }
+        const users = await response.json();
 
-    fetchUsers()
-  }, [])
+        // Fetch online time for each user and merge it into user data
+        const usersWithOnlineTime = await Promise.all(
+          users.map(async (user) => {
+            try {
+              const onlineTimeResponse = await fetch(
+                `http://localhost:5000/user/online-time/${user._id}`
+              );
+
+              if (!onlineTimeResponse.ok) {
+                throw new Error('Failed to fetch online time');
+              }
+
+              const onlineTimeData = await onlineTimeResponse.json();
+
+              return {
+                ...user,
+                onlineTime: onlineTimeData.totalOnlineTime, // Add total online time in seconds
+                timeAgo: timeAgo(user.lastLogin), // Human-readable last login time
+              };
+            } catch (error) {
+              console.error(`Error fetching online time for user ${user._id}:`, error);
+              return {
+                ...user,
+                onlineTime: 0, // Default to 0 if the fetch fails
+                timeAgo: timeAgo(user.lastLogin),
+              };
+            }
+          })
+        );
+
+        setUsers(usersWithOnlineTime);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+
 
   const timeAgo = (timestamp) => {
     const now = new Date();
@@ -147,7 +177,7 @@ function User() {
                     {/* <CTableHeaderCell className="bg-body-tertiary text-center">
                         Country
                     </CTableHeaderCell> */}
-                    <CTableHeaderCell className="bg-body-tertiary">Usage</CTableHeaderCell>
+                    <CTableHeaderCell className="bg-body-tertiary">Online time</CTableHeaderCell>
                     <CTableHeaderCell className="bg-body-tertiary text-center">
                         Lock/Unlock
                     </CTableHeaderCell>
@@ -156,7 +186,7 @@ function User() {
                 </CTableHead>
                 <CTableBody>
                     {users.map((user, index) => (
-                    <CTableRow v-for="item in tableItems" key={index}>
+                    <CTableRow v-for="item in tableItems" key={user._id}>
                         <CTableDataCell className="text-center">
                         <CAvatar
                           size="md"
@@ -175,12 +205,17 @@ function User() {
                         </CTableDataCell> */}
                         <CTableDataCell>
                         <div className="d-flex justify-content-between text-nowrap">
-                            <div className="fw-semibold">100%</div>
+                            {/* <div className="fw-semibold">100%</div>
                             <div className="ms-3">
                             <small className="text-body-secondary">10</small>
-                            </div>
+                            </div> */}
+                             <p>
+                              {Math.floor(user.onlineTime / 3600)}h{' '}
+                              {Math.floor((user.onlineTime % 3600) / 60)}m{' '}
+                              {Math.floor(user.onlineTime % 60)}s
+                            </p>
                         </div>
-                        <CProgress thin color='red' value = {50} />
+                        {/* <CProgress thin color='red' value = {50} /> */}
                         </CTableDataCell>
                         {/* <CTableDataCell className="text-center">
                         <CIcon size="xl" icon={item.payment.icon} />

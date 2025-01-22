@@ -92,36 +92,34 @@ class UserControllers {
         }
     }
     async getOnlineTimeUsers(req, res) {
-        const userId = req.params.userId
-        const token = req.headers.authorization;
-
-        if (!token) {
-            return res.status(401).json({
-                message: "Unauthorized"
-            });
-        }
+        const {
+            userId
+        } = req.params.userId;
 
         try {
-            const decoded = jwt.verify(token, JWT_SECRET);
-            const userId = decoded.userId;
+            const user = await Account.findById(id);
 
-            const account = await Account.findById(userId, "onlineTime username email");
-            if (!account) {
+            if (!user) {
                 return res.status(404).json({
-                    message: "User not found"
+                    message: 'User not found'
                 });
             }
 
-            res.json({
-                message: "Online time retrieved successfully",
-                onlineTime: account.onlineTime,
-                username: account.username,
-                email: account.email,
+            // Calculate total online time in seconds
+            const totalOnlineTime = user.sessions.reduce((total, session) => {
+                const startTime = new Date(session.startTime).getTime();
+                const endTime = session.endTime ? new Date(session.endTime).getTime() : Date.now();
+                return total + (endTime - startTime) / 1000; // Convert milliseconds to seconds
+            }, 0);
+
+            res.status(200).json({
+                userId: user._id,
+                totalOnlineTime, // Time in seconds
             });
         } catch (error) {
-            console.error("Error fetching online time:", error);
+            console.error('Error fetching online time:', error);
             res.status(500).json({
-                message: "Internal server error"
+                message: 'Server error'
             });
         }
     }

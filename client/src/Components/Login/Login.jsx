@@ -12,44 +12,7 @@ function Login({ setUserEmail }) {
   // Track user online time
   useEffect(() => {
     document.title = "Login Page";
-
-    let onlineStartTime = 0;
-    let totalOnlineTime = 0;
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        onlineStartTime = Date.now(); // User starts being online
-      } else if (onlineStartTime > 0) {
-        totalOnlineTime += Date.now() - onlineStartTime; // Update total online time
-        onlineStartTime = 0;
-      }
-    };
-
-    const handleBeforeUnload = () => {
-      if (onlineStartTime > 0) {
-        totalOnlineTime += Date.now() - onlineStartTime;
-      }
-      sendOnlineTimeToServer(totalOnlineTime);
-    };
-
-    const sendOnlineTimeToServer = (time) => {
-      fetch(`http://localhost:5000/infor/users/online-time/${userId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ time }),
-      }).catch((error) => console.error("Error sending online time:", error));
-    };
-    console.log(`Online time: ${totalOnlineTime}`)
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+    
   }, []);
 
   // Validate inputs
