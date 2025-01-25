@@ -124,15 +124,22 @@ class UploadController {
         if (thumbFile) {
           allFiles.push({
             type: "thumbnail",
-            fileName: thumbFile.key, // S3 key for thumbnail file
+            fileName: thumbFile.originalname, // S3 key for thumbnail file
             s3Key: thumbFile.key, // S3 key for thumbnail
+          });
+        }
+
+        if (slug) {
+          allFiles.push({
+            type: "slug",
+            value: slug,
           });
         }
     
         if (posterFile) {
           allFiles.push({
             type: "poster",
-            fileName: posterFile.key, // S3 key for poster file
+            fileName: posterFile.originalname, // S3 key for poster file
             s3Key: posterFile.key, // S3 key for poster
           });
         }
@@ -151,8 +158,8 @@ class UploadController {
           _id: new mongoose.Types.ObjectId().toString(),
           status: 'inactive',
           type: 'Drama',
-          poster_url: `https://d104go8mhut32c.cloudfront.net/videos/${baseName}/poster/${posterFile.key}`,
-          thumb_url: `https://d104go8mhut32c.cloudfront.net/videos/${baseName}/thumb/${thumbFile.key}`,
+          poster_url: `https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/poster/${posterFile.originalname}`,
+          thumb_url: `https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/thumb/${thumbFile.originalname}`,
           tmdb: {
             type: 'movie',
             id: '12345',
@@ -184,8 +191,8 @@ class UploadController {
                   name: name,
                   slug: slug,
                   filename: videoFile.key,
-                  link_embed: `https://player.phimapi.com/player/?url=https://d104go8mhut32c.cloudfront.net/videos/${baseName}/master.m3u8`,
-                  link_m3u8: `https://d104go8mhut32c.cloudfront.net/videos/${baseName}/master.m3u8`,
+                  link_embed: `https://player.phimapi.com/player/?url=https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/master.m3u8`,
+                  link_m3u8: `https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/master.m3u8`,
                 },
               ],
             },

@@ -61,6 +61,7 @@ const worker = new Worker(
     } finally {
       isProcessing = false;
       console.log(`[${new Date().toISOString()}] Job ${jobId}: Released processing lock`);
+      console.log(`[${new Date().toISOString()}] FFmpeg worker is ready.`);
     }
   },
   { 
@@ -117,8 +118,7 @@ async function handleJob(job) {
     if (thumbData.fileName) {
       console.log(`[${new Date().toISOString()}] Job ${job.id}: Processing thumbnail`);
       await uploadFileToS3(
-        thumbData.folderPath,
-        thumbData.fileName,
+        thumbData.s3Key,
         `${outputS3KeyPrefix}/thumb/${thumbData.fileName}`
       );
     }
@@ -126,8 +126,7 @@ async function handleJob(job) {
     if (posterData.fileName) {
       console.log(`[${new Date().toISOString()}] Job ${job.id}: Processing poster`);
       await uploadFileToS3(
-        posterData.folderPath,
-        posterData.fileName,
+        posterData.s3Key,
         `${outputS3KeyPrefix}/poster/${posterData.fileName}`
       );
     }
@@ -222,18 +221,30 @@ async function uploadBufferToS3(buffer, key) {
   console.log(`[${new Date().toISOString()}] Uploaded ${key} to S3`);
 }
 
-async function uploadFileToS3(folderPath, fileName, s3Key) {
-  const filePath = path.join(folderPath, fileName);
-  const fileStream = fs.createReadStream(filePath);
+async function uploadFileToS3(inputS3Key, outputS3Key) {
+  try {
+    // Get file from input S3
+    const getCommand = new GetObjectCommand({
+      Bucket: process.env.BUCKET_INPUT,
+      Key: inputS3Key
+    });
 
-  const uploadParams = {
-    Bucket: process.env.BUCKET_OUTPUT,
-    Key: s3Key,
-    Body: fileStream
-  };
+    const response = await inputS3Client.send(getCommand);
+    const fileBuffer = await response.Body.transformToByteArray();
 
-  await outputS3Client.send(new PutObjectCommand(uploadParams));
-  console.log(`[${new Date().toISOString()}] Uploaded ${fileName} to S3 at ${s3Key}`);
+    // Upload buffer to output S3
+    const uploadParams = {
+      Bucket: process.env.BUCKET_OUTPUT,
+      Key: outputS3Key,
+      Body: fileBuffer
+    };
+
+    await outputS3Client.send(new PutObjectCommand(uploadParams));
+    console.log(`[${new Date().toISOString()}] Uploaded ${inputS3Key} to ${outputS3Key}`);
+  } catch (error) {
+    console.error(`[${new Date().toISOString()}] Error uploading ${inputS3Key}:`, error);
+    throw error;
+  }
 }
 
 async function getS3FileStream(key) {
