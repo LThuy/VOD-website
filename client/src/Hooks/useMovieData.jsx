@@ -30,7 +30,7 @@ const useMovieData = () => {
     const fetchData = async () => {
       const endpoints = [
         // { url: 'https://phimapi.com/danh-sach/phim-moi-cap-nhat?limit=12', key: 'phimmoiCN' },
-        { url: '${process.env.REACT_APP_SERVER_BASE_URL}/film/list/new', key: 'phimmoiCN' },
+        { url: `${process.env.REACT_APP_SERVER_BASE_URL}/film/list/new`, key: 'phimmoiCN' },
         { url: 'https://phimapi.com/v1/api/danh-sach/phim-le?limit=12', key: 'phimLe' },
         { url: 'https://phimapi.com/v1/api/danh-sach/phim-bo?limit=12', key: 'phimBo' },
         { url: 'https://phimapi.com/v1/api/danh-sach/hoat-hinh?limit=12', key: 'phimHH' },

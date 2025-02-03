@@ -204,7 +204,7 @@ function User() {
                         <CIcon size="xl" icon={item.country.flag} title={item.country.name} />
                         </CTableDataCell> */}
                         <CTableDataCell>
-                        <div className="d-flex justify-content-between text-nowrap">
+                        <div className="d-flex justify-content-between text-nowrap mt-3">
                             {/* <div className="fw-semibold">100%</div>
                             <div className="ms-3">
                             <small className="text-body-secondary">10</small>

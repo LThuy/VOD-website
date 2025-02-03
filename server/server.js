@@ -13,21 +13,25 @@ require('dotenv').config();
 app.use(bodyParser.json());
 const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
 
-// app.use(cors({
-//   origin: 'http://localhost:3000'
-// })); 
- 
-
-
 app.use(cors({
-  origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-      } else {
-          callback(new Error('Not allowed by CORS'));
-      }
-  }
+  origin: 'http://localhost:3000'
+})); 
+app.use(cors({
+  origin: [process.env.CLIENT_BASE_URL], // Allow frontend domain
+  credentials: true
 }));
+
+
+
+// app.use(cors({
+//   origin: (origin, callback) => {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//           callback(null, true);
+//       } else {
+//           callback(new Error('Not allowed by CORS'));
+//       }
+//   }
+// }));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
