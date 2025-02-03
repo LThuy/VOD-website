@@ -14,7 +14,7 @@ const CommentSection = ({ userId, filmId }) => {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/comments/${filmId}`);
+                const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/comments/${filmId}`);
                 const result = await response.json();
                 if (response.ok) {
                     console.log("Fetched comments:", result.comments); // Debug log
@@ -45,7 +45,7 @@ const CommentSection = ({ userId, filmId }) => {
         }
         if (newComment.trim()) {
             try {
-                const response = await fetch("http://localhost:5000/comments", {
+                const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/comments`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

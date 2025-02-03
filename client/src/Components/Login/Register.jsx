@@ -48,7 +48,7 @@ function Register() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/register', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

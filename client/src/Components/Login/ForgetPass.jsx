@@ -40,7 +40,7 @@ function ForgetPass() {
 
     try {
       // Send a POST request to the server
-      const response = await fetch('http://localhost:5000/forget-password', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/forget-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

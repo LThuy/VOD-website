@@ -57,7 +57,7 @@ function ChangePassword() {
     if (!validateInputs()) return;
 
     try {
-      const response = await axios.post("http://localhost:5000/change-password", {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_BASE_URL}/change-password`, {
         email: userEmail,
         oldPassword: formData.oldPassword,
         newPassword: formData.newPassword,

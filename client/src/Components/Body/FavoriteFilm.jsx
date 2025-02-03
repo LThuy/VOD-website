@@ -30,10 +30,9 @@ const FavoriteFilm = () => {
         console.log("No user ID available yet");
         return;
       }
-
       try {
 
-        const response = await fetch(`http://localhost:5000/film/getfavorites/${userId}`);
+        const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/film/getfavorites/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch favorite films');
         }

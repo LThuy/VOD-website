@@ -105,7 +105,7 @@ function FilmDetail() {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const phimDetailData = await fetchingApiData([`http://localhost:5000/film/${slug}`]);
+                const phimDetailData = await fetchingApiData([`${process.env.REACT_APP_SERVER_BASE_URL}/film/${slug}`]);
                 // const [phimDetailData] = await fetchingApiData([`https://phimapi.com/phim/${slug}`]);
             
                 if (phimDetailData[0]) {

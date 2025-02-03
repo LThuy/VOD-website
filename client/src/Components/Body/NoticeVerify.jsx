@@ -16,7 +16,6 @@ function NoticeVerify() {
     setError('');
 
     try {
-      // Replace 'user@example.com' with the actual user email (e.g., pass it as a prop or context)
       const response = await axios.post('/resend-verification', {
         email: email, // Update this to the correct user email
       });

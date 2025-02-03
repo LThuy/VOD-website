@@ -13,7 +13,7 @@ const LikeButton = ({ filmData, userId, showToast }) => {
 
     const checkFilmLiked = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/film/is-favorite`, {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/film/is-favorite`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -48,8 +48,8 @@ const LikeButton = ({ filmData, userId, showToast }) => {
 
     try {
       const url = isActive
-        ? "http://localhost:5000/film/remove-favorite"
-        : "http://localhost:5000/film/add-favorite";
+        ? `${process.env.REACT_APP_SERVER_BASE_URL}/film/remove-favorite`
+        : `${process.env.REACT_APP_SERVER_BASE_URL}/film/add-favorite`;
 
       const body = isActive
         ? JSON.stringify({ userId: userId, filmId: filmData._id })

@@ -66,9 +66,8 @@ function Header() {
     const handleLogout = async  () => {
         
         try {
-            // Make a POST request to your server's logout endpoint
-            const userId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
-            await axios.post('http://localhost:5000/logout', { userId }, {
+            const userId = localStorage.getItem('userId'); 
+            await axios.post(`${process.env.REACT_APP_SERVER_BASE_URL}/logout`, { userId }, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token if required
                 },

@@ -54,7 +54,7 @@ function WatchFilm() {
             try {
                 setLoading(true);
                 const phimDetailData = await fetchingApiData([
-                    `http://localhost:5000/film/${slug}`,
+                    `${process.env.REACT_APP_SERVER_BASE_URL}/film/${slug}`,
                 ]);
 
                 if (phimDetailData[0]) {
