@@ -77,11 +77,16 @@ class UploadController {
       //     res.status(500).json({ error: "Error uploading file" });
       // }
 
-      // Redis connection setup
-      const connection = new IORedis({
+      const redisCloudConfig = {
+        host: process.env.HOST_REDIS, // Redis Cloud host
+        port: process.env.PORT_REDIS, // Redis Cloud port
+        password: process.env.PASSWORD_REDIS, // Redis Cloud password
         maxRetriesPerRequest: null,
         enableReadyCheck: false,
-      });
+      }; 
+
+      // Redis connection setup
+      const connection = new IORedis(redisCloudConfig);
 
       const fileQueue = new Queue("encode-video", { connection });
 
