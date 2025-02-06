@@ -129,7 +129,7 @@ function CreateFilm() {
 
       if (response.status === 200) {
         toast.success('Upload Successfully!', { icon: '🚀' })
-        setTimeout(() => navigate('/'), 2000) // Navigate after success
+        setTimeout(() => navigate('/film/manage-library'), 2000) // Navigate after success
       }
     } catch (error) {
       console.error('Upload error:', error)

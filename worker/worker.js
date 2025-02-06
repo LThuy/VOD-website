@@ -30,11 +30,16 @@ const outputS3Client = new S3Client({
   signatureVersion: "v4",
 });
 
-// Initialize Redis connection
-const connection = new IORedis({
-  maxRetriesPerRequest: null,
-  enableReadyCheck: false,
-});
+const redisCloudConfig = {
+        host: process.env.HOST_REDIS, // Redis Cloud host
+        port: process.env.PORT_REDIS, // Redis Cloud port
+        password: process.env.PASSWORD_REDIS, // Redis Cloud password
+        maxRetriesPerRequest: null,
+        enableReadyCheck: false,
+      };
+
+// Redis connection setup
+const connection = new IORedis(redisCloudConfig);
 
 let isProcessing = false; // Global flag to prevent duplicate processing
 
@@ -66,7 +71,8 @@ const worker = new Worker(
   },
   { 
     connection,
-    concurrency: 1
+    concurrency: 1,
+    lockDuration: 60000
   }
 );
 
@@ -91,7 +97,7 @@ async function handleJob(job) {
   const qualities = [
     { name: "360p", resolution: "640x360", bitrate: "800k" },
     { name: "480p", resolution: "854x480", bitrate: "1400k" },
-    { name: "720p", resolution: "1280x720", bitrate: "2800k" },
+    // { name: "720p", resolution: "1280x720", bitrate: "2800k" },
   ];
 
   try {
