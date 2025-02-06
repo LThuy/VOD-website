@@ -11,17 +11,7 @@ require('dotenv').config();
 
 // Middleware
 app.use(bodyParser.json());
-const allowedOrigins = [`${process.env.CLIENT_BASE_URL}`, 'http://localhost:3001'];
-
-// app.use(cors({
-//   origin: 'http://localhost:3000'
-// })); 
-// app.use(cors({
-//   origin: [process.env.CLIENT_BASE_URL], // Allow frontend domain
-//   credentials: true
-// }));
-
-
+const allowedOrigins = [`${process.env.CLIENT_BASE_URL}`, `${process.env.CLIENT_DASHBOARD_URL}`];
 
 app.use(cors({
   origin: (origin, callback) => {

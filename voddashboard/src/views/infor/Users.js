@@ -56,13 +56,13 @@ function User() {
   const [users, setUsers] = useState([])
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
-
   const [onlineTime, setOnlineTime] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/info/users');
+        const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/info/users`);
+       
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
@@ -73,7 +73,7 @@ function User() {
           users.map(async (user) => {
             try {
               const onlineTimeResponse = await fetch(
-                `http://localhost:5000/user/online-time/${user._id}`
+                `${import.meta.env.VITE_SERVER_BASE_URL}/user/online-time/${user._id}`
               );
 
               if (!onlineTimeResponse.ok) {
@@ -131,7 +131,7 @@ function User() {
   const handleLockUnlock = async () => {
     if (selectedUser) {
       try {
-        const response = await fetch(`http://localhost:5000/info/users/${selectedUser._id}/lock`, {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/info/users/${selectedUser._id}/lock`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

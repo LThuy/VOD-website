@@ -27,7 +27,7 @@ function FilmLibrary() {
     useEffect(() => {
         async function fetchFilms() {
             try {
-                const response = await axios.get('http://localhost:5000/film/get-film');
+                const response = await axios.get(`${import.meta.env.VITE_SERVER_BASE_URL}/film/get-film`);
                 setFilms(response.data.data); 
             } catch (error) {
                 setError(error.message);
@@ -48,7 +48,7 @@ function FilmLibrary() {
         // Handle delete action (you can add the logic to delete the film here)
         console.log('Deleting film with ID:', filmId);
         try {
-            const response = await axios.delete(`http://localhost:5000/film/delete-film/${filmId}`);
+            const response = await axios.delete(`${import.meta.env.VITE_SERVER_BASE_URL}/film/delete-film/${filmId}`);
             if(response.status == 200) {
                 setFilms(films.filter((film) => film._id !== filmId));
                 toast.success(response.data.message);

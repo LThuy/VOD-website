@@ -49,7 +49,7 @@ function EditFilm() {
   useEffect(() => {
     async function fetchFilm() {
       try {
-        const response = await axios.get(`http://localhost:5000/film/get-film/${filmId}`);
+        const response = await axios.get(`${import.meta.env.VITE_SERVER_BASE_URL}/film/get-film/${filmId}`);
         setFilmData(response.data.data);
       } catch (error) {
         console.error('Error fetching film data:', error);
@@ -92,7 +92,7 @@ function EditFilm() {
 
     try {
       const response = await axios.put(
-        `http://localhost:5000/film/update-film/${filmId}`,
+        `${import.meta.env.VITE_SERVER_BASE_URL}/film/update-film/${filmId}`,
         formData,
         {
           headers: {
