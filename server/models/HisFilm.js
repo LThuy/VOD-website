@@ -19,7 +19,7 @@ const HistFilmChema = new mongoose.Schema({
   },
   _id: { type: String, required: true }, // Maintain the API's specific ID format
   name: { type: String, required: true },
-  slug: { type: String ,unique: true },
+  slug: { type: String ,unique: false },
   origin_name: { type: String },
   content: { type: String },
   type: { type: String },

@@ -265,7 +265,7 @@ async function getS3FileStream(key) {
 
 async function sendSlugDataToLocalServer(slug) {
   try {
-    await axios.post("http://localhost:5000/film/setActive", { slug });
+    await axios.post(`${process.env.REACT_APP_SERVER_BASE_URL}/film/setActive`, { slug });
     console.log(`[${new Date().toISOString()}] Sent slug data: ${slug}`);
   } catch (error) {
     console.error(`[${new Date().toISOString()}] Error sending slug data:`, error.response?.data || error.message);
