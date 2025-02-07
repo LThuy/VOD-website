@@ -188,7 +188,7 @@ function Header() {
                                                 </Link>
                                                 {userRole === "admin" && (
                                                     <>
-                                                        <a href={`http://localhost:3001/dashboard?username=${encodeURIComponent(userName)}`} className="profile-list-item">
+                                                        <a href={`${process.env.REACT_APP_SERVER_BASE_URL}/dashboard?username=${encodeURIComponent(userName)}`} className="profile-list-item">
                                                             <FontAwesomeIcon className="profile-icon" icon={faPeopleRoof} />
                                                             <span>Dashboard</span>
                                                         </a>
