@@ -12,7 +12,7 @@ const VerifyEmail = () => {
 
         const verifyToken = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/verify-email?token=${token}`);
+                const response = await axios.get(`${process.env.REACT_APP_SERVER_BASE_URL}/verify-email?token=${token}`);
                 const message = response.data.message;
                 navigate('/successnotice', { state: { message } });
             } catch (error) {
