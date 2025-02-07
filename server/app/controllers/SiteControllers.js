@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Send a verification email
-const sendVerificationEmail = (email, token) => {
+const sendVerificationEmail = async (email, token) => {
     const clientBaseUrl = process.env.CLIENT_BASE_URL;
     const verificationUrl = `${clientBaseUrl}/verify-email?token=${token}`;
     const mailOptions = {
@@ -40,14 +40,14 @@ const sendVerificationEmail = (email, token) => {
         `,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log('Error sending email:', error);
-        } else {
-            console.log('Email sent:', info.response);
-        }
-    });
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.response);
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
 };
+
 // sende email forget pass
 const sendResetEmail = async (to, subject, html) => {
     const mailOptions = {
@@ -180,7 +180,8 @@ class SiteControllers {
             });
 
             // Send the verification email
-            sendVerificationEmail(email, token);
+            await sendVerificationEmail(email, token);
+
 
             res.status(201).json({
                 message: 'User registered successfully! Please verify your email.'
