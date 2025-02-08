@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-    CButton,
-    CRow,
-    CTable,
-    CTableBody,
-    CTableDataCell,
-    CTableHead,
-    CTableHeaderCell,
-    CTableRow,
-} from '@coreui/react'
+import { CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CRow } from "@coreui/react";
+
 import CIcon from '@coreui/icons-react'
 import {
     cilPencil,
@@ -21,7 +13,9 @@ import { toast } from 'react-toastify';
 
 function FilmLibrary() {
     const [films, setFilms] = useState([]);
-    const [showModal, setShowModal] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedFilmId, setSelectedFilmId] = useState(null);
+
     const [error, setError] = useState(null);
     const navigate = useNavigate()
 
@@ -44,9 +38,18 @@ function FilmLibrary() {
         console.log('Editing film with ID:', filmId);
         navigate(`/film/edit-film/${filmId}`);
     };
+    const confirmDelete = (filmId) => {
+        setSelectedFilmId(filmId);
+        setModalVisible(true);
+    };
+    const handleConfirmDelete = () => {
+        if (selectedFilmId) {
+            handleDelete(selectedFilmId);
+            setModalVisible(false);
+        }
+    };
 
     const handleDelete = async (filmId) => {
-        // Handle delete action (you can add the logic to delete the film here)
         console.log('Deleting film with ID:', filmId);
         try {
             const response = await axios.delete(`${import.meta.env.VITE_SERVER_BASE_URL}/film/delete-film/${filmId}`);
@@ -120,7 +123,7 @@ function FilmLibrary() {
                                     <CButton
                                         color="danger"
                                         size="sm"
-                                        onClick={() => handleDelete(film._id)}
+                                        onClick={() => confirmDelete(film._id)}
                                     >
                                         <CIcon icon={cilTrash} />
                                     </CButton>
@@ -130,7 +133,21 @@ function FilmLibrary() {
                     </CTableBody>
                 </CTable>
             </CRow>
-            
+            {/* Confirmation Modal */}
+            <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+                <CModalHeader closeButton>
+                    <CModalTitle>Confirm Deletion</CModalTitle>
+                </CModalHeader>
+                <CModalBody>Are you sure you want to delete this film?</CModalBody>
+                <CModalFooter>
+                    <CButton color="secondary" onClick={() => setModalVisible(false)}>
+                        Cancel
+                    </CButton>
+                    <CButton color="danger" onClick={handleConfirmDelete}>
+                        Yes, Delete
+                    </CButton>
+                </CModalFooter>
+            </CModal>
         </div>
     );
 }
