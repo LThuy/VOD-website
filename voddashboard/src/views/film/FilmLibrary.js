@@ -46,7 +46,7 @@ function FilmLibrary() {
         if (selectedFilmId) {
             handleDelete(selectedFilmId);
             setModalVisible(false);
-        }
+        }   
     };
 
     const handleDelete = async (filmId) => {
