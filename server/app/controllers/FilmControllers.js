@@ -30,6 +30,16 @@ class FilmControllers {
       });
     }
   }
+
+  async getMoviesCount(req, res) {
+    try {
+        const count = await Film.countDocuments();
+        res.json({ count });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching movie count', error });
+    }
+  }
+
   // [GET] : Get film by ID
   async getFilmById(req, res) {
     const {

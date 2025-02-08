@@ -12,6 +12,15 @@ class MovieControllers {
             res.status(500).json({ message: 'Error fetching users', error });
           }
     }
+
+    async getMoviesCount(req, res) {
+      try {
+          const count = await Movie.countDocuments();
+          res.json({ count });
+      } catch (error) {
+          res.status(500).json({ message: 'Error fetching movie count', error });
+      }
+  }
 }
 
 module.exports = new MovieControllers();

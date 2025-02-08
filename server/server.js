@@ -11,17 +11,28 @@ require('dotenv').config();
 
 // Middleware
 app.use(bodyParser.json());
-const allowedOrigins = [`${process.env.CLIENT_BASE_URL}`, `${process.env.CLIENT_DASHBOARD_URL}`];
+const allowedOrigins = [
+  process.env.CLIENT_BASE_URL,
+  process.env.CLIENT_DASHBOARD_URL
+].filter(Boolean);
+
 
 app.use(cors({
   origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
           callback(null, true);
       } else {
+          console.error('Blocked by CORS:', origin);
           callback(new Error('Not allowed by CORS'));
       }
-  }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Allow cookies and auth headers
 }));
+
+// Handle preflight requests (OPTIONS)
+app.options('*', cors());
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {

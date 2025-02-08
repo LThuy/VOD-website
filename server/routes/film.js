@@ -17,6 +17,7 @@ const upload = multer({
 });
 // get all film
 router.get('/get-film', filmControllers.getFilms)
+router.get('/get-film-count', filmControllers.getMoviesCount)
 router.get('/get-film/:filmId', filmControllers.getFilmById)
 router.delete('/delete-film/:filmId', filmControllers.deleteFilm);
 router.put('/update-film/:filmId', upload.single('video'), filmControllers.editFilm);
