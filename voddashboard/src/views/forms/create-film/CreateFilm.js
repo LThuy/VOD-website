@@ -85,37 +85,6 @@ function CreateFilm() {
     e.preventDefault()
     setLoading(true)
     console.log('Form Submitted:', formData)
-    // Add your API or form submission logic here
-    // try {
-    //   const response = await fetch('http://localhost:5000/upload', {
-    //       method: 'POST',
-    //       // headers: {
-    //       //   'Content-Type': 'multipart/form-data',
-    //       // },
-    //       body: formData,
-    //   });
-
-    //   if (!response.ok) {
-    //       const errorResponse = await response.json();
-    //       throw new Error(errorResponse.message || "Upload failed");
-    //   }
-
-    //   const result = await response.json();
-
-    //   // Show success toast
-    //   toast.success('Upload Successfully!', {
-    //     icon: '🚀', 
-    //   })
-    //   // console.log(result) 
-
-    //   // Navigate to the home page after a delay
-    //   // setTimeout(() => {
-    //   // navigate('/');
-    //   // }, 2000);
-    // } catch (error) {
-    //   console.error('Upload error:', error)
-    //   toast.error(error.message || 'An error occurred during upload.')
-    // }
     try {
       const response = await axios.post(`${import.meta.env.VITE_SERVER_BASE_URL}/upload`, formData, {
         headers: {

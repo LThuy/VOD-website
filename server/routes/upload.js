@@ -2,12 +2,16 @@ const express = require('express');
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const AWS = require("aws-sdk");
-const { S3Client } = require('@aws-sdk/client-s3');
+const {
+  S3Client
+} = require('@aws-sdk/client-s3');
 require("dotenv").config();
 const router = express.Router();
 const fs = require("fs");
 const path = require("path");
-const { Queue } = require("bullmq");
+const {
+  Queue
+} = require("bullmq");
 const IORedis = require("ioredis");
 
 const uploadControllers = require('../app/controllers/UploadController');
@@ -28,11 +32,13 @@ const upload = multer({
     s3: s3,
     bucket: process.env.BUCKET_INPUT,
     metadata: (req, file, cb) => {
-      cb(null, { fieldName: file.fieldname });
+      cb(null, {
+        fieldName: file.fieldname
+      });
     },
     key: (req, file, cb) => {
-       // Check if the folder name has already been generated for this request
-       if (!req.folderName) {
+      // Check if the folder name has already been generated for this request
+      if (!req.folderName) {
         // Generate a random 4-digit integer
         const randomInt = Math.floor(1000 + Math.random() * 9000);
 
@@ -61,8 +67,17 @@ const upload = multer({
 
       cb(null, s3Key);
     },
+    limits: {
+      fileSize: 2 * 1024 * 1024 * 1024
+    }, // ✅ Set limit to 2GB
+    fileFilter: (req, file, cb) => {
+      const allowedMimeTypes = ["video/mp4", "video/x-matroska", "video/webm", "image/jpeg", "image/png"];
+      allowedMimeTypes.includes(file.mimetype) ? cb(null, true) : cb(new Error("Invalid file type"), false);
+    }
   }),
-  limits: { fileSize: 1024 * 1024 * 1024 }, // Limit to 1GB
+  limits: {
+    fileSize: 1024 * 1024 * 1024
+  }, // Limit to 1GB
   fileFilter: (req, file, cb) => {
     const allowedMimeTypes = [
       "video/mp4",
@@ -152,16 +167,24 @@ const upload = multer({
 // });
 
 // upload section routes
-router.post('/', upload.fields([
-  { name: 'video', maxCount: 1 },  
+router.post('/', upload.fields([{
+    name: 'video',
+    maxCount: 1
+  },
   // { name: 'name', maxCount: 1 },
   // { name: 'slug', maxCount: 1 },
   // { name: 'origin_name', maxCount: 1 },
   // { name: 'content', maxCount: 1 },
   // { name: 'type', maxCount: 1 },
   // { name: 'status', maxCount: 1 },
-  { name: 'poster_url', maxCount: 1 },
-  { name: 'thumb_url', maxCount: 1 },
+  {
+    name: 'poster_url',
+    maxCount: 1
+  },
+  {
+    name: 'thumb_url',
+    maxCount: 1
+  },
   // { name: 'trailer_url', maxCount: 1 },
   // { name: 'time', maxCount: 1 },
   // { name: 'episode_current', maxCount: 1 },
@@ -178,4 +201,4 @@ router.post('/', upload.fields([
   // Add more fields if you have additional files, e.g., poster images
 ]), uploadControllers.uploadVideos)
 
-module.exports = router; 
+module.exports = router;

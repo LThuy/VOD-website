@@ -13,10 +13,10 @@ require('dotenv').config();
 app.use(bodyParser.json());
 
 app.use(bodyParser.json({
-  limit: '1024mb'
+  limit: '2gb'
 }));
 app.use(bodyParser.urlencoded({
-  limit: '1024mb',
+  limit: '2gb',
   extended: true
 }));
 

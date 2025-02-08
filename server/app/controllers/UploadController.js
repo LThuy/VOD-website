@@ -20,63 +20,7 @@ class UploadController {
 
   //[POST] upload content
   async uploadVideos(req, res) {
-//     console.log("AWS Credentials:", AWS.config.credentials);
-//     const { test } = req.body;
-//     try {
-//       const response = await s3
-//         .putObject({
-//           Bucket: process.env.BUCKET_INPUT,
-//           Body: "HELLO",
-//           Key: "my-file.txt",
-//         }) 
-//         .promise();
-        
-//       console.log("Upload succeeded - ", response);
-//       res.status(200).send("File uploaded successfully.");
-//     } catch (err) {
-//       console.error("Upload failed:", err);
-//       res.status(500).send("Failed to upload file.");
-//     }
-//   }
-      // Initialize Redis connection with required options
-      // const connection = new IORedis({
-      //   maxRetriesPerRequest: null, // Set this explicitly to null
-      //   enableReadyCheck: false, // Optional: Prevent ready checks for faster setup
-      // });
-      // const fileQueue = new Queue("encode-video", { connection });
-
-      // const videoFile = req.files['video'] ? req.files['video'][0] : null;
-
-      // // console.log('File:', video); // The uploaded file
-      // console.log('Body:', videoFile); 
-
-      // // If the file is successfully uploaded
-      // const uploadedFileName = videoFile.filename; 
-
-      // await fileQueue.add(
-      //   "encode-video",
-      //   { fileName: uploadedFileName, folderPath: videoFile.destination },
-      //   {
-      //     attempts: 2,
-      //     backoff: {
-      //       type: "fixed",
-      //       delay: 10000, // thử lại sau 10
-      //     },
-      //   }
-      // );
-
-      // try {
-      //     console.log("File uploaded successfully:", req.file);
-
-      //     res.status(200).json({
-      //     message: "File uploaded successfully",
-      //     file: req.file,
-      //     });
-      // } catch (error) {
-      //     console.error("Error uploading file:", error);
-      //     res.status(500).json({ error: "Error uploading file" });
-      // }
-
+//   
       const redisCloudConfig = {
         host: process.env.HOST_REDIS, // Redis Cloud host
         port: process.env.PORT_REDIS, // Redis Cloud port
@@ -92,7 +36,7 @@ class UploadController {
 
       try {
         const { slug, name } = req.body;
-        console.log(req.files);
+        // console.log(req.files);
     
         // Extract files from request
         const videoFile = req.files['video'] ? req.files['video'][0] : null;
@@ -104,15 +48,15 @@ class UploadController {
           return res.status(400).json({ error: 'Video file is required.' });
         }
     
-        console.log(videoFile.key); // Use key for S3 file reference, not filename
+        // console.log(videoFile.key); // Use key for S3 file reference, not filename
     
         // Generate base name from the video file
         const baseName = path.basename(videoFile.key, path.extname(videoFile.key)); // Use key to get base name
     
         // Log files for debugging
-        console.log('Video File:', videoFile);
-        console.log('Thumbnail File:', thumbFile);
-        console.log('Poster File:', posterFile);
+        // console.log('Video File:', videoFile);
+        // console.log('Thumbnail File:', thumbFile);
+        // console.log('Poster File:', posterFile);
     
         // Prepare the files array for the Redis queue
         const allFiles = [];
@@ -150,7 +94,7 @@ class UploadController {
         }
     
         // Log all files for debugging
-        console.log('All Files:', allFiles);
+        // console.log('All Files:', allFiles);
     
         // Film object to be saved to database
         const newFilm = new Film({
@@ -216,7 +160,7 @@ class UploadController {
     
         // Save the new film object
         const savedFilm = await newFilm.save();
-        console.log("Film saved successfully:", savedFilm);
+        // console.log("Film saved successfully:", savedFilm);
     
         // Respond back to client
         res.status(200).json({

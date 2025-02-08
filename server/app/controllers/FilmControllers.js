@@ -521,7 +521,7 @@ class FilmControllers {
       const {
         slug
       } = req.params;
-      console.log(slug)
+      // console.log(slug)
 
       // Find the film by slug in the database
       const film = await Film.findOne({
@@ -561,7 +561,7 @@ class FilmControllers {
         });
       }
   
-      console.log(`Received slug: ${slug}`);
+      // console.log(`Received slug: ${slug}`);
   
       // Find the film by slug and update its status to "active"
       const updatedFilm = await Film.findOneAndUpdate(
