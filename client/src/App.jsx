@@ -29,7 +29,7 @@ import ResetPassword from './Components/Login/ResetPassword';
 import CountryFilm from './Components/Body/CountryFilm';
 import CreateNewFilm from './Components/Body/CreateNewFilm';
 import YearFilm from './Components/Body/YearFilm';
-
+import { Analytics } from "@vercel/analytics/react"
 
 const FilmDetail = lazy(() => import('./Components/Body/FilmDetail'));
 const Home = lazy(() => import('./Components/Body/Home'));
