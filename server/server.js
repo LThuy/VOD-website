@@ -11,6 +11,15 @@ require('dotenv').config();
 
 // Middleware
 app.use(bodyParser.json());
+
+app.use(bodyParser.json({
+  limit: '1024mb'
+}));
+app.use(bodyParser.urlencoded({
+  limit: '1024mb',
+  extended: true
+}));
+
 const allowedOrigins = [
   process.env.CLIENT_BASE_URL,
   process.env.CLIENT_DASHBOARD_URL
@@ -19,16 +28,16 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-      if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
-          callback(null, true);
-      } else {
-          console.error('Blocked by CORS:', origin);
-          callback(new Error('Not allowed by CORS'));
-      }
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.error("Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true // Allow cookies and auth headers
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }));
 
 // Handle preflight requests (OPTIONS)
