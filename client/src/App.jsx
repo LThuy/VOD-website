@@ -204,6 +204,7 @@ function App() {
                 </Routes>
             </div>
             {displayLayout && <Footer />}
+            <Analytics />
         </div>
     );
 }
