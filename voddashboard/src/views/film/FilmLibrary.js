@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 
 function FilmLibrary() {
     const [films, setFilms] = useState([]);
+    const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate()
 
@@ -72,7 +73,7 @@ function FilmLibrary() {
     >
         <CIcon icon={cilPlus} style={{ fontSize: '1.5rem', marginRight: '8px' }} /> 
         <div style={{ fontWeight: 'bold' }}>Add New Film</div> 
-    </CButton>
+        </CButton>
             <CRow>
                 <CTable align="middle" className="mb-0 border" hover responsive>
                     <CTableHead className="text-nowrap">
@@ -129,6 +130,7 @@ function FilmLibrary() {
                     </CTableBody>
                 </CTable>
             </CRow>
+            
         </div>
     );
 }

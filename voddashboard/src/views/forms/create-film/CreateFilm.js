@@ -117,7 +117,7 @@ function CreateFilm() {
     //   toast.error(error.message || 'An error occurred during upload.')
     // }
     try {
-      const response = await axios.post('http://localhost:5000/upload', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_BASE_URL}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
