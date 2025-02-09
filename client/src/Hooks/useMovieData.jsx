@@ -23,7 +23,7 @@ const useMovieData = () => {
         setMovieData((prev) => ({ ...prev, slider: items.slice(0, 4) }));
       }
     }
-  }, []);
+  }, []); 
 
   useEffect(() => {
     setIsLoading(true);

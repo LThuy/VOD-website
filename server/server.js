@@ -19,11 +19,12 @@ app.use(bodyParser.urlencoded({
   limit: '2gb',
   extended: true
 }));
-
+ 
 const allowedOrigins = [
   process.env.CLIENT_BASE_URL,
-  process.env.CLIENT_DASHBOARD_URL
-].filter(Boolean);
+  process.env.CLIENT_DASHBOARD_URL,
+  process.env.REACT_APP_SERVER_BASE_URL
+].filter(Boolean); 
 
 
 app.use(cors({
