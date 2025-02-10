@@ -1,366 +1,303 @@
 const path = require("path");
-const ffmpeg = require("fluent-ffmpeg");
-const fs = require("fs");
+const fs = require("fs").promises;
+const { Readable } = require('stream');
+const { spawn } = require("child_process");
 const { Worker } = require("bullmq");
 const IORedis = require("ioredis");
-const AWS = require('aws-sdk');
-const axios = require('axios');
-require('dotenv').config();
-const { S3Client } = require('@aws-sdk/client-s3');
-const { Upload } = require("@aws-sdk/lib-storage");
+const { S3Client, GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
+const axios = require("axios");
+require("dotenv").config();
 
-const ffmpegLog = false;
-
-const s3Client = new S3Client({
-      region:  process.env.AWS_REGION,
-      credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEYIN,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      },
-      sslEnabled: false,
-      s3ForcePathStyle: true,
-      signatureVersion: 'v4',
-    });
-
-console.log("AWS Credentials: ", AWS.config.credentials);
-
-// Initialize Redis connection with required options
-const connection = new IORedis({
-  maxRetriesPerRequest: null, // Set this explicitly to null
-  enableReadyCheck: false, // Optional: Prevent ready checks for faster setup
+// S3 Client Configuration
+const createS3Client = (accessKeyId, secretAccessKey) => new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: { accessKeyId, secretAccessKey },
+  sslEnabled: false,
+  s3ForcePathStyle: true,
+  signatureVersion: "v4",
 });
 
-// Create a worker instance
-const worker = new Worker("encode-video", handleJob, { connection });
+const inputS3Client = createS3Client(
+  process.env.AWS_ACCESS_KEY_INPUT, 
+  process.env.AWS_SECRET_ACCESS_KEY_INPUT
+);
+
+const outputS3Client = createS3Client(
+  process.env.AWS_ACCESS_KEYIN, 
+  process.env.AWS_SECRET_ACCESS_KEY
+);
+
+// Redis Connection Configuration
+const redisConfig = {
+  host: process.env.HOST_REDIS,
+  port: process.env.PORT_REDIS,
+  password: process.env.PASSWORD_REDIS,
+  maxRetriesPerRequest: null,
+  enableReadyCheck: false,
+};
+const redisConnection = new IORedis(redisConfig);
+
+// Video Processing Configuration
+const VIDEO_QUALITIES = [
+  { name: "360p", resolution: "640x360", bitrate: "800k" },
+  { name: "480p", resolution: "854x480", bitrate: "1400k" },
+];
+
+class VideoProcessor {
+  constructor() {
+    this.isProcessing = false;
+  }
+
+  async processJob(job) {
+    if (this.isProcessing) {
+      console.log(`Job ${job.id}: Processing already in progress, skipping`);
+      return;
+    }
+
+    this.isProcessing = true;
+    console.log(`Job ${job.id}: Starting video processing`);
+
+    try {
+      const { files = [] } = job.data;
+      const videoFile = files.find(f => f.type === "video") || {};
+      
+      if (!videoFile.fileName) {
+        throw new Error('No video file found in job data');
+      }
+
+      const baseName = path.basename(videoFile.fileName, path.extname(videoFile.fileName));
+      const outputPrefix = `videos/${baseName}`;
+
+      await this.processVideoQualities(videoFile.fileName, outputPrefix, job.id);
+      await this.generateMasterPlaylist(outputPrefix);
+      await this.processAdditionalFiles(files, outputPrefix, job.id);
+    } catch (error) {
+      console.error(`Job ${job.id}: Processing failed:`, error);
+      throw error;
+    } finally {
+      this.isProcessing = false;
+      console.log(`Job ${job.id}: Processing completed`);
+    }
+  }
+
+  async processVideoQualities(inputFileName, outputPrefix, jobId) {
+    for (const quality of VIDEO_QUALITIES) {
+      const tempDir = await this.createTempDirectory(quality.name);
+      try {
+        await this.runFFmpegConversion(
+          inputFileName, 
+          tempDir, 
+          quality, 
+          jobId
+        );
+        await this.uploadProcessedFiles(tempDir, `${outputPrefix}/${quality.name}`, jobId);
+      } catch (error) {
+        console.error(`Quality ${quality.name} processing failed:`, error);
+        throw error;
+      } finally {
+        await this.cleanupTempDirectory(tempDir);
+      }
+    }
+  }
+
+  async createTempDirectory(qualityName) {
+    const tempDir = path.join(
+      process.env.TEMP_DIR || '/tmp', 
+      `hls-${Date.now()}-${qualityName}`
+    );
+    await fs.mkdir(tempDir, { recursive: true });
+    return tempDir;
+  }
+
+  async runFFmpegConversion(inputFileName, tempDir, quality, jobId) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Get S3 object
+        const command = new GetObjectCommand({
+          Bucket: process.env.BUCKET_INPUT,
+          Key: inputFileName
+        });
+        const response = await inputS3Client.send(command);
+
+        // Convert response body to buffer
+        const inputBuffer = await response.Body.transformToByteArray();
+
+        // Write buffer to a temporary input file
+        const tempInputFile = path.join(tempDir, 'input_video');
+        await fs.writeFile(tempInputFile, inputBuffer);
+
+        const ffmpegProcess = spawn('ffmpeg', [
+          '-i', tempInputFile,
+          '-vf', `scale=${quality.resolution}`,
+          '-b:v', quality.bitrate,
+          '-c:v', 'libx264',
+          '-preset', 'fast',
+          '-c:a', 'aac',
+          '-b:a', '128k',
+          '-hls_time', '5',
+          '-hls_list_size', '0',
+          `-hls_segment_filename`, path.join(tempDir, 'segment%03d.ts'),
+          path.join(tempDir, 'playlist.m3u8')
+        ]);
+
+        let errorOutput = '';
+        ffmpegProcess.stderr.on('data', (data) => {
+          errorOutput += data.toString();
+        });
+
+        ffmpegProcess.on('close', (code) => {
+          if (code === 0) {
+            console.log(`FFmpeg conversion for ${quality.name} completed`);
+            resolve();
+          } else {
+            console.error(`FFmpeg conversion failed with code ${code}`);
+            console.error('Error output:', errorOutput);
+            reject(new Error(`FFmpeg conversion failed: ${errorOutput}`));
+          }
+        });
+
+        ffmpegProcess.on('error', (err) => {
+          console.error('FFmpeg process error:', err);
+          reject(err);
+        });
+      } catch (error) {
+        console.error('Error preparing S3 input:', error);
+        reject(error);
+      }
+    });
+  }
+
+  async uploadProcessedFiles(tempDir, outputS3Key, jobId) {
+    const files = await fs.readdir(tempDir);
+    for (const file of files) {
+      // Skip the temporary input video file
+      if (file === 'input_video') continue;
+
+      const fileContent = await fs.readFile(path.join(tempDir, file));
+      await this.uploadBufferToS3(
+        fileContent, 
+        `${outputS3Key}/${file}`,
+        file.endsWith('.m3u8') ? 'application/vnd.apple.mpegurl' : 'video/MP2T'
+      );
+    }
+  }
+
+  async generateMasterPlaylist(outputPrefix) {
+    const masterPlaylistContent = this.createMasterPlaylistContent();
+    await this.uploadBufferToS3(
+      Buffer.from(masterPlaylistContent),
+      `${outputPrefix}/master.m3u8`,
+      'application/vnd.apple.mpegurl'
+    );
+  }
+
+  createMasterPlaylistContent() {
+    return "#EXTM3U\n#EXT-X-VERSION:3\n" + 
+      VIDEO_QUALITIES
+        .map(({ name, resolution, bitrate }) => {
+          const bandwidth = parseInt(bitrate.replace('k', '000'));
+          return `#EXT-X-STREAM-INF:BANDWIDTH=${bandwidth},RESOLUTION=${resolution}\n${name}/playlist.m3u8`;
+        })
+        .join("\n");
+  }
+
+  async processAdditionalFiles(files, outputPrefix, jobId) {
+    const additionalFileTypes = [
+      { type: 'thumbnail', subDir: 'thumb' },
+      { type: 'poster', subDir: 'poster' }
+    ];
+
+    for (const { type, subDir } of additionalFileTypes) {
+      const fileData = files.find(f => f.type === type);
+      if (fileData?.fileName) {
+        await this.uploadS3File(
+          fileData.s3Key, 
+          `${outputPrefix}/${subDir}/${fileData.fileName}`
+        );
+      }
+    }
+
+    const slugData = files.find(f => f.type === 'slug');
+    if (slugData?.value) {
+      await this.sendSlugToServer(slugData.value);
+    }
+  }
+
+  async uploadS3File(inputS3Key, outputS3Key) {
+    try {
+      const response = await inputS3Client.send(
+        new GetObjectCommand({
+          Bucket: process.env.BUCKET_INPUT,
+          Key: inputS3Key
+        })
+      );
+      
+      const fileBuffer = await response.Body.transformToByteArray();
+      
+      await outputS3Client.send(
+        new PutObjectCommand({
+          Bucket: process.env.BUCKET_OUTPUT,
+          Key: outputS3Key,
+          Body: fileBuffer
+        })
+      );
+      
+      console.log(`Uploaded ${inputS3Key} to ${outputS3Key}`);
+    } catch (error) {
+      console.error(`Error uploading ${inputS3Key}:`, error);
+      throw error;
+    }
+  }
+
+  async uploadBufferToS3(buffer, key, contentType) {
+    await outputS3Client.send(
+      new PutObjectCommand({
+        Bucket: process.env.BUCKET_OUTPUT,
+        Key: key,
+        Body: buffer,
+        ContentType: contentType
+      })
+    );
+    console.log(`Uploaded ${key} to S3`);
+  }
+
+  async cleanupTempDirectory(tempDir) {
+    try {
+      await fs.rm(tempDir, { recursive: true, force: true });
+      console.log(`Cleaned up temp directory: ${tempDir}`);
+    } catch (error) {
+      console.error(`Error cleaning temp directory ${tempDir}:`, error);
+    }
+  }
+
+  async sendSlugToServer(slug) {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_SERVER_BASE_URL}/film/setActive`, 
+        { slug }
+      );
+      console.log(`Sent slug data: ${slug}`);
+    } catch (error) {
+      console.error('Error sending slug data:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+}
+
+// Worker Setup
+const videoProcessor = new VideoProcessor();
+const worker = new Worker(
+  "encode-video",
+  async (job) => await videoProcessor.processJob(job),
+  { 
+    connection: redisConnection,
+    concurrency: 1,
+    lockDuration: 60000
+  }
+);
 
 worker.on("failed", (job, err) => {
-  console.error(`\tThất bại`);
-  console.log(err)
+  console.error(`Job ${job.id} failed:`, err);
 });
 
-worker.on("completed", (job) => {
-  console.log(`\tThành công`);
-});
-
-// async function handleJob(job) {
-//   const { fileName, folderPath } = job.data;
-//   console.log(`\tBắt đầu chuyển đổi video: ${fileName}`);
-//   let dir =
-//     "../uploads/" + path.basename(fileName, path.extname(fileName));
-//   const fullPath = path.join(folderPath, fileName);
-//   if (!fs.existsSync(dir)) fs.mkdirSync(dir);
-
-//   await new Promise((resolve, reject) => {
-//     ffmpeg(fullPath) // cần đảm bảo là máy đã cài đặt ffmpeg trước
-//       .addOption("-hls_time", "5")
-//       .addOption("-hls_list_size", "0")
-//       .addOption("-hls_segment_filename", `${dir}/output%03d.ts`)
-//       .output(`${dir}/output.m3u8`)
-//       .on("stderr", (d) => ffmpegLog && console.log(`\t${d}`)) // hiển thị log ra console khi ffmpeg hoạt động
-//       .on("error", (err) => {
-//         console.error(`\tFFmpeg error for ${fileName}:`, err);
-//         reject(err);
-//       })
-//       .on("end", () => {
-//         // console.log(`\tFinished converting video: ${fileName}`);
-//         resolve();
-//       })
-//       .run();
-//   });
-// }
-
-// async function handleJob(job) {
-//   const { fileName, folderPath } = job.data;
-//   console.log(`\tBắt đầu chuyển đổi video: ${fileName}`);
-//   const baseName = path.basename(fileName, path.extname(fileName));
-//   const inputPath = path.join(folderPath, fileName);
-//   const outputDir = path.resolve("../uploads", baseName);
-
-//   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
-
-//   // Define quality levels
-//   const qualities = [
-//     { name: "360p", resolution: "640x360", bitrate: "800k" },
-//     { name: "480p", resolution: "854x480", bitrate: "1400k" },
-//     { name: "720p", resolution: "1280x720", bitrate: "2800k" },
-//   ];
-
-//   // Store paths to the individual playlists
-//   const playlistPaths = [];
-
-//   // Process each quality level
-//   for (const quality of qualities) {
-//     const qualityDir = path.join(outputDir, quality.name);
-//     if (!fs.existsSync(qualityDir)) fs.mkdirSync(qualityDir);
-
-//     const playlistPath = path.join(qualityDir, "output.m3u8");
-//     playlistPaths.push({ path: playlistPath, resolution: quality.resolution });
-
-//     await new Promise((resolve, reject) => {
-//       ffmpeg(inputPath)
-//         .size(quality.resolution)
-//         .videoBitrate(quality.bitrate)
-//         .addOption("-hls_time", "5")
-//         .addOption("-hls_list_size", "0")
-//         .addOption("-hls_segment_filename", `${qualityDir}/output%03d.ts`)
-//         .output(playlistPath)
-//         .on("stderr", (d) => ffmpegLog && console.log(`\t${d}`))
-//         .on("error", (err) => {
-//           console.error(`\tFFmpeg error for ${fileName} (${quality.name}):`, err);
-//           reject(err);
-//         })
-//         .on("end", () => {
-//           console.log(`\tFinished encoding ${quality.name}`);
-//           resolve();
-//         })
-//         .run();
-//     });
-//   }
-
-//   // Generate master playlist
-//   const masterPlaylistPath = path.join(outputDir, "master.m3u8");
-//   const masterPlaylistContent = playlistPaths
-//     .map(
-//       ({ path, resolution }) =>
-//         `#EXT-X-STREAM-INF:BANDWIDTH=${getBitrate(resolution)},RESOLUTION=${resolution}\n${path}`
-//     )
-//     .join("\n");
-
-//   fs.writeFileSync(masterPlaylistPath, `#EXTM3U\n${masterPlaylistContent}`);
-//   console.log(`\tMaster playlist created at: ${masterPlaylistPath}`);
-// }
-
-// Function to process the video
-// Custom base directory for processed videos
-const bucketName = process.env.BUCKET_OUTPUT;
-
-async function handleJob(job) {
-  
-  // const { fileName, folderPath, thumbFileName, posterFileName } = job.data;
-  // Extracting `files` array from job.data
-  const { files = [] } = job.data;
-
-  // Ensure the array contains all required items
-  const videoData = files.find((file) => file.type === 'video') || {};
-  const thumbData = files.find((file) => file.type === 'thumbnail') || {};
-  const posterData = files.find((file) => file.type === 'poster') || {};
-  const slugData = files.find((file) => file.type === 'slug') || {};
-
-  console.log("Video data:",videoData)
-  // Access their properties
-  const fileName = videoData.fileName;
-  const folderPath = videoData.folderPath;
-
-  const thumbFileName = thumbData.fileName;
-
-  const posterFileName = posterData.fileName;
-
-  console.log(`Starting to process video: ${fileName}`);
-  
-
-  const inputPath = path.join(folderPath,fileName);
-  const baseName = path.basename(fileName, path.extname(fileName)); // e.g., video_123
-  const outputDir = path.resolve(__dirname, "temp_videos", baseName);
-
-  // Create a temporary local directory for processing
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
-  // Define video qualities
-  const qualities = [
-    { name: "360p", resolution: "640x360", bitrate: "800k" },
-    { name: "480p", resolution: "854x480", bitrate: "1400k" },
-    { name: "720p", resolution: "1280x720", bitrate: "2800k" },
-  ];
-
-  const playlistPaths = [];
-
-  try {
-    // Process each quality level
-    for (const quality of qualities) {
-      const qualityDir = path.join(outputDir, quality.name);
-      if (!fs.existsSync(qualityDir)) {
-        fs.mkdirSync(qualityDir);
-      }
-
-      const playlistPath = path.join(qualityDir, "output.m3u8");
-      playlistPaths.push({ path: playlistPath, resolution: quality.resolution });
-
-      await new Promise((resolve, reject) => {
-        // ffmpeg(inputPath)
-        //   .size(quality.resolution)
-        //   .videoBitrate(quality.bitrate)
-        //   .addOption("-hls_time", "5")
-        //   .addOption("-hls_list_size", "0")
-        //   .addOption("-hls_segment_filename", `${qualityDir}/output%03d.ts`)
-        //   .output(playlistPath)
-        //   .on("error", (err) => {
-        //     console.error(`FFmpeg error for ${fileName} (${quality.name}):`, err);
-        //     reject(err);
-        //   })
-        //   .on("end", () => {
-        //     console.log(`Finished encoding ${quality.name}`);
-        //     resolve();
-        //   })
-        //   .run();
-          ffmpeg(inputPath)
-            .size(quality.resolution)               // Set video resolution
-            .videoBitrate(quality.bitrate)          // Set video bitrate
-            .addOption('-c:v', 'libx264')           // Use H.264 codec for video
-            .addOption('-preset', 'fast')           // Fast encoding preset
-            .addOption('-c:a', 'aac')               // Use AAC codec for audio
-            .addOption('-ar', '48000')              // Set audio sample rate
-            .addOption('-b:a', '128k')              // Set audio bitrate
-            .addOption('-hls_time', '5')            // Segment duration for HLS
-            .addOption('-hls_list_size', '0')       // Save all segments in the playlist
-            .addOption('-hls_segment_filename', `${qualityDir}/output%03d.ts`) // Naming pattern for segments
-            .output(playlistPath)
-            .on('start', (cmd) => {
-              console.log(`FFmpeg started with command: ${cmd}`);
-            })
-            .on('progress', (progress) => {
-              console.log(`Processing frame: ${progress.frames}`);
-            })
-            .on('stderr', (stderrLine) => {
-              if (stderrLine.includes('.ts')) {
-                console.log(`Segment created: ${stderrLine}`);
-              }
-            })
-            .on('error', (err) => {
-              console.error(`FFmpeg error for ${fileName} (${quality.name}):`, err.message);
-              reject(err);
-            })
-            .on('end', () => {
-              console.log(`Finished encoding ${quality.name}`);
-              resolve();
-            })
-            .run();
-      });
-    }
-
-    // Create master playlist
-    const masterPlaylistPath = path.join(outputDir, "master.m3u8");
-    const masterPlaylistContent = playlistPaths
-      .map(
-        ({ path, resolution }) =>
-         `#EXT-X-STREAM-INF:BANDWIDTH=${getBitrate(resolution)},RESOLUTION=${resolution}\n${path.replace(
-          outputDir, // Remove leading slash if present
-          ""
-        ).replace("\\","").replace("\\","/")}`
-      )
-      .join("\n");
-    fs.writeFileSync(masterPlaylistPath, `#EXTM3U\n${masterPlaylistContent}`);
-    console.log("Master playlist created.");
-
-    // Upload video files to S3
-    await uploadDirectory(outputDir, `videos/${baseName}`);
-
-    console.log("Video files uploaded to S3 successfully.");
-
-    // Upload thumb file to S3
-    if (thumbFileName) {
-      const thumbPath = path.join(folderPath, thumbFileName);
-      const thumbS3Key = `videos/${baseName}/thumb/${thumbFileName}`;
-      await uploadFile(thumbPath, bucketName, thumbS3Key);
-      console.log("Thumb uploaded successfully.");
-    }
-
-    // Upload poster file to S3
-    if (posterFileName) {
-      const posterPath = path.join(folderPath, posterFileName);
-      const posterS3Key = `videos/${baseName}/poster/${posterFileName}`;
-      await uploadFile(posterPath, bucketName, posterS3Key);
-      console.log("Poster uploaded successfully.");
-    }
-
-    console.log(slugData + "hahaaaaa")
-    if (slugData && slugData.value) {
-      const slugPayload = {
-        slug: slugData.value,
-      };
-
-      console.log("Sending slug data to the local server:", slugPayload);
-
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/film/setActive",
-          { slug: slugData.value }, 
-          { headers: { "Content-Type": "application/json" } }
-        );
-        console.log(response.message);
-      } catch (error) {
-        console.error("Error posting data:", error.response?.data || error.message);
-      }
-
-      console.log("Slug data sent to the local server successfully.");
-    }
-
-
-    // Clean up local files (optional)
-    async function cleanUpDirectory(dirPath) {
-      try {
-        await fs.rm(dirPath, { recursive: true, force: true });
-        console.log("Local files deleted successfully.");
-      } catch (err) {
-        console.error("Error deleting local files:", err);
-      }
-    }
-
-    await cleanUpDirectory(outputDir);
-  } catch (err) {
-    console.error("Error processing job:", err);
-  }
-}
-
-// Upload a directory to S3
-async function uploadDirectory(localDir, s3BaseKey) {
-  const files = fs.readdirSync(localDir);
-
-  for (const file of files) {
-    const localFilePath = path.join(localDir, file);
-    const s3Key = `${s3BaseKey}/${file}`;
-
-    if (fs.statSync(localFilePath).isDirectory()) {
-      // Recursively upload subdirectories
-      await uploadDirectory(localFilePath, s3Key);
-    } else {
-      // Upload individual file
-      await uploadFile(localFilePath, bucketName, s3Key);
-    }
-  }
-}
-
-// Upload a single file to S3
-async function uploadFile(localFilePath, bucketName, s3Key) {
-  const fileStream = fs.createReadStream(localFilePath);
-  const uploadParams = {
-    Bucket: bucketName,
-    Key: s3Key,
-    Body: fileStream,
-  };
-
-  const upload = new Upload({
-    client: s3Client,
-    params: uploadParams,
-  });
-
-  upload.on("httpUploadProgress", (progress) => {
-    console.log(`Uploading ${s3Key}: ${progress.loaded} / ${progress.total}`);
-  });
-
-  await upload.done();
-  console.log(`Uploaded ${s3Key}`);
-}
-
-// Helper function to estimate bitrate (can be adjusted as needed)
-function getBitrate(resolution) {
-  const map = {
-    "640x360": 800000,
-    "854x480": 1400000,
-    "1280x720": 2800000,
-  };
-  return map[resolution] || 1000000; // Default bitrate
-}
-
-console.log("ffmpeg worker đã sẵn sàng");
+console.log('FFmpeg worker is ready.');
