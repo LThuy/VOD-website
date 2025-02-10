@@ -1,4 +1,3 @@
-
 const AWS = require("aws-sdk");
 const express = require("express");
 const multer = require("multer");
@@ -11,7 +10,7 @@ const path = require('path')
 const mongoose = require('mongoose');
 
 const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEYIN,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_REGION,
   });
@@ -21,74 +20,23 @@ class UploadController {
 
   //[POST] upload content
   async uploadVideos(req, res) {
-//     console.log("AWS Credentials:", AWS.config.credentials);
-//     const { test } = req.body;
-//     try {
-//       const response = await s3
-//         .putObject({
-//           Bucket: process.env.BUCKET_INPUT,
-//           Body: "HELLO",
-//           Key: "my-file.txt",
-//         }) 
-//         .promise();
-        
-//       console.log("Upload succeeded - ", response);
-//       res.status(200).send("File uploaded successfully.");
-//     } catch (err) {
-//       console.error("Upload failed:", err);
-//       res.status(500).send("Failed to upload file.");
-//     }
-//   }
-      // Initialize Redis connection with required options
-      // const connection = new IORedis({
-      //   maxRetriesPerRequest: null, // Set this explicitly to null
-      //   enableReadyCheck: false, // Optional: Prevent ready checks for faster setup
-      // });
-      // const fileQueue = new Queue("encode-video", { connection });
-
-      // const videoFile = req.files['video'] ? req.files['video'][0] : null;
-
-      // // console.log('File:', video); // The uploaded file
-      // console.log('Body:', videoFile); 
-
-      // // If the file is successfully uploaded
-      // const uploadedFileName = videoFile.filename; 
-
-      // await fileQueue.add(
-      //   "encode-video",
-      //   { fileName: uploadedFileName, folderPath: videoFile.destination },
-      //   {
-      //     attempts: 2,
-      //     backoff: {
-      //       type: "fixed",
-      //       delay: 10000, // thử lại sau 10
-      //     },
-      //   }
-      // );
-
-      // try {
-      //     console.log("File uploaded successfully:", req.file);
-
-      //     res.status(200).json({
-      //     message: "File uploaded successfully",
-      //     file: req.file,
-      //     });
-      // } catch (error) {
-      //     console.error("Error uploading file:", error);
-      //     res.status(500).json({ error: "Error uploading file" });
-      // }
-
-      // Redis connection setup
-      const connection = new IORedis({
+//   
+      const redisCloudConfig = {
+        host: process.env.HOST_REDIS, // Redis Cloud host
+        port: process.env.PORT_REDIS, // Redis Cloud port
+        password: process.env.PASSWORD_REDIS, // Redis Cloud password
         maxRetriesPerRequest: null,
         enableReadyCheck: false,
-      });
+      }; 
+
+      // Redis connection setup
+      const connection = new IORedis(redisCloudConfig);
 
       const fileQueue = new Queue("encode-video", { connection });
 
       try {
         const { slug, name } = req.body;
-        console.log(req.files);
+        // console.log(req.files);
     
         // Extract files from request
         const videoFile = req.files['video'] ? req.files['video'][0] : null;
@@ -99,16 +47,16 @@ class UploadController {
         if (!videoFile) {
           return res.status(400).json({ error: 'Video file is required.' });
         }
-        console.log("Video file:", videoFile);
+    
         // console.log(videoFile.key); // Use key for S3 file reference, not filename
     
         // Generate base name from the video file
-        const baseName = path.basename(videoFile.filename, path.extname(videoFile.filename)); // Use key to get base name
+        const baseName = path.basename(videoFile.key, path.extname(videoFile.key)); // Use key to get base name
     
         // Log files for debugging
-        console.log('Video File:', videoFile);
-        console.log('Thumbnail File:', thumbFile);
-        console.log('Poster File:', posterFile);
+        // console.log('Video File:', videoFile);
+        // console.log('Thumbnail File:', thumbFile);
+        // console.log('Poster File:', posterFile);
     
         // Prepare the files array for the Redis queue
         const allFiles = [];
@@ -117,16 +65,16 @@ class UploadController {
         if (videoFile) {
           allFiles.push({
             type: "video",
-            fileName: videoFile.filename, // S3 key for video file
-            folderPath: videoFile.destination,
+            fileName: videoFile.key, // S3 key for video file
+            s3Key: videoFile.key, // S3 key for video file
           });
         }
     
         if (thumbFile) {
           allFiles.push({
             type: "thumbnail",
-            fileName: thumbFile.filename, // S3 key for thumbnail file
-            folderPath: thumbFile.destination,
+            fileName: thumbFile.originalname, // S3 key for thumbnail file
+            s3Key: thumbFile.key, // S3 key for thumbnail
           });
         }
 
@@ -140,13 +88,13 @@ class UploadController {
         if (posterFile) {
           allFiles.push({
             type: "poster",
-            fileName: posterFile.filename, // S3 key for poster file
-            folderPath: posterFile.destination,
+            fileName: posterFile.originalname, // S3 key for poster file
+            s3Key: posterFile.key, // S3 key for poster
           });
         }
     
         // Log all files for debugging
-        console.log('All Files:', allFiles);
+        // console.log('All Files:', allFiles);
     
         // Film object to be saved to database
         const newFilm = new Film({
@@ -159,8 +107,8 @@ class UploadController {
           _id: new mongoose.Types.ObjectId().toString(),
           status: 'inactive',
           type: 'Drama',
-          poster_url: `https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/poster/${posterFile.filename}`,
-          thumb_url: `https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/thumb/${thumbFile.filename}`,
+          poster_url: `https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/poster/${posterFile.originalname}`,
+          thumb_url: `https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/thumb/${thumbFile.originalname}`,
           tmdb: {
             type: 'movie',
             id: '12345',
@@ -212,7 +160,7 @@ class UploadController {
     
         // Save the new film object
         const savedFilm = await newFilm.save();
-        console.log("Film saved successfully:", savedFilm);
+        // console.log("Film saved successfully:", savedFilm);
     
         // Respond back to client
         res.status(200).json({
