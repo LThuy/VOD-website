@@ -67,16 +67,14 @@ const upload = multer({
 
       cb(null, s3Key);
     },
-    limits: {
-      fileSize: 2 * 1024 * 1024 * 1024
-    }, // ✅ Set limit to 2GB
     fileFilter: (req, file, cb) => {
       const allowedMimeTypes = ["video/mp4", "video/x-matroska", "video/webm", "image/jpeg", "image/png"];
       allowedMimeTypes.includes(file.mimetype) ? cb(null, true) : cb(new Error("Invalid file type"), false);
     }
   }),
   limits: {
-    fileSize: 1024 * 1024 * 1024
+    fileSize: 2 * 1024 * 1024 * 1024, // 2GB in bytes
+    fieldSize: 2 * 1024 * 1024 * 1024
   }, // Limit to 1GB
   fileFilter: (req, file, cb) => {
     const allowedMimeTypes = [
