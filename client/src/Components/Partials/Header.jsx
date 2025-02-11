@@ -63,23 +63,23 @@ function Header() {
         }
     }, []);
 
-    const handleLogout = async  () => {
-        
+    const handleLogout = async () => {
+
         try {
-            const userId = localStorage.getItem('userId'); 
+            const userId = localStorage.getItem('userId');
             await axios.post(`${process.env.REACT_APP_SERVER_BASE_URL}/logout`, { userId }, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token if required
                 },
             });
-    
+
             // Clear client-side data
             localStorage.removeItem('token');
             localStorage.removeItem('userEmail');
             localStorage.removeItem('userId');
             setUserEmail(null); // Reset state
             setUserName(null); // Reset state
-    
+
             // Navigate to login page
             navigate('/login');
         } catch (error) {
@@ -87,7 +87,7 @@ function Header() {
         }
     };
 
-    
+
 
     return (
         <header>
@@ -142,14 +142,14 @@ function Header() {
                                     <a className="nav-item_link" href="">Năm Phát Hành</a>
                                     <div className="subnav-topphim">
                                         <ul className="topphim-list">
+                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2025'}>2025</Link></li>
                                             <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2024'}>2024</Link></li>
                                             <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2023'}>2023</Link></li>
-                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2022'}>2022</Link></li>
                                         </ul>
                                         <ul className="topphim-list">
+                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2022'}>2022</Link></li>
                                             <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2021'}>2021</Link></li>
                                             <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2020'}>2020</Link></li>
-                                            <li className="topphim-list-item"><Link className="topphim-list-item_link" to={'/year/2019'}>2019</Link></li>
                                         </ul>
                                     </div>
                                 </li>
@@ -198,7 +198,7 @@ function Header() {
                                                         </Link>
                                                     </>
                                                 )}
-                                                 <div onClick={() => setShowModal(true)} className="profile-list-item">
+                                                <div onClick={() => setShowModal(true)} className="profile-list-item">
                                                     <FontAwesomeIcon className="profile-icon" icon={faRightFromBracket} />
                                                     <span>Đăng Xuất</span>
                                                 </div>
@@ -220,52 +220,52 @@ function Header() {
             <div className={`overlay ${isNavOpen ? 'open' : ''}`} onClick={closeNav} />
             {/* Logout Confirmation Modal */}
             <div>
-            {/* Custom Bootstrap Modal */}
-            <div
-                className={`modal fade ${showModal ? "show d-block" : "d-none"}`}
-                tabIndex="-1"
-                role="dialog"
-                style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
-            >
-                <div className="modal-dialog modal-dialog-centered" role="document">
-                <div className="modal-content border-0 shadow-lg">
-                    <div className="modal-header bg-danger text-white">
-                    <h5 className="modal-title">
-                        <FontAwesomeIcon icon={faRightFromBracket} className="me-2" />
-                        Confirm Logout
-                    </h5>
-                    <button
-                        type="button"
-                        className="btn-close btn-close-white"
-                        onClick={() => setShowModal(false)}
-                        aria-label="Close"
-                    ></button>
-                    </div>
-                    <div className="modal-body text-center">
-                    <p className="fs-5">
-                        Are you sure you want to log out? You will need to log back in
-                        to continue using your account.
-                    </p>
-                    </div>
-                    <div className="modal-footer justify-content-center">
-                    <button
-                        type="button"
-                        className="btn btn-danger btn-lg px-4"
-                        onClick={handleLogout}
-                    >
-                        Yes, Log Out
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-secondary btn-lg px-4"
-                        onClick={() => setShowModal(false)}
-                    >
-                        Cancel
-                    </button>
+                {/* Custom Bootstrap Modal */}
+                <div
+                    className={`modal fade ${showModal ? "show d-block" : "d-none"}`}
+                    tabIndex="-1"
+                    role="dialog"
+                    style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
+                >
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                        <div className="modal-content border-0 shadow-lg">
+                            <div className="modal-header bg-danger text-white">
+                                <h5 className="modal-title">
+                                    <FontAwesomeIcon icon={faRightFromBracket} className="me-2" />
+                                    Confirm Logout
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close btn-close-white"
+                                    onClick={() => setShowModal(false)}
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <div className="modal-body text-center">
+                                <p className="fs-5">
+                                    Are you sure you want to log out? You will need to log back in
+                                    to continue using your account.
+                                </p>
+                            </div>
+                            <div className="modal-footer justify-content-center">
+                                <button
+                                    type="button"
+                                    className="btn btn-danger btn-lg px-4"
+                                    onClick={handleLogout}
+                                >
+                                    Yes, Log Out
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary btn-lg px-4"
+                                    onClick={() => setShowModal(false)}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
-            </div>
             </div>
         </header>
     );

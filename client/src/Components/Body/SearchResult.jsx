@@ -5,10 +5,9 @@ import { useParams } from "react-router-dom";
 import "../../Style/BodyCss/Home.css";
 import "../../Style/All/grid.css";
 import "../../Style/Responsive/Responsive.css";
-import fetchingApiData from "../../Ultil/FetchingData/FetchingApi";
 import { useHandleClickFilmDetail } from "../../Ultil/Hepler/navigationHelpers";
 import { useHandleTruncateText } from "../../Ultil/Hepler/truncateText";
-import Skeleton from "react-loading-skeleton"; // Import skeleton loader library
+import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 function SearchResult() {
@@ -16,30 +15,39 @@ function SearchResult() {
   const [loading, setLoading] = useState(false);
   const [filmResult, setFilmResult] = useState([]);
   const [dataFilmResult, setDataFilmResult] = useState({});
-  const imgUrl = "https://img.phimapi.com/";
-  const hanldeClickFilmDetail = useHandleClickFilmDetail();
-  const hanldeTruncateText = useHandleTruncateText();
+  const handleClickFilmDetail = useHandleClickFilmDetail();
+  const handleTruncateText = useHandleTruncateText();
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [searchFilmData] = await fetchingApiData([
-          `https://phimapi.com/v1/api/tim-kiem?keyword=${slug}&limit=100`,
-        ]);
+        const response = await fetch(`http://localhost:5000/film/search-film?keyword=${encodeURIComponent(slug)}`);
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
 
-        if (searchFilmData && searchFilmData.data.items) {
-          setDataFilmResult(searchFilmData.data);
-          setFilmResult(searchFilmData.data.items);
+        const searchFilmData = await response.json();
+
+        if (searchFilmData) {
+          setDataFilmResult({
+            titlePage: `Kết quả tìm kiếm: ${slug}`,
+            seoOnPage: { titleHead: `Tìm kiếm - ${slug}` }
+          });
+          setFilmResult(searchFilmData);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
+        setFilmResult([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    if (slug) {
+      fetchData();
+    }
   }, [slug]);
 
   useEffect(() => {
@@ -81,11 +89,11 @@ function SearchResult() {
 
   return (
     <div>
-      <div class="maincontainer-searchResult">
-        <div class="grid">
-          <div class="row header-container">
-            <div class="film-header-container">
-              <h1 class="film-item_header">
+      <div className="maincontainer-searchResult">
+        <div className="grid">
+          <div className="row header-container">
+            <div className="film-header-container">
+              <h1 className="film-item_header">
                 {dataFilmResult?.titlePage || "Đang tải phim"}
               </h1>
             </div>
@@ -107,11 +115,11 @@ function SearchResult() {
               filmResult.map((item) => (
                 <div
                   key={item._id}
-                  onClick={() => hanldeClickFilmDetail(item.slug)}
+                  onClick={() => handleClickFilmDetail(item.slug)}
                   className="film-item col col-lg-2 col-md-4"
                 >
                   <div className="film-item-img-container">
-                    <img src={imgUrl + item.poster_url} alt={item.name} />
+                    <img src={item.poster_url} alt={item.name} />
                     <div className="film-item-iconplay">
                       <FontAwesomeIcon
                         className="fa-circle-play"
@@ -119,22 +127,11 @@ function SearchResult() {
                       />
                     </div>
                   </div>
-                  {/* <div className="film-item-iconplay">
-                                            <FontAwesomeIcon className='fa-circle-play' icon={faCirclePlay} />
-                                        </div> */}
-                  <h4>{hanldeTruncateText(item.name)}</h4>
-                  <button hidden={true} className="film-item-watch-btn">
-                    <a
-                      href={`filmDetail.php?name=${item.slug}`}
-                      className="film-item-watch-link"
-                    >
-                      Watch
-                    </a>
-                  </button>
+                  <h4>{handleTruncateText(item.name)}</h4>
                 </div>
               ))
             ) : (
-              <div className="error-message">No results found</div>
+              <div className="error-message">Không tìm thấy kết quả</div>
             )}
           </div>
         </div>

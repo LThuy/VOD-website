@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
 const filmControllers = require('../app/controllers/FilmControllers');
 
 const multer = require('multer');
@@ -21,6 +20,8 @@ router.get('/get-film-count', filmControllers.getMoviesCount)
 router.get('/get-film/:filmId', filmControllers.getFilmById)
 router.delete('/delete-film/:filmId', filmControllers.deleteFilm);
 router.put('/update-film/:filmId', upload.single('video'), filmControllers.editFilm);
+router.get('/search-film', filmControllers.getSeachFilm);
+router.get('/year/:year?', filmControllers.getYearFilm);
 
 // account section routes
 router.post('/add-favorite', filmControllers.addFavorite)

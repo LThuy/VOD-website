@@ -4,9 +4,11 @@ const cors = require('cors');
 const User = require('../../models/Account')
 const Favfilm = require('../../models/FavorFilm');
 const Film = require('../../models/Film');
+const {
+  removeVietnameseTones
+} = require('../../utils/vietnameseUtils');
 
 
-  
 class FilmControllers {
 
 
@@ -33,10 +35,15 @@ class FilmControllers {
 
   async getMoviesCount(req, res) {
     try {
-        const count = await Film.countDocuments();
-        res.json({ count });
+      const count = await Film.countDocuments();
+      res.json({
+        count
+      });
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching movie count', error });
+      res.status(500).json({
+        message: 'Error fetching movie count',
+        error
+      });
     }
   }
 
@@ -102,13 +109,17 @@ class FilmControllers {
   }
   // [PUT] : Edit film
   async editFilm(req, res) {
-    const { filmId } = req.params;
-    let updatedData = { ...req.body };
-  
+    const {
+      filmId
+    } = req.params;
+    let updatedData = {
+      ...req.body
+    };
+
     try {
       // Array of fields that need to be parsed from JSON
       const arrayFields = ['category', 'country', 'actor', 'director', 'comments', 'episodes'];
-      
+
       // Parse all array fields or use existing data
       for (const field of arrayFields) {
         if (updatedData[field]) {
@@ -127,7 +138,7 @@ class FilmControllers {
           }
         }
       }
-  
+
       // Convert boolean strings to actual booleans
       const booleanFields = ['is_copyright', 'sub_docquyen', 'chieurap'];
       booleanFields.forEach(field => {
@@ -135,12 +146,12 @@ class FilmControllers {
           updatedData[field] = updatedData[field] === 'true';
         }
       });
-  
+
       // Convert year to number if present
       if (updatedData.year) {
         updatedData.year = parseInt(updatedData.year, 10);
       }
-  
+
       // Find the existing film first
       const existingFilm = await Film.findById(filmId);
       if (!existingFilm) {
@@ -149,19 +160,19 @@ class FilmControllers {
           message: 'Film not found',
         });
       }
-  
+
       // Keep existing arrays if not provided in update
       arrayFields.forEach(field => {
         if (!updatedData[field] || (Array.isArray(updatedData[field]) && updatedData[field].length === 0)) {
           updatedData[field] = existingFilm[field];
         }
       });
-  
+
       // Add or update timestamp fields
       updatedData.modified = {
         time: new Date()
       };
-  
+
       // Keep the original creation time
       if (existingFilm.created && existingFilm.created.time) {
         updatedData.created = {
@@ -173,18 +184,17 @@ class FilmControllers {
           time: new Date()
         };
       }
-  
+
       console.log('Final processed update data:', updatedData);
-  
+
       const film = await Film.findByIdAndUpdate(
         filmId,
-        updatedData,
-        {
+        updatedData, {
           new: true,
           runValidators: true
         }
       );
-  
+
       res.status(200).json({
         success: true,
         message: 'Film updated successfully',
@@ -475,7 +485,9 @@ class FilmControllers {
       } = req.query; // Get pagination parameters
 
       // Retrieve films from the database with pagination
-      const films = await Film.find({ status: "active" })
+      const films = await Film.find({
+          status: "active"
+        })
         .skip((page - 1) * limit) // Skipping the documents for pagination
         .limit(limit) // Limiting the number of films returned
         .exec();
@@ -551,8 +563,10 @@ class FilmControllers {
   async setFilmActive(req, res) {
     try {
       // Extract slugPayload from the request body
-      const { slug } = req.body;
-  
+      const {
+        slug
+      } = req.body;
+
       // Ensure the slugPayload contains the slug
       if (!slug) {
         return res.status(400).json({
@@ -560,16 +574,23 @@ class FilmControllers {
           message: 'Slug is required',
         });
       }
-  
+
       // console.log(`Received slug: ${slug}`);
-  
+
       // Find the film by slug and update its status to "active"
-      const updatedFilm = await Film.findOneAndUpdate(
-        { slug: slug }, // Match condition
-        { $set: { status: 'active' } }, // Update the status field
-        { new: true } // Return the updated document
+      const updatedFilm = await Film.findOneAndUpdate({
+          slug: slug
+        }, // Match condition
+        {
+          $set: {
+            status: 'active'
+          }
+        }, // Update the status field
+        {
+          new: true
+        } // Return the updated document
       );
-  
+
       // If film not found, return a 404 response
       if (!updatedFilm) {
         return res.status(404).json({
@@ -577,7 +598,7 @@ class FilmControllers {
           message: 'Film not found',
         });
       }
-  
+
       // Return the updated film document
       res.json({
         status: true,
@@ -592,7 +613,89 @@ class FilmControllers {
       });
     }
   }
-  
+  async getSeachFilm(req, res) {
+    try {
+      const {
+        keyword
+      } = req.query;
+
+      if (!keyword) {
+        return res.status(400).json({
+          message: 'Search keyword is required'
+        });
+      }
+
+      // Lấy tất cả các phim
+      const allFilms = await Film.find()
+        .select('_id name slug poster_url description genre status');
+
+      // Lọc phim dựa trên keyword
+      const matchedFilms = allFilms.filter(film => {
+        // Chuyển đổi tên phim và keyword thành chữ thường và bỏ dấu
+        const normalizedFilmName = removeVietnameseTones(film.name.toLowerCase());
+        const normalizedKeyword = removeVietnameseTones(keyword.toLowerCase());
+
+        // Kiểm tra xem keyword có trong tên phim không
+        return normalizedFilmName.includes(normalizedKeyword);
+      });
+
+      // Lọc chỉ lấy những phim có status active
+      const activeFilms = matchedFilms.filter(film => film.status === 'active');
+
+      res.json(activeFilms);
+
+    } catch (error) {
+      console.error('Search error:', error);
+      res.status(500).json({
+        message: 'Internal server error'
+      });
+    }
+  }
+  async getYearFilm(req, res) {
+    try {
+      const year = req.params.year;
+      const page = parseInt(req.query.page) || 1;
+      const limit = 60; // Same as your current limit
+      const skip = (page - 1) * limit;
+
+      // Create base query
+      let query = {
+        status: 'active'
+      };
+
+      // Add year to query if provided
+      if (year && year !== 'all') {
+        query.year = parseInt(year);
+      }
+
+      // Get total count for pagination
+      const total = await Film.countDocuments(query);
+
+      // Get films
+      const films = await Film.find(query)
+        .select('_id name slug poster_url year')
+        .skip(skip)
+        .limit(limit)
+        .sort({
+          createdAt: -1
+        });
+
+      res.json({
+        films,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(total / limit),
+          total
+        }
+      });
+
+    } catch (error) {
+      console.error('Error fetching films by year:', error);
+      res.status(500).json({
+        message: 'Internal server error'
+      });
+    }
+  }
 
 }
 
