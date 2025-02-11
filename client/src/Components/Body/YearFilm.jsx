@@ -28,7 +28,7 @@ function YearFilm() {
             setLoading(true);
             try {
                 const response = await fetch(
-                    `http://localhost:5000/film/year/${slug || 'all'}?page=${currentPage}`
+                    `${process.env.REACT_APP_SERVER_BASE_URL}/film/year/${slug || 'all'}?page=${currentPage}`
                 );
                 const data = await response.json();
                 

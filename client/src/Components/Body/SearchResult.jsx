@@ -22,7 +22,7 @@ function SearchResult() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/film/search-film?keyword=${encodeURIComponent(slug)}`);
+        const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/film/search-film?keyword=${encodeURIComponent(slug)}`);
         
         if (!response.ok) {
           throw new Error('Network response was not ok');
