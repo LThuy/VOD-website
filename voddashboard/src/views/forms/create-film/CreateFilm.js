@@ -30,7 +30,6 @@ function CreateFilm() {
     origin_name: '',
     content: '',
     type: '',
-    status: '',
     // poster_url: '',
     // thumb_url: '',
     trailer_url: '',
@@ -42,22 +41,30 @@ function CreateFilm() {
     notify: '',
     showtimes: '',
     year: '',
-    actor: [],
+    actor:[],
     director: [],
     category: [],
     country: [],
   })
   
 
-  // Create a FormData object
-  const formData = new FormData()
+  const formData = new FormData();
 
-  // Append the file
-  formData.append('video', file)
-  formData.append('poster_url', filePoster)
-  formData.append('thumb_url', fileThumb)
-  formData.append('name', filmData.name)
-  formData.append('slug', filmData.slug)
+  // Append files separately if they exist
+  if (file) formData.append('video', file);
+  if (filePoster) formData.append('poster_url', filePoster);
+  if (fileThumb) formData.append('thumb_url', fileThumb);
+
+  // Append all other properties of filmData
+  Object.entries(filmData).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        formData.append(`${key}[${index}]`, item);
+      });
+    } else if (value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -172,17 +179,6 @@ function CreateFilm() {
                     name="type"
                     type="text"
                     value={filmData.type}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                {/* Status */}
-                <div className="mb-3">
-                  <CFormLabel>Status:</CFormLabel>
-                  <CFormInput
-                    name="status"
-                    type="text"
-                    value={filmData.status}
                     onChange={handleChange}
                   />
                 </div>

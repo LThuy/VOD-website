@@ -36,6 +36,7 @@ class UploadController {
 
       try {
         const { slug, name } = req.body;
+        const filmData = req.body;
         // console.log(req.files);
     
         // Extract files from request
@@ -100,13 +101,13 @@ class UploadController {
         const newFilm = new Film({
           name: name,
           origin_name: name,
-          content: slug,
+          content: filmData.content,
           slug: slug,
           created: { time: new Date() },
           modified: { time: new Date() },
           _id: new mongoose.Types.ObjectId().toString(),
           status: 'inactive',
-          type: 'Drama',
+          type: filmData.type,
           poster_url: `https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/poster/${posterFile.originalname}`,
           thumb_url: `https://d1m1whfx9njb6a.cloudfront.net/videos/${baseName}/thumb/${thumbFile.originalname}`,
           tmdb: {
@@ -119,18 +120,22 @@ class UploadController {
           imdb: {
             id: 'tt1234567',
           },
-          year: 2025,
-          quality: "HD",
-          lang: "English",
-          category: [{ id: "1", name: "Action", slug: "action" }],
-          country: [{ id: "US", name: "United States", slug: "us" }],
-          actor: ["John Doe", "Jane Smith"],
-          director: ["Director Name"],
-          episode_current: "1",
-          episode_total: "10",
-          trailer_url: "http://example.com/trailer.mp4",
-          time: "120 mins",
-          view: 1000,
+          year: filmData.year,
+          quality: filmData.quality,
+          lang: filmData.lang,
+          category:  Array.isArray(filmData.category)
+          ? filmData.category.map(cat => (typeof cat === 'string' ? { id: "", name: cat, slug: cat.toLowerCase().replace(/\s+/g, "-") } : cat))
+          : [{ id: "", name: filmData.category, slug: filmData.category.toLowerCase().replace(/\s+/g, "-") }],
+          country: Array.isArray(filmData.country)
+          ? filmData.country.map(cty => (typeof cty === 'string' ? { id: "", name: cty, slug: cty.toLowerCase().replace(/\s+/g, "-") } : cty))
+          : [{ id: "", name: filmData.country, slug: filmData.country.toLowerCase().replace(/\s+/g, "-") }],
+          actor: filmData.actor,
+          director: filmData.director, 
+          episode_current: filmData.episode_current,
+          episode_total: filmData.episode_total,
+          trailer_url: filmData.trailer_url,
+          time: filmData.time + ' minutes',
+          view: 0,
           showtimes: "2025-12-01",
           episodes: [
             {

@@ -169,12 +169,12 @@ router.post('/', upload.fields([{
     name: 'video',
     maxCount: 1
   },
-  // { name: 'name', maxCount: 1 },
-  // { name: 'slug', maxCount: 1 },
-  // { name: 'origin_name', maxCount: 1 },
-  // { name: 'content', maxCount: 1 },
-  // { name: 'type', maxCount: 1 },
-  // { name: 'status', maxCount: 1 },
+  { name: 'name', maxCount: 1 },
+  { name: 'slug', maxCount: 1 },
+  { name: 'origin_name', maxCount: 1 },
+  { name: 'content', maxCount: 1 },
+  { name: 'type', maxCount: 1 },
+  { name: 'status', maxCount: 1 },
   {
     name: 'poster_url',
     maxCount: 1
@@ -183,20 +183,19 @@ router.post('/', upload.fields([{
     name: 'thumb_url',
     maxCount: 1
   },
-  // { name: 'trailer_url', maxCount: 1 },
-  // { name: 'time', maxCount: 1 },
-  // { name: 'episode_current', maxCount: 1 },
-  // { name: 'episode_total', maxCount: 1 },
-  // { name: 'quality', maxCount: 1 },
-  // { name: 'lang', maxCount: 1 },
-  // { name: 'notify', maxCount: 1 },
-  // { name: 'showtimes', maxCount: 1 },
-  // { name: 'year', maxCount: 1 },
-  // { name: 'actor', maxCount: 10 },  // You can have multiple actors, so maxCount is 10 (or whatever you prefer)
-  // { name: 'director', maxCount: 10 },
-  // { name: 'category', maxCount: 10 },
-  // { name: 'country', maxCount: 10 },
-  // Add more fields if you have additional files, e.g., poster images
+  { name: 'trailer_url', maxCount: 1 },
+  { name: 'time', maxCount: 1 },
+  { name: 'episode_current', maxCount: 1 },
+  { name: 'episode_total', maxCount: 1 },
+  { name: 'quality', maxCount: 1 },
+  { name: 'lang', maxCount: 1 },
+  { name: 'notify', maxCount: 1 },
+  { name: 'showtimes', maxCount: 1 },
+  { name: 'year', maxCount: 1 },
+  { name: 'actor', maxCount: 10 },  
+  { name: 'director', maxCount: 10 },
+  { name: 'category', maxCount: 10 },
+  { name: 'country', maxCount: 10 },
 ]), uploadControllers.uploadVideos)
 
 module.exports = router;
