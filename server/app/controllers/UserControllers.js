@@ -54,14 +54,11 @@ class UserControllers {
     async updateAdminInfo(req, res) {
         try {
             const { id } = req.params;
-            const { email, username } = req.body;
-
-            console.log("HAHAHA123")
-            console.log(email + "vai gau")
+            let updatedData = req.body
             
             const updatedAdmin = await Account.findOneAndUpdate(
                 { _id: id, role: 'admin' },
-                { email, username },
+                { email: updatedData.email, username: updatedData.username },
                 { new: true }
             );
             

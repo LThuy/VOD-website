@@ -47,24 +47,15 @@ function EditAdmin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true)
-    const formData = new FormData();
-    
-    formData.append('email', adminData.email);
-    formData.append('username', adminData.username);
-  
-    // Debugging: Ensure FormData has values
-    // for (let pair of formData.entries()) {
-    //   console.log(pair[0] + ': ' + pair[1]);
-    // }
 
   
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_SERVER_BASE_URL}/info/update-admin/${adminId}`,
-        formData,
+        adminData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
           }
         }
       );
