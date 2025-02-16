@@ -13,6 +13,8 @@ router.post('/change-password', siteControllers.changePassword);
 router.post('/forget-password', siteControllers.forgetPassword); 
 router.post('/reset-password', siteControllers.resetPassword); 
 router.post('/dashboard', siteControllers.getDashboard); 
+router.post('/create-admin', siteControllers.createAdminAccount); 
+
 //movie
 const movieControllers = require('../app/controllers/MovieControllers');
 router.get('/api/danh-sach/phim-le',movieControllers.getMovies);

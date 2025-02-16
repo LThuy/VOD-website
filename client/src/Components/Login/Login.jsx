@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 function Login({ setUserEmail }) {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [mustChangePassword, setMustChangePassword] = useState(true);
   const navigate = useNavigate();
   const [userId, setUserId] = useState()
 
@@ -81,6 +82,7 @@ function Login({ setUserEmail }) {
       localStorage.setItem("userEmail", result.email);
       localStorage.setItem("userId", result.userId);
       localStorage.setItem("userRole", result.role);
+      localStorage.setItem("mustChangePassword", result.mustChangePassword);
       setUserId(result.userId);
 
       if (typeof setUserEmail === "function") {

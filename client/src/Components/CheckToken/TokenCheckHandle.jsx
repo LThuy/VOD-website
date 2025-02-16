@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import ChangePasswordModal from "../Parts/ChangePasswordModal";
 
 // Function to check if the token is expired
 function isTokenExpired(token) {
@@ -16,6 +17,28 @@ function isTokenExpired(token) {
 
 const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem('token');
+    const [mustChangePassword, setMustChangePassword] = useState(
+        localStorage.getItem("mustChangePassword") === "true"
+      );
+    const [showModal, setShowModal] = useState(false);
+
+    useEffect(() => {
+    // Optional: Listen for changes (e.g., user updates password)
+    const handleStorageChange = () => {
+        setMustChangePassword(localStorage.getItem("mustChangePassword") === "true");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+    }, []);
+
+    useEffect(() => {
+        const storedValue = localStorage.getItem("mustChangePassword");
+        if (storedValue && mustChangePassword === true) {
+          setShowModal(true); // Ensure modal state updates
+        }
+      }, []);
+
     const isGuest = sessionStorage.getItem('isGuest')
     console.log(!isGuest)
     
@@ -24,8 +47,12 @@ const ProtectedRoute = ({ children }) => {
         localStorage.removeItem('token');
         return <Navigate to="/login" replace />;
     }
+    console.log("Retrieved mustChangePassword:", mustChangePassword);
 
-    return children; // If the token is valid, render the protected component
+    return <> 
+                {showModal && <ChangePasswordModal />}
+                {children} 
+            </>; 
 };
 
 export default ProtectedRoute;

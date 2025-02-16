@@ -48,6 +48,39 @@ const sendVerificationEmail = async (email, token) => {
     }
 };
 
+// Send a verification email
+const sendVerificationAdminEmail = async (email, username, token) => {
+    const clientBaseUrl = process.env.CLIENT_BASE_URL;
+    const verificationUrl = `${clientBaseUrl}/verify-email?token=${token}`;
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Action Required: Verify Your Email Address',
+        html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h2 style="color: #4CAF50;">Welcome to Our Service!</h2>
+                <p>Thank you for signing up. Please confirm your email address to activate your account.</p>
+                <p>
+                    <a href="${verificationUrl}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+                        Verify Email Address
+                    </a>
+                </p>
+                <p>Your username is: <strong>${username}</strong></p>
+                <p>Your temporary password is: <strong>${username}</strong></p>
+                <p>If you didn't sign up for this account, please disregard this email.</p>
+                <p>Best regards,<br>The Team</p>
+            </div>
+        `,
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.response);
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
+};
+
 // sende email forget pass
 const sendResetEmail = async (to, subject, html) => {
     const mailOptions = {
@@ -126,6 +159,7 @@ class SiteControllers {
                 email: user.email,
                 userId: user._id,
                 role: user.role,
+                mustChangePassword: user.mustChangePassword
             });
         } catch (error) {
             console.error(error);
@@ -185,6 +219,76 @@ class SiteControllers {
 
             res.status(201).json({
                 message: 'User registered successfully! Please verify your email.'
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({
+                message: 'Server error'
+            });
+        }
+    }
+
+    async getUsernameFromEmail(email) {
+        // Split the email address at the "@" symbol
+        const parts = email.split('@');
+    
+        // The first part (index 0) will be the username
+        const username = parts[0];
+      
+        return username;
+    }
+
+    //POST create admin section : /createAdmin
+    async createAdminAccount(req, res) {
+        const {
+            email,
+        } = req.body; 
+        console.log(email)
+
+        try {
+            const existingUser = await User.findOne({
+                email
+            });
+            if (existingUser) {
+                return res.status(400).json({
+                    message: 'Email already exists'
+                });
+            }
+
+              // Split the email address at the "@" symbol
+            const parts = email.split('@');
+        
+            // The first part (index 0) will be the username
+            const username = parts[0];
+
+            const salt = await bcrypt.genSalt(saltRounds);
+            const hashedPassword = await bcrypt.hash(username, salt);
+
+            const newUser = new User({
+                username: username,
+                password: hashedPassword,
+                email: email,
+                role: 'admin',
+                verified: false, 
+                change: false,
+            });
+
+            await newUser.save();
+
+            // Generate a verification token (JWT)
+            const token = jwt.sign({
+                userId: newUser._id
+            }, process.env.JWT_SECRET, {
+                expiresIn: '30m'
+            });
+
+            // Send the verification email
+            await sendVerificationAdminEmail(email, username, token);
+
+
+            res.status(200).json({
+                message: 'Admin created successfully! Please verify the email.',
+                change: newUser.mustChangePassword
             });
         } catch (error) {
             console.error(error);
@@ -307,6 +411,7 @@ class SiteControllers {
 
             // Save the new password
             user.password = hashedPassword;
+            user.mustChangePassword = false
             await user.save();
 
             res.status(200).json({
@@ -319,6 +424,7 @@ class SiteControllers {
             });
         }
     }
+    
     // [post] /forgetpassword
     async forgetPassword(req, res) {
         const {

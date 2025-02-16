@@ -34,6 +34,18 @@ const _nav = [
   },
   {
     component: CNavItem,
+    name: 'Create New Admin',
+    to: '/forms/create-admin',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Admin Management',
+    to: '/infor/admin',
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
     name: 'User',
     to: '/infor/user',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,

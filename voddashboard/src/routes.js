@@ -39,6 +39,7 @@ const CreateFilm = React.lazy(() => import('./views/forms/create-film/CreateFilm
 const Users = React.lazy(() => import('./views/infor/Users'))
 const FilmLibrary = React.lazy(() => import('./views/film/FilmLibrary'))
 const EditFilm = React.lazy(() => import('./views/film/EditFilm'))
+const CreateAdmin = React.lazy(() => import('./views/forms/create-admin/CreateAdmin'))
 
 const Charts = React.lazy(() => import('./views/charts/Charts'))
 
@@ -92,6 +93,7 @@ const routes = [
   { path: '/forms/layout', name: 'Layout', element: Layout },
   { path: '/forms/validation', name: 'Validation', element: Validation },
   { path: '/forms/create-film', name: 'Create New Film', element: CreateFilm }, //form create film
+  { path: '/forms/create-admin', name: 'Create New Admin', element: CreateAdmin }, //form create admin
   { path: '/infor/user', name: 'User Information', element: Users }, //form create film
   { path: '/film/manage-library', name: 'Film Library', element: FilmLibrary }, //manage film library
   { path: '/film/edit-film/:filmId', name: 'Edit Film', element: EditFilm }, //edit film library

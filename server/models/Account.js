@@ -33,6 +33,10 @@ const AccountSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   }, // Track email verification status
+  mustChangePassword: {
+    type: Boolean,
+    default: true,
+  }, 
   verificationToken: {
     type: String,
   },
