@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const filmControllers = require('../app/controllers/FilmControllers');
+const {validatePaginationParams} = require("../middleware/validatePaginationParams")
 
 const multer = require('multer');
 const storage = multer.diskStorage({
@@ -22,6 +23,8 @@ router.delete('/delete-film/:filmId', filmControllers.deleteFilm);
 router.put('/update-film/:filmId', upload.single('video'), filmControllers.editFilm);
 router.get('/search-film', filmControllers.getSeachFilm);
 router.get('/year/:year?', filmControllers.getYearFilm);
+router.get('/genre/:slug',filmControllers.getGenreFilm);
+
 
 // account section routes
 router.post('/add-favorite', filmControllers.addFavorite)

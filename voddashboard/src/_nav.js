@@ -41,7 +41,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Admin Management',
-    to: '/infor/admin',
+    to: '/infor/admin-library',
     icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
   {

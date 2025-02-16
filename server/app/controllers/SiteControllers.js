@@ -593,5 +593,23 @@ class SiteControllers {
         res.redirect(`http://localhost:3001?username=${encodeURIComponent(username)}`);
     }
 
+    async deleteAdmin(req, res) {
+        try {
+            const { id } = req.params;
+            const deletedAdmin = await User.findOneAndDelete({ _id: id, role: 'admin' });
+            
+            if (!deletedAdmin) {
+                return res.status(404).json({ message: 'Admin not found' });
+            }
+            
+            res.json({ message: 'Admin deleted successfully', deletedAdmin });
+        } catch (error) {
+            res.status(500).json({
+                message: 'Error deleting admin',
+                error
+            });
+        }
+    }
+
 }
 module.exports = new SiteControllers();

@@ -49,7 +49,7 @@ import {
   cilLockLocked,
   cilLockUnlocked,
 } from '@coreui/icons'
-import avatarPlaceholder from 'src/assets/images/avatars/10.png'
+import avatarPlaceholder from 'src/assets/images/avartar.png'
 import { toast } from 'react-toastify'
 
 function User() {
@@ -226,7 +226,7 @@ function User() {
                           onClick={() => toggleModal(user)}
                           title={user.locked ? 'Unlock User' : 'Lock User'}
                         >
-                          <CIcon icon={user.locked ? cilLockLocked : cilLockUnlocked} size="xl" />
+                        <CIcon icon={user.locked ? cilLockLocked : cilLockUnlocked} size="xl" />
                         </CButton>
                         </CTableDataCell>
                         <CTableDataCell>

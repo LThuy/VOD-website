@@ -302,30 +302,30 @@ function FilmDetail() {
                             <div className="filmdetaile-infor-item">
                                 <h4 className="filmdetaile-infor-item_type">Bạn thích phim này chứ?</h4>
                                 <LikeButton filmData={film} userId={userId} showToast={showToast} />
-                                <h4 className="gern-info filmdetaile-infor-item_type">Genre: <span className="filmdetaile-infor-item_info">
+                                <h4 className="gern-info filmdetaile-infor-item_type">Thể Loại: <span className="filmdetaile-infor-item_info">
                                     {categoryNames}
                                 </span></h4>
-                                <h4 className="filmdetaile-infor-item_type">Actors: <span className="filmdetaile-infor-item_info">
+                                <h4 className="filmdetaile-infor-item_type">Diễn Viên: <span className="filmdetaile-infor-item_info">
                                     {actorNames}
                                 </span></h4>
                             </div>
                             <div className="filmdetaile-infor-item">
-                                <h4 className="filmdetaile-infor-item_type">Year: <span className="filmdetaile-infor-item_info">{film.year}</span></h4>
-                                <h4 className="filmdetaile-infor-item_type">Director: <span className="filmdetaile-infor-item_info">
+                                <h4 className="filmdetaile-infor-item_type">Năm: <span className="filmdetaile-infor-item_info">{film.year}</span></h4>
+                                <h4 className="filmdetaile-infor-item_type">Đạo Diễn: <span className="filmdetaile-infor-item_info">
                                     {directorNames}
                                 </span></h4>
                             </div>
                             <div className="filmdetaile-infor-item">
-                                <h4 className="filmdetaile-infor-item_type">Country: <span className="filmdetaile-infor-item_info">
+                                <h4 className="filmdetaile-infor-item_type">Quốc Gia: <span className="filmdetaile-infor-item_info">
                                     {countryNames}</span></h4>
-                                <h4 className="filmdetaile-infor-item_type">Duration: <span className="filmdetaile-infor-item_info"><span id="duration">{film.time}</span></span></h4>
+                                <h4 className="filmdetaile-infor-item_type">Thời Lượng: <span className="filmdetaile-infor-item_info"><span id="duration">{film.time}</span></span></h4>
                             </div>
                             <div className="filmdetaile-infor-item">
-                                <h4 className="filmdetaile-infor-item_type">Quality: <span className="filmdetaile-infor-item_info">{film.quality}</span></h4>
-                                <h4 className="filmdetaile-infor-item_type">Status: <span className="filmdetaile-infor-item_info"><span id="duration">{film.episode_current}</span></span></h4>
+                                <h4 className="filmdetaile-infor-item_type">Chất Lượng: <span className="filmdetaile-infor-item_info">{film.quality}</span></h4>
+                                <h4 className="filmdetaile-infor-item_type">Trạng Thái: <span className="filmdetaile-infor-item_info"><span id="duration">{film.episode_current}</span></span></h4>
                             </div>
                             <div className="filmdetaile-infor-review">
-                                <h4 className="filmdetaile-infor-item_type">Review Film</h4>
+                                <h4 className="filmdetaile-infor-item_type">Nội Dung</h4>
                                 <p>{film.content}</p>
                             </div>
                         </div>

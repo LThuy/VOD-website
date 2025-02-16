@@ -40,6 +40,8 @@ const Users = React.lazy(() => import('./views/infor/Users'))
 const FilmLibrary = React.lazy(() => import('./views/film/FilmLibrary'))
 const EditFilm = React.lazy(() => import('./views/film/EditFilm'))
 const CreateAdmin = React.lazy(() => import('./views/forms/create-admin/CreateAdmin'))
+const AdminLibrary = React.lazy(() => import('./views/admin/AdminList'))
+const EditAdmin = React.lazy(() => import('./views/admin/EditAdmin'))
 
 const Charts = React.lazy(() => import('./views/charts/Charts'))
 
@@ -96,6 +98,8 @@ const routes = [
   { path: '/forms/create-admin', name: 'Create New Admin', element: CreateAdmin }, //form create admin
   { path: '/infor/user', name: 'User Information', element: Users }, //form create film
   { path: '/film/manage-library', name: 'Film Library', element: FilmLibrary }, //manage film library
+  { path: '/infor/admin-library', name: 'Admin Library', element: AdminLibrary }, //manage film library
+  { path: '/infor/edit-admin/:adminId', name: 'Admin Library', element: EditAdmin }, //manage film library
   { path: '/film/edit-film/:filmId', name: 'Edit Film', element: EditFilm }, //edit film library
   { path: '/icons', exact: true, name: 'Icons', element: CoreUIIcons },
   { path: '/icons/coreui-icons', name: 'CoreUI Icons', element: CoreUIIcons },

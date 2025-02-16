@@ -19,6 +19,65 @@ class UserControllers {
         }
     }
 
+    async getAdmins(req, res) {
+        try {
+            const users = await Account.find({
+                role: 'admin'
+            });
+            console.log(users)
+            res.send(users);
+        } catch (error) {
+            res.status(500).json({
+                message: 'Error fetching users',
+                error
+            });
+        }
+    }
+    async getAdminsInfo(req, res) {
+        try {
+            const { id } = req.params;
+            const admin = await Account.findOne({ _id: id, role: 'admin' });
+            
+            if (!admin) {
+                return res.status(404).json({ message: 'Admin not found' });
+            }
+            
+            res.json({ message: 'Admin fetched successfully', admin });
+        } catch (error) {
+            res.status(500).json({
+                message: 'Error fetching admin',
+                error
+            });
+        }
+    }
+
+    async updateAdminInfo(req, res) {
+        try {
+            const { id } = req.params;
+            const { email, username } = req.body;
+
+            console.log("HAHAHA123")
+            console.log(email + "vai gau")
+            
+            const updatedAdmin = await Account.findOneAndUpdate(
+                { _id: id, role: 'admin' },
+                { email, username },
+                { new: true }
+            );
+            
+            if (!updatedAdmin) {
+                return res.status(404).json({ message: 'Admin not found' });
+            }
+            
+            res.json({ message: 'Admin updated successfully', updatedAdmin });
+        } catch (error) {
+            res.status(500).json({
+                message: 'Error updating admin',
+                error
+            });
+        }
+    }
+
     async handleLockUnlock(req, res) {
         const {
             id

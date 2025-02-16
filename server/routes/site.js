@@ -14,6 +14,7 @@ router.post('/forget-password', siteControllers.forgetPassword);
 router.post('/reset-password', siteControllers.resetPassword); 
 router.post('/dashboard', siteControllers.getDashboard); 
 router.post('/create-admin', siteControllers.createAdminAccount); 
+router.delete('/delete-admin/:id', siteControllers.deleteAdmin); 
 
 //movie
 const movieControllers = require('../app/controllers/MovieControllers');

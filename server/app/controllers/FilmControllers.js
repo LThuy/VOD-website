@@ -696,7 +696,25 @@ class FilmControllers {
       });
     }
   }
-
+  async getGenreFilm(req, res) {
+    try {
+      const { slug } = req.params;
+  
+      // Find all films that have this genre (category slug)
+      const films = await Film.find({ 'category.slug': slug })
+        .sort({ createdAt: -1 }) // Sort newest first
+        .select('name slug poster_url category type'); // Select only needed fields
+  
+      res.json({
+        items: films,
+        totalItems: films.length, // Total number of films
+      });
+    } catch (error) {
+      console.error('Error fetching films:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+  
 }
 
 module.exports = new FilmControllers();
