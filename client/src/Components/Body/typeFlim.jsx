@@ -101,7 +101,7 @@ function TypeFilm() {
     if (loading) {
         return (
             <div>
-                <div className="maincontainer">
+                <div className="maincontainer-searchResult">
                     <div className="grid">
                         <div className="row header-container">
                             <div className="film-header-container">
@@ -134,7 +134,7 @@ function TypeFilm() {
 
     return (
         <div>
-            <div className="maincontainer">
+            <div className="maincontainer-searchResult">
                 <div className="grid">
                     <div className="row header-container">
                         <div className="film-header-container">

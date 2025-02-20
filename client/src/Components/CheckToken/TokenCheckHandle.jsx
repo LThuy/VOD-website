@@ -16,6 +16,9 @@ function isTokenExpired(token) {
 }
 
 const ProtectedRoute = ({ children }) => {
+    if(localStorage.getItem('userRole') !== 'admin') {
+        localStorage.setItem("mustChangePassword", false)
+    }
     const token = localStorage.getItem('token');
     const [mustChangePassword, setMustChangePassword] = useState(
         localStorage.getItem("mustChangePassword") === "true"

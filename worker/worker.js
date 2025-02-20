@@ -39,10 +39,10 @@ const redisConnection = new IORedis(redisConfig);
 
 // Video Processing Configuration
 const VIDEO_QUALITIES = [
-  { name: "360p", resolution: "640x360", bitrate: "800k" },
   { name: "480p", resolution: "854x480", bitrate: "1400k" },
+  { name: "720p", resolution: "1280x720", bitrate: "2800k" },
+  { name: "1080p", resolution: "1920x1080", bitrate: "5000k" },
 ];
-
 class VideoProcessor {
   constructor() {
     this.isProcessing = false;
