@@ -98,7 +98,7 @@ function GenreFilm() {
 
     return (
         <div>
-            <div className="maincontainer">
+            <div className="maincontainer-searchResult">
                 <div className="grid">
                     {loading ? (
                         renderSkeletonLoader()
