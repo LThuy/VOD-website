@@ -1,6 +1,6 @@
 import React, { useState, Suspense, lazy } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-
+import Home from "./Components/Body/Home";
 import Header from "./Components/Partials/Header";
 import Footer from "./Components/Partials/Footer";
 import TypeFilm from "./Components/Body/typeFlim";
@@ -15,7 +15,6 @@ import VerifyEmail from "./Ultil/Account/VerifyEmail";
 import VerifyEmailAdmin from "./Ultil/Admin-Account/VerifyEmail";
 import SuccessNotice from "./Components/Body/SuccesNotive";
 import SuccessVerifyAdmin from "./Admin/Components/SuccessVerify";
-import Test from "./Components/test";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer } from "react-toastify";
@@ -29,11 +28,10 @@ import ResetPassword from "./Components/Login/ResetPassword";
 import CountryFilm from "./Components/Body/CountryFilm";
 import CreateNewFilm from "./Components/Body/CreateNewFilm";
 import YearFilm from "./Components/Body/YearFilm";
+import FilmDetail from "./Components/Body/FilmDetail";
 import ChangePasswordModal from "./Components/Parts/ChangePasswordModal";
 import { Analytics } from "@vercel/analytics/react";
 
-const FilmDetail = lazy(() => import("./Components/Body/FilmDetail"));
-const Home = lazy(() => import("./Components/Body/Home"));
 
 function App() {
   const location = useLocation();
@@ -68,7 +66,6 @@ function App() {
       <div id="body-content">
         <Routes>
           {/* <Route path="/" element={<Home />} /> */}
-          <Route path="/test" element={<Test />} />
           <Route path="/verify" element={<NoticeVerify />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/admin/verify-email" element={<VerifyEmailAdmin />} />
@@ -93,9 +90,7 @@ function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <Suspense fallback={<div>Đang tải, vui lòng đợi...</div>}>
                   <Home />
-                </Suspense>
               </ProtectedRoute>
             }
           />
@@ -160,9 +155,7 @@ function App() {
             path="/filmDetail/:slug"
             element={
               <ProtectedRoute>
-                <Suspense fallback={<div>Đang tải, vui lòng đợi...</div>}>
                   <FilmDetail />
-                </Suspense>
               </ProtectedRoute>
             }
           />

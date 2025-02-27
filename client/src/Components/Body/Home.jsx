@@ -1,6 +1,6 @@
 // src/components/Home.js
 import React, { useEffect, useMemo, Suspense } from 'react';
-import '../../Style/BodyCss/Home.css';
+import '../../Style/BodyCss/Home.scss';
 import '../../Style/All/grid.css';
 import '../../Style/Responsive/Responsive.css';
 import useMovieData from '../../Hooks/useMovieData';

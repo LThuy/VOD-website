@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../../Style/PartialsCss/Header.css';
+import '../../Style/PartialsCss/Header.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faMagnifyingGlass, faUser, faStar, faRightFromBracket, faClockRotateLeft, faPeopleRoof, faPlus } from '@fortawesome/free-solid-svg-icons';
 import '../../Style/Responsive/Responsive.css'

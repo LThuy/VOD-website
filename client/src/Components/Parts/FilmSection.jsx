@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import '../../Style/BodyCss/Home.css';
+import '../../Style/BodyCss/Home.scss';
 import { faCirclePlay } from '@fortawesome/free-solid-svg-icons';
 import Skeleton from 'react-loading-skeleton';  // Import skeleton loader library
 import 'react-loading-skeleton/dist/skeleton.css';  // Import skeleton styles

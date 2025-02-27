@@ -6,7 +6,7 @@ import { faStar, faSpinner, faCirclePlay } from '@fortawesome/free-solid-svg-ico
 import '../../Style/BodyCss/FilmDetail.css'
 import '../../Style/All/grid.css'
 import '../../Style/Responsive/Responsive.css'
-import '../../Style/BodyCss/Home.css'
+import '../../Style/BodyCss/Home.scss'
 import fetchingApiData from '../../Ultil/FetchingData/FetchingApi'
 import { useHandleClickFilmDetail } from '../../Ultil/Hepler/navigationHelpers';
 import { useHandleTruncateText } from '../../Ultil/Hepler/truncateText'

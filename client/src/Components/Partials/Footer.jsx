@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../Style/PartialsCss/Footer.css'; // Ensure the path to your CSS file is correct
+import '../../Style/PartialsCss/Footer.scss'; // Ensure the path to your CSS file is correct
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';

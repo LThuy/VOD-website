@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlay } from '@fortawesome/free-solid-svg-icons';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../Style/BodyCss/Home.css';
+import '../../Style/BodyCss/Home.scss';
 import '../../Style/All/grid.css';
 import '../../Style/Responsive/Responsive.css';
 import Pagination from '../Pagination/Pagination';
