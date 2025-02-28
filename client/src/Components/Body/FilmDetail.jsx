@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faStar, faCirclePlay, faSpinner, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faYoutube } from '@fortawesome/free-brands-svg-icons';
-import '../../Style/BodyCss/FilmDetail.css'
+import '../../Style/BodyCss/FilmDetail.scss'
 import '../../Style/All/grid.css'
 import '../../Style/Responsive/Responsive.css'
 import fetchingApiData from '../../Ultil/FetchingData/FetchingApi'
