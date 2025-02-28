@@ -54,11 +54,6 @@ function App() {
 
   const displayLayout = shouldDisplayLayout(location.pathname);
 
-  const LazyComponent = ({ component: Component }) => (
-    <Suspense fallback={<div>Loading, please wait...</div>}>
-      <Component />
-    </Suspense>
-  );
   return (
     <div className="App">
       <ToastContainer position="top-right" autoClose={3000} />
