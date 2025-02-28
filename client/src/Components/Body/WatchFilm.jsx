@@ -136,7 +136,7 @@ function WatchFilm() {
             }
 
             try {
-                const response = await fetch('http://localhost:5000/film/addToHistory', {
+                const response = await fetch(`${process.env.REACT_APP_SERVER_BASE_URL}/film/addToHistory`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
