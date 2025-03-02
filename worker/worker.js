@@ -6,6 +6,7 @@ const { Worker } = require("bullmq");
 const IORedis = require("ioredis");
 const { S3Client, GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 const axios = require("axios");
+require("@aws-sdk/crc64-nvme-crt");
 require("dotenv").config();
 
 // S3 Client Configuration
