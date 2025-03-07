@@ -40,6 +40,7 @@ router.get('/list/new', filmControllers.getNewestFilm)
 router.get('/:slug', filmControllers.getFilmDetails)
 // set film active for displaying
 router.post('/setActive', filmControllers.setFilmActive)
+router.post('/setStatus', filmControllers.setStatusVideo)
 
 
 module.exports = router;

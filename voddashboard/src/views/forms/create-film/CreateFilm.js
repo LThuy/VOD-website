@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
+import CIcon from '@coreui/icons-react'
 import {
   CButton,
   CCard,
@@ -30,8 +31,6 @@ function CreateFilm() {
     origin_name: '',
     content: '',
     type: '',
-    // poster_url: '',
-    // thumb_url: '',
     trailer_url: '',
     time: '',
     episode_current: '',
@@ -47,6 +46,13 @@ function CreateFilm() {
     country: [],
   })
   
+  // Load saved form data from localStorage when component mounts
+  useEffect(() => {
+    const savedFormData = localStorage.getItem('filmFormData');
+    if (savedFormData) {
+      setFilmData(JSON.parse(savedFormData));
+    }
+  }, []);
 
   const formData = new FormData();
 
@@ -68,21 +74,22 @@ function CreateFilm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFilmData({ ...filmData, [name]: value })
+    const updatedFilmData = { ...filmData, [name]: value };
+    setFilmData(updatedFilmData);
+    
+    // Save to localStorage whenever form data changes
+    localStorage.setItem('filmFormData', JSON.stringify(updatedFilmData));
   }
 
   const handleFileChange = (e) => {
-    // setFilmData({ ...filmData, video: e.target.files[0] });
     setFile(e.target.files[0])
   }
 
   const handleThumbChange = (e) => {
-    // setFilmData({ ...filmData, video: e.target.files[0] });
     setFileThumb(e.target.files[0])
   }
 
   const handlePosterChange = (e) => {
-    // setFilmData({ ...filmData, video: e.target.files[0] });
     setFilePoster(e.target.files[0])
   }
 
@@ -105,6 +112,8 @@ function CreateFilm() {
       })
 
       if (response.status === 200) {
+        // Clear the saved form data on successful submission
+        localStorage.removeItem('filmFormData');
         toast.success('Upload Successfully!', { icon: '🚀' })
         setTimeout(() => navigate('/film/manage-library'), 2000) // Navigate after success
       }
@@ -116,13 +125,52 @@ function CreateFilm() {
     }
   }
 
+  // Function to clear cached form data
+  const clearFormCache = () => {
+    localStorage.removeItem('filmFormData');
+    setFilmData({
+      name: '',
+      slug: '',
+      origin_name: '',
+      content: '',
+      type: '',
+      trailer_url: '',
+      time: '',
+      episode_current: '',
+      episode_total: '',
+      quality: '',
+      lang: '',
+      notify: '',
+      showtimes: '',
+      year: '',
+      actor:[],
+      director: [],
+      category: [],
+      country: [],
+    });
+    toast.info('Form data cleared!');
+  }
+
   return (
     <div>
       <CRow>
         <CCol xs={12}>
           <CCard className="mb-4">
-            <CCardHeader>
+            <CCardHeader className='d-flex justify-content-between align-items-center'>
               <strong>Create New Film</strong>
+              <CButton 
+                color="danger"
+                className="px-3 py-2"
+                style={{
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.15)',
+                  transition: 'all 0.3s ease',
+                  fontWeight: '500'
+                }}
+                onClick={clearFormCache}
+              >
+                Clear Form
+              </CButton>
             </CCardHeader>
             <CCardBody>
               <CForm id="create-newfilm" onSubmit={handleSubmit}>

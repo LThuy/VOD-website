@@ -394,7 +394,7 @@ class FilmControllers {
       userId,
       filmData
     } = req.body;
-
+    console.log(filmData);
     try {
       // Validate userId and filmData
       if (!userId || !filmData || !filmData._id) {
@@ -405,7 +405,7 @@ class FilmControllers {
       }
 
       // Find the user by ID
-      const user = await User.findById(userId).populate('historyFilms');
+      const user = await User.findById(userId);
 
       if (!user) {
         return res.status(404).json({
@@ -414,30 +414,29 @@ class FilmControllers {
         });
       }
 
-      // Check if the film already exists in the historyFilms array
-      const isFilmExists = user.historyFilms.some(
-        (film) => film._id.toString() === filmData._id.toString()
+      // Remove existing film if it exists to prevent duplicates
+      user.historyFilms = user.historyFilms.filter(
+        film => film._id.toString() !== filmData._id.toString()
       );
 
-      if (isFilmExists) {
-        return res.status(400).json({
-          status: false,
-          message: "This film has already been added to the history.",
-        });
-      }
-
-      // Add the film to the historyFilms array
+      // Add the new film to the end (most recent)
       user.historyFilms.push(filmData);
+
+      // If history exceeds a certain limit (e.g., 50 films), remove the oldest entries
+      const MAX_HISTORY_LENGTH = 50;
+      if (user.historyFilms.length > MAX_HISTORY_LENGTH) {
+        user.historyFilms = user.historyFilms.slice(-MAX_HISTORY_LENGTH);
+      }
 
       // Save the updated user document
       await user.save();
 
-      // Send success response
-      res.status(200).json({
+      return res.status(200).json({
         status: true,
         message: "Film added to history successfully!",
         historyFilms: user.historyFilms,
       });
+
     } catch (error) {
       console.error("Error adding history film:", error);
       res.status(500).json({
@@ -613,6 +612,61 @@ class FilmControllers {
       });
     }
   }
+
+  async setStatusVideo(req, res) {
+    try {
+      // Extract slugPayload from the request body
+      const {
+        slug, status
+      } = req.body;
+
+      // Ensure the slugPayload contains the slug
+      if (!slug) {
+        return res.status(400).json({
+          status: false,
+          message: 'Slug is required',
+        });
+      }
+
+      // console.log(`Received slug: ${slug}`);
+
+      // Find the film by slug and update its status to "active"
+      const updatedFilm = await Film.findOneAndUpdate({
+          slug: slug
+        }, // Match condition
+        {
+          $set: {
+            status: status
+          }
+        }, // Update the status field
+        {
+          new: true
+        } // Return the updated document
+      );
+
+      // If film not found, return a 404 response
+      if (!updatedFilm) {
+        return res.status(404).json({
+          status: false,
+          message: 'Film not found',
+        });
+      }
+
+      // Return the updated film document
+      res.json({
+        status: true,
+        message: 'Film status updated to active',
+        data: updatedFilm,
+      });
+    } catch (error) {
+      console.error('Error setting film status to active:', error);
+      res.status(500).json({
+        status: false,
+        message: 'Server error',
+      });
+    }
+  }
+
   async getSeachFilm(req, res) {
     try {
       const {
@@ -701,7 +755,7 @@ class FilmControllers {
       const { slug } = req.params;
   
       // Find all films that have this genre (category slug)
-      const films = await Film.find({ 'category.slug': slug })
+      const films = await Film.find({ 'category.slug': slug, 'status': 'active'})
         .sort({ createdAt: -1 }) // Sort newest first
         .select('name slug poster_url category type'); // Select only needed fields
   

@@ -61,6 +61,11 @@ class VideoProcessor {
     try {
       const { files = [] } = job.data;
       const videoFile = files.find(f => f.type === "video") || {};
+      const slugData = files.find(f => f.type === 'slug');
+
+      if (slugData?.value) {
+        await this.updateStatusVideo(slugData.value, "On processing");
+      }
       
       if (!videoFile.fileName) {
         throw new Error('No video file found in job data');
@@ -69,9 +74,9 @@ class VideoProcessor {
       const baseName = path.basename(videoFile.fileName, path.extname(videoFile.fileName));
       const outputPrefix = `videos/${baseName}`;
 
-      await this.processVideoQualities(videoFile.fileName, outputPrefix, job.id);
-      await this.generateMasterPlaylist(outputPrefix);
-      await this.processAdditionalFiles(files, outputPrefix, job.id);
+      await this.processVideoQualities(videoFile.fileName, outputPrefix, job.id, slugData.value);
+      await this.generateMasterPlaylist(outputPrefix, slugData.value);
+      await this.processAdditionalFiles(files, outputPrefix, job.id, slugData.value);
     } catch (error) {
       console.error(`Job ${job.id}: Processing failed:`, error);
       throw error;
@@ -81,8 +86,9 @@ class VideoProcessor {
     }
   }
 
-  async processVideoQualities(inputFileName, outputPrefix, jobId) {
+  async processVideoQualities(inputFileName, outputPrefix, jobId, slug) {
     for (const quality of VIDEO_QUALITIES) {
+      await this.updateStatusVideo(slug, `${quality.name} on processing`);
       const tempDir = await this.createTempDirectory(quality.name);
       try {
         await this.runFFmpegConversion(
@@ -96,7 +102,7 @@ class VideoProcessor {
         console.error(`Quality ${quality.name} processing failed:`, error);
         throw error;
       } finally {
-        await this.cleanupTempDirectory(tempDir);
+        await this.cleanupTempDirectory(tempDir, quality.name, slug);
       }
     }
   }
@@ -183,7 +189,7 @@ class VideoProcessor {
     }
   }
 
-  async generateMasterPlaylist(outputPrefix) {
+  async generateMasterPlaylist(outputPrefix, slug) {
     const masterPlaylistContent = this.createMasterPlaylistContent();
     await this.uploadBufferToS3(
       Buffer.from(masterPlaylistContent),
@@ -202,7 +208,7 @@ class VideoProcessor {
         .join("\n");
   }
 
-  async processAdditionalFiles(files, outputPrefix, jobId) {
+  async processAdditionalFiles(files, outputPrefix, jobId, slug) {
     const additionalFileTypes = [
       { type: 'thumbnail', subDir: 'thumb' },
       { type: 'poster', subDir: 'poster' }
@@ -262,10 +268,11 @@ class VideoProcessor {
     console.log(`Uploaded ${key} to S3`);
   }
 
-  async cleanupTempDirectory(tempDir) {
+  async cleanupTempDirectory(tempDir, quality, slug) {
     try {
       await fs.rm(tempDir, { recursive: true, force: true });
       console.log(`Cleaned up temp directory: ${tempDir}`);
+      await this.updateStatusVideo(slug, `${quality} done`);
     } catch (error) {
       console.error(`Error cleaning temp directory ${tempDir}:`, error);
     }
@@ -283,6 +290,20 @@ class VideoProcessor {
       throw error;
     }
   }
+
+  async updateStatusVideo(slug, status) {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_SERVER_BASE_URL}/film/setStatus`, 
+        { slug, status }
+      );
+      console.log(`Sent slug data: ${slug}`);
+    } catch (error) {
+      console.error('Error sending slug data:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+
 }
 
 // Worker Setup

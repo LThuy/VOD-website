@@ -128,6 +128,8 @@ function WatchFilm() {
         if (film) {
             document.title = film.name || '';
         }
+        if (!film?._id) return;
+        console.log('add History')
         const fetchData = async () => {
 
             const userid = localStorage.getItem("userId");
@@ -147,14 +149,13 @@ function WatchFilm() {
                     }),
                 });
 
-                const data = await response.json();
             } catch (err) {
                 console.error('Error saving to history', err);
             }
         };
 
         fetchData(); // Call the async function inside useEffect
-    }, [film]); // Add film as dependency to run the effect whenever film changes
+    }, [film?._id]); // Add film as dependency to run the effect whenever film changes
 
     if (loading) {
         return (

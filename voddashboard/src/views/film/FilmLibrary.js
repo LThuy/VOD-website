@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CRow } from "@coreui/react";
-
+import '../../style/FilmLibrary.css'
 import CIcon from '@coreui/icons-react'
 import {
     cilPencil,
@@ -15,9 +15,13 @@ function FilmLibrary() {
     const [films, setFilms] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedFilmId, setSelectedFilmId] = useState(null);
+    const [status, setStatus] = useState('Pending');
+    const [loading, setLoading] = useState(true);
+
 
     const [error, setError] = useState(null);
     const navigate = useNavigate()
+
 
     useEffect(() => {
         async function fetchFilms() {
@@ -30,6 +34,9 @@ function FilmLibrary() {
         }
 
         fetchFilms();
+
+        const intervalId = setInterval(fetchFilms, 3000);
+        return () => clearInterval(intervalId)
         
     }, []);
 
@@ -87,6 +94,7 @@ function FilmLibrary() {
                             <CTableHeaderCell className="bg-body-tertiary">Director</CTableHeaderCell>
                             <CTableHeaderCell className="bg-body-tertiary">Country</CTableHeaderCell>
                             <CTableHeaderCell className="bg-body-tertiary">Views</CTableHeaderCell>
+                            <CTableHeaderCell className="bg-body-tertiary">Status</CTableHeaderCell>
                             <CTableHeaderCell className="bg-body-tertiary">Action</CTableHeaderCell>
                         </CTableRow>
                     </CTableHead>
@@ -111,6 +119,31 @@ function FilmLibrary() {
                                 </CTableDataCell>
                                 <CTableDataCell>
                                     <div>{film.view}</div> 
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                    <div 
+                                        id='Status' 
+                                        style={{
+                                            backgroundColor: getStatusColor(film.status),
+                                            color: 'white',
+                                            textAlign: 'center', 
+                                            borderRadius: '8px',
+                                            padding: '6px 0px',
+                                            fontWeight: '500',
+                                            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                                            fontSize: '0.9rem',
+                                            letterSpacing: '0.5px',
+                                            textTransform: 'capitalize',
+                                        }}
+                                    >
+                                        {film.status === 'active' ? 
+                                            film.status.charAt(0).toUpperCase() + film.status.slice(1)
+                                            :
+                                            <span className="processing-text">
+                                                {film.status}...
+                                            </span>            
+                                        }
+                                    </div> 
                                 </CTableDataCell>
                                 <CTableDataCell>
                                     <CButton
@@ -150,6 +183,23 @@ function FilmLibrary() {
             </CModal>
         </div>
     );
+
+    function getStatusColor(status) {
+        switch(status.toLowerCase()) {
+            case 'active':
+                return '#2eb85c'; // Green
+            case 'processing':
+                return '#3399ff'; // Blue
+            case 'pending':
+                return '#f9b115'; // Yellow/Orange
+            case 'failed':
+                return '#e55353'; // Red
+            case 'draft':
+                return '#768192'; // Gray
+            default:
+                return '#321fdb'; // Primary blue
+        }
+    }
 }
 
 export default FilmLibrary;
